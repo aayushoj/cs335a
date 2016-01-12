@@ -33,7 +33,7 @@ class MyLexer(object):
     Keyword = r'(continue|for|new|switch|assert|default|goto|boolean|do|if|private|this|break|double|protected|byte|else|import|public|case|enum|return|catch|extends|int|short|try|char|static|void|class|long|volatile|const|float|while)'
 
     Separator = r'[;,.(){}[\] \"\']'
-    Comments = r'//[^\n]* | /[*].*[*]/'
+    Comments = r'//[^\n]* | /[*][^*]*[*]/'
     # incomplete
     Operator = r'(=|<|>|<=|>=|\+|-|\*|/|==|\+\+|--|~|!|%|<<|>>|>>>|instanceof|!=|&|\^|\||&&|\|\||[+\-*/%&\^|]=|<<=|>>=|>>>=)'
 
@@ -47,27 +47,38 @@ class MyLexer(object):
 
     # A regular expression rule with some action code
     # Note addition of self parameter since we're in a class
-    @TOKEN(Keyword)
-    def t_Keyword(self, t):
-        return t
-
-    @TOKEN(Identifier)
-    def t_Identifier(self, t):
-        return t
-    @TOKEN(Literals)
-    def t_Literals(self, t):
-        return t
-
-    @TOKEN(Separator)
-    def t_Separator(self, t):
-        return t
-
     @TOKEN(Comments)
     def t_Comments(self, t):
         pass
 
+    @TOKEN(Keyword)
+    def t_Keyword(self, t):
+        self.Num_Keyword+=1;
+        self.Set_Keyword.add(t.value)
+        return t
+
+    @TOKEN(Identifier)
+    def t_Identifier(self, t):
+        self.Num_Identifier+=1
+        self.Set_Identifier.add(t.value)
+        return t
+
+    @TOKEN(Literals)
+    def t_Literals(self, t):
+        self.Num_Literals+=1
+        self.Set_Literals.add(t.value)
+        return t
+
+    @TOKEN(Separator)
+    def t_Separator(self, t):
+        self.Num_Separator+=1
+        self.Set_Separator.add(t.value)
+        return t
+
     @TOKEN(Operator)
     def t_Operator(self, t):
+        self.Num_Operator+=1
+        self.Set_Operator.add(t.value)
         return t
 
 
@@ -81,7 +92,7 @@ class MyLexer(object):
 
     # Error handling rule
     def t_error(self, t):
-        print("Illegal character '%s'" % t.value[0])
+        print("Line:%d  ::  Illegal character '%s'" %(t.lexer.lineno, t.value[0]))
         t.lexer.skip(1)
 
     # Build the lexer
@@ -95,13 +106,31 @@ class MyLexer(object):
             tok = self.lexer.token()
             if not tok:
                 break
-            print(tok)
+            # print(tok)
+
+    def __init__(self):
+        self.Num_Keyword=0
+        self.Num_Literals=0
+        self.Num_Operator=0
+        self.Num_Separator=0
+        self.Num_Identifier=0
+        self.Set_Keyword = set()
+        self.Set_Literals = set()
+        self.Set_Operator = set()
+        self.Set_Separator = set()
+        self.Set_Identifier = set()
 
 # Build the lexer and try it out
 m = MyLexer()
 m.build()           # Build the lexer
+# m.Num_Keyword=0
 filename = sys.argv[1]
 f = open(filename, 'r')
 data = f.read()
 # print(data)
 m.test(data)     # Test it
+print "Keyword\t\t\t\t%d\t\t\t" %m.Num_Keyword + ', '.join(str(item) for item in m.Set_Keyword)
+print "\nLiterals\t\t\t%d\t\t\t" %m.Num_Literals + ', '.join(str(item) for item in m.Set_Literals)
+print "\nOperator\t\t\t%d\t\t\t" %m.Num_Operator + ', '.join(str(item) for item in m.Set_Operator)
+print "\nSeparator\t\t\t%d\t\t\t" %m.Num_Separator + ', '.join(str(item) for item in m.Set_Separator)
+print "\nIdentifier\t\t\t%d\t\t\t" %m.Num_Identifier + ', '.join(str(item) for item in m.Set_Identifier)
