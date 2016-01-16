@@ -43,7 +43,7 @@ class MyLexer(object):
     CharacterLiteral=r'(\'(' + Graphic + r'|\ |\\[n\\ta"\'])\')'
     StringLiteral=r'(\"(' + Graphic + r'|\ |\\[n\\ta"\'])*\")'
     Literals= r'('+IntegerLiteral+r'|null|'+FloatingLiteral+r'|'+BooleanLiteral+r'|'+CharacterLiteral+r'|'+StringLiteral+r')'
-    Illegals = r'('+IntegerLiteral + r'[a-zA-Z]*)'
+    Illegals = r'('+IntegerLiteral + r'[a-zA-Z]+)'
 
     # A regular expression rule with some action code
     # Note addition of self parameter since we're in a class
@@ -53,7 +53,7 @@ class MyLexer(object):
         pass
     @TOKEN(Illegals)
     def t_Illegals(self,t):
-        print("Line :: %d  Illegal entry '%s'" %(t.lexer.lineno, t.value))
+        print("Line :: %d  Illegal 1asdasentry '%s'" %(t.lexer.lineno, t.value))
         pass
 
     @TOKEN(Keyword)
