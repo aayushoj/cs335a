@@ -24,43 +24,54 @@ class MyLexer(object):
     Alphabets = r'([a-zA-Z])'
     Numeric = r'([0-9])'
     Alphanum = r'([a-zA-Z0-9])'
-    Special = r'([\]!%\^&*()-+={}|~[\;:"<>?,./#@`_])' + r'|' + r'\''
+    Special = r'([\]!%\^&*()-+={}|~[\;:<>?,./#@`_])'
     Graphic = r'([a-zA-Z0-9]|'+ Special + r')'
     IdentifierStart = r'([0-9a-zA-Z$_])'
-    Identifier = r'[a-zA-z$_][a-zA-Z0-9$_]*'
+    Identifier = r'[a-zA-Z$_][a-zA-Z0-9$_]*'
 
     # print(Identifier)
-    Keyword = r'(continue|for|new|switch|assert|default|goto|boolean|do|if|private|this|break|double|protected|byte|else|import|public|case|enum|return|catch|extends|int|short|try|char|static|void|class|long|volatile|const|float|while)'
+    Keyword = r'(continue|for|new|switch|assert|default|goto|boolean|do|if|private|this|break|double|protected|byte|else|import|public|case|enum|return|catch|extends|int|short|try|char|static|void|class|long|volatile|const|float|while)'+r'[^0-9a-zA-Z$_]'
 
     Separator = r'[;,.(){}[\] \"\']'
-    Comments = r'//[^\n]* | /[*][^*]*[*]/'
+    Comments = r'(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|(//.*)'
     # incomplete
     Operator = r'(=|<|>|<=|>=|\+|-|\*|/|==|\+\+|--|~|!|%|<<|>>|>>>|instanceof|!=|&|\^|\||&&|\|\||[+\-*/%&\^|]=|<<=|>>=|>>>=)'
 
     IntegerLiteral=r'[0-9]+'
     FloatingLiteral=r'([0-9]+(e|E)(\+|-)?[0-9]+|([0-9]+)?\.([0-9]+)((e|E)((\+|-)?[0-9]+))?)'
     BooleanLiteral=r'(true|false|TRUE|FALSE)'
-    CharacterLiteral=r'(\'(' + Graphic + r'|\ |\\[n\\ta])\')|\''
-    StringLiteral=r'(\"(' + Graphic + r'|\ |\\[n\\ta])*\")|\"'
+    CharacterLiteral=r'(\'(' + Graphic + r'|\ |\\[n\\ta"\'])\')'
+    StringLiteral=r'(\"(' + Graphic + r'|\ |\\[n\\ta"\'])*\")'
     Literals= r'('+IntegerLiteral+r'|null|'+FloatingLiteral+r'|'+BooleanLiteral+r'|'+CharacterLiteral+r'|'+StringLiteral+r')'
-
+    Illegals = r'('+IntegerLiteral + r'[a-zA-Z]*)'
 
     # A regular expression rule with some action code
     # Note addition of self parameter since we're in a class
     @TOKEN(Comments)
     def t_Comments(self, t):
+        self.lexer.lineno+=t.value.count('\n')
+        pass
+    @TOKEN(Illegals)
+    def t_Illegals(self,t):
+        print("Line :: %d  Illegal entry '%s'" %(t.lexer.lineno, t.value))
         pass
 
     @TOKEN(Keyword)
     def t_Keyword(self, t):
         self.Num_Keyword+=1;
+        self.lexer.lexpos-=1;
         self.Set_Keyword.add(t.value)
         return t
 
     @TOKEN(Identifier)
     def t_Identifier(self, t):
-        self.Num_Identifier+=1
-        self.Set_Identifier.add(t.value)
+        if(t.value in self.ReservedWords):
+            t.type="Literals"
+            self.Num_Literals+=1
+            self.Set_Literals.add(t.value)
+        else:
+            self.Num_Identifier+=1
+            self.Set_Identifier.add(t.value)
         return t
 
     @TOKEN(Literals)
@@ -92,7 +103,7 @@ class MyLexer(object):
 
     # Error handling rule
     def t_error(self, t):
-        print("Line:%d  ::  Illegal character '%s'" %(t.lexer.lineno, t.value[0]))
+        print("Line :: %d  Illegal entry '%s'" %(t.lexer.lineno, t.value))
         t.lexer.skip(1)
 
     # Build the lexer
@@ -114,11 +125,14 @@ class MyLexer(object):
         self.Num_Operator=0
         self.Num_Separator=0
         self.Num_Identifier=0
+        self.ReservedWords=["TRUE","true","FALSE","false","null"]
         self.Set_Keyword = set()
         self.Set_Literals = set()
         self.Set_Operator = set()
         self.Set_Separator = set()
         self.Set_Identifier = set()
+
+
 
 # Build the lexer and try it out
 m = MyLexer()
@@ -129,8 +143,8 @@ f = open(filename, 'r')
 data = f.read()
 # print(data)
 m.test(data)     # Test it
-print "Keyword\t\t\t\t%d\t\t\t" %m.Num_Keyword + ', '.join(str(item) for item in m.Set_Keyword)
-print "\nLiterals\t\t\t%d\t\t\t" %m.Num_Literals + ', '.join(str(item) for item in m.Set_Literals)
-print "\nOperator\t\t\t%d\t\t\t" %m.Num_Operator + ', '.join(str(item) for item in m.Set_Operator)
-print "\nSeparator\t\t\t%d\t\t\t" %m.Num_Separator + ', '.join(str(item) for item in m.Set_Separator)
-print "\nIdentifier\t\t\t%d\t\t\t" %m.Num_Identifier + ', '.join(str(item) for item in m.Set_Identifier)
+print("Keyword\t\t\t\t%d\t\t\t" %m.Num_Keyword + ', '.join(str(item) for item in m.Set_Keyword) )
+print("\nLiterals\t\t\t%d\t\t\t" %m.Num_Literals + ', '.join(str(item) for item in m.Set_Literals) )
+print("\nOperator\t\t\t%d\t\t\t" %m.Num_Operator + ', '.join(str(item) for item in m.Set_Operator) )
+print("\nSeparator\t\t\t%d\t\t\t" %m.Num_Separator + ', '.join(str(item) for item in m.Set_Separator) )
+print("\nIdentifier\t\t\t%d\t\t\t" %m.Num_Identifier + ', '.join(str(item) for item in m.Set_Identifier) )
