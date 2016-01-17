@@ -9,7 +9,8 @@ class HelloWorldApp {
     }
 }
 class MyClass {
-   int height;
+   int he12ight;
+   int height2;
    MyClass() {
       System.out.println("bricks");
       height = 0;

@@ -53,7 +53,7 @@ class MyLexer(object):
         pass
     @TOKEN(Illegals)
     def t_Illegals(self,t):
-        print("Line :: %d  Illegal 1asdasentry '%s'" %(t.lexer.lineno, t.value))
+        print("Line :: %d  Illegal entry '%s'" %(t.lexer.lineno, t.value))
         pass
 
     @TOKEN(Keyword)
