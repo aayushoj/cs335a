@@ -1,7 +1,10 @@
-public class StringExample
-{	public static void main(String[] args)
-	{	String s1 = "Computer Science";
-		int x = 307;
+// to check if program does not take String as a keyword 
+class StringExample
+{	
+	public static void main(String[] args)
+	{	
+		String s1 = "Compiler Design ";
+		int x = 307;					// checking for the literals
 		String s2 = s1 + " " + x;
 		String s3 = s2.substring(10,17);
 		String s4 = "is fun";
