@@ -143,6 +143,7 @@ f = open(filename, 'r')
 data = f.read()
 # print(data)
 m.test(data)     # Test it
+print("Token\t\t\tOccurrances\t\t\t\tLexemes\n-----------------------------------------------------------------------------------------------------\n")
 print("Keyword\t\t\t\t%d\t\t\t" %m.Num_Keyword + ', '.join(str(item) for item in m.Set_Keyword) )
 print("\nLiterals\t\t\t%d\t\t\t" %m.Num_Literals + ', '.join(str(item) for item in m.Set_Literals) )
 print("\nOperator\t\t\t%d\t\t\t" %m.Num_Operator + ', '.join(str(item) for item in m.Set_Operator) )

@@ -35,8 +35,10 @@ class MyClass {
                + topN + " from " + from + " to " + to);
                doTowers(topN - 1, inter, from, to);
             }
-         }
-      }
+         }/*  The HelloWorldApp class implements an application that
+           simply prints "Hello World!" to standard output.
+          */
+      }//*/
    }
    void info() {
       System.out.println("House is " + height
