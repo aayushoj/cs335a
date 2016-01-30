@@ -1,6 +1,9 @@
 import sys
 class instruction(object):
     def convert(self, param):
+        # print(param)
+        if(len(param)==1):
+            return 0
         self.lineno=param[0]
         self.op=param[1]
         if (param[1]=="ifgoto"):
@@ -10,12 +13,18 @@ class instruction(object):
             self.src1=param[3]
             self.src2=param[4]
             self.jlno=param[5]
+            basicblock.append(int(self.lineno))
+            marker.append(int(self.jlno))
         elif (param[1]=="call"):
+            basicblock.append(int(self.lineno))
+            basicblock.append(int(self.lineno)+1)
             self.func=True
             self.funcname=param[2]
         elif (param[1]=="ret"):
             self.returnc=True
         elif (param[1]=="label"):
+            # basicblock.append(int(self.lineno))
+            marker.append(int(self.lineno))
             self.lbl=True
             self.lblname=param[2]
         elif (param[1]=="print"):
@@ -65,9 +74,18 @@ class instruction(object):
         self.printc=False        #If we have to print or not(lib func)
         self.inputc=False        #If we have to take input or not(lib func)
         self.returnc=False       #If we have to return or not(lib func)
+#
+def build_nextusetable():
+    #print(type(basicblock[0]))
+    for i in range(1,len(basicblock)):
+        for j in range(basicblock[i],basicblock[i-1],-1):
+            print(str(j))
+    		
 
-
-
+basicblock=[]
+basicblock.append(0)
+marker=[]
+i=0
 filename = sys.argv[1]
 f = open(filename, 'r')
 data = f.read()
@@ -86,8 +104,12 @@ for l in splitins2:
     temp=instruction()
     temp.convert(x)
     splitins.append(temp)
-for i in splitins:
-    i.printobj()
+basicblock.append(len(splitins)-1)
+# for i in splitins:
+#     i.printobj()
+print(basicblock)
+print(marker)
+build_nextusetable()
 #print(splitins)
 # for l in splitins:
 #     print(l)
