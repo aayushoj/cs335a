@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 
 import sys
@@ -107,12 +108,73 @@ def build_nextusetable():
 
     #             print(splitins[j-1].src1)
 
+def isregassigned(var):
+    for i in range(0,6):
+        if(regalloc[i]==var):
+            return i
+    return "-1"
+
+def regname(regno):
+    #ebx=1 ,ecx=2, esi=3, edi=4, eax=5, edx=6
+    if(regno==0):
+        return 'ebx'
+    if(regno==1):
+        return 'ecx'
+    if(regno==2):
+        return 'esi'
+    if(regno==3):
+        return 'edi'
+    if(regno==4):
+        return 'eax'
+    if(regno==5):
+        return 'edx'
+
+def getreg(lineno,var):
+    if(splitins[lineno].dst!=None):
+        if(splitins[lineno].op=="/" or splitins[lineno].op=="%"):
+            return None
+        else:
+            allocatedreg=isregassigned(var)
+            if(isregassigned(var)=='-1'):
+                for i in range(6):
+                    if(regalloc[i]=='-1'):
+                        allocatedreg=i
+                        regalloc[i]=var
+                        return i
+                tempvar='-1'
+                tempnextuse='-1'
+                for i in regalloc:
+                    if i not in nextuse[lineno-1].keys():
+                        print( "line no: "+str(lineno)+ "  mov "+str(i)+" %"+str(regname(isregassigned(i))))
+                        regtoassign=isregassigned(i)
+                        regalloc[regtoassign]=var
+                        return regtoassign
+                for i in nextuse[lineno-1].keys():
+                    if(i=='1lineno'):
+                        continue
+                    if(tempvar=='-1' and isregassigned(i)!='-1'):
+                        tempvar=i
+                        tempnextuse=nextuse[lineno-1][i]
+                    elif(int(tempnextuse)<nextuse[lineno-1][i] and isregassigned(i)!='-1'):
+                        tempvar=i
+                        tempnextuse=nextuse[lineno-1][i]
+                # print("reg ass " + str(isregassigned(tempvar))+ " at" + regname(isregassigned(tempvar)))
+                print("line no: "+str(lineno)+ "  mov "+str(tempvar)+" %"+str(regname(isregassigned(tempvar))))
+                rregtoassign=isregassigned(i)
+                regalloc[regtoassign]=var
+                return regtoassign
+
+
+
 
 variables = []
 basicblock=[]
 nextuse = []
 basicblock.append(0)
 marker=[]
+regalloc = ['-1']*6
+#No Scheme for regalloc
+#ebx=1 ,ecx=2, esi=3, edi=4, eax=5, edx=6
 i=0
 filename = sys.argv[1]
 f = open(filename, 'r')
@@ -147,6 +209,16 @@ print("*************************************************************************
 for i in nextuse:
     print(i)
 print("*********************************************************************************")
+for i in range(len(nextuse)):
+    for j in nextuse[i-1].keys():
+        if(j=='1line'):
+            continue
+        if(isregassigned(j)!='-1'):
+            continue
+        if(isregassigned(j)=='-1'):
+            temp=getreg(i,j)
+        print("line no: "+str(i)+"  "+j+"  ::  "+str(temp))
+        # print()
 
 
 
