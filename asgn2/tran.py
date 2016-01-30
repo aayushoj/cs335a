@@ -33,10 +33,15 @@ class instruction(object):
         elif (param[1]=="="):
             self.dst=param[2]
             self.src1=param[3]
+            variables.append(param[2])
+            variables.append(param[3])
         else:
             self.dst=param[2]
             self.src1=param[3]
             self.src2=param[4]
+            variables.append(param[2])
+            variables.append(param[3])
+            variables.append(param[4])
 
     def printobj(self):
         print("line no: "+self.lineno)
@@ -77,12 +82,33 @@ class instruction(object):
 #
 def build_nextusetable():
     #print(type(basicblock[0]))
+    # for i in range(1,len(basicblock)):
+    #     for j in range(basicblock[i],basicblock[i-1],-1):
+    #         print(str(j))
+            # continue
     for i in range(1,len(basicblock)):
+        newdiction  = {}
+        newdiction['line'] = -1
         for j in range(basicblock[i],basicblock[i-1],-1):
-            print(str(j))
-    		
+            print("line no = " + str(j))
+            newdiction['line'] = j
+            nextuse.insert(basicblock[i-1],newdiction.copy())
+            if(splitins[j-1].dst!=None):
+            	if(splitins[j-1].dst in newdiction.keys()):
+                	del newdiction[splitins[j-1].dst]
+            if(splitins[j-1].src1!= None):
+            	if(splitins[j-1].src1.isdigit()==False):
+                	newdiction[splitins[j-1].src1]=j
+            if(splitins[j-1].src2!= None):
+            	if(splitins[j-1].src2.isdigit()==False):
+                	newdiction[splitins[j-1].src2]=j
+            
+    #             print(splitins[j-1].src1)
 
+            
+variables = []
 basicblock=[]
+nextuse = []
 basicblock.append(0)
 marker=[]
 i=0
@@ -96,6 +122,7 @@ for i in lines:
     splitins2.append(f)
 splitins=[]
 x=[]
+# print(splitins2)
 for l in splitins2:
     x=[]
     for i in l:
@@ -103,13 +130,19 @@ for l in splitins2:
         x.append(i)
     temp=instruction()
     temp.convert(x)
-    splitins.append(temp)
-basicblock.append(len(splitins)-1)
+    if(len(x)!=1):
+        splitins.append(temp)
+basicblock.append(len(splitins))
 # for i in splitins:
 #     i.printobj()
+unique = set(variables)
+variables = list(unique)
+
 print(basicblock)
 print(marker)
 build_nextusetable()
+print("*********************************************************************************")
+print(nextuse)
 #print(splitins)
 # for l in splitins:
 #     print(l)
