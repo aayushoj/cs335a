@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import sys
 class instruction(object):
     def convert(self, param):
@@ -88,10 +90,10 @@ def build_nextusetable():
             # continue
     for i in range(1,len(basicblock)):
         newdiction  = {}
-        newdiction['line'] = -1
+        newdiction['1line'] = -1
         for j in range(basicblock[i],basicblock[i-1],-1):
-            print("line no = " + str(j))
-            newdiction['line'] = j
+            # print("line no = " + str(j))
+            newdiction['1line'] = j
             nextuse.insert(basicblock[i-1],newdiction.copy())
             if(splitins[j-1].dst!=None):
             	if(splitins[j-1].dst in newdiction.keys()):
@@ -102,10 +104,10 @@ def build_nextusetable():
             if(splitins[j-1].src2!= None):
             	if(splitins[j-1].src2.isdigit()==False):
                 	newdiction[splitins[j-1].src2]=j
-            
+
     #             print(splitins[j-1].src1)
 
-            
+
 variables = []
 basicblock=[]
 nextuse = []
@@ -142,7 +144,12 @@ print(basicblock)
 print(marker)
 build_nextusetable()
 print("*********************************************************************************")
-print(nextuse)
+for i in nextuse:
+    print(i)
+print("*********************************************************************************")
+
+
+
 #print(splitins)
 # for l in splitins:
 #     print(l)
