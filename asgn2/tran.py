@@ -161,23 +161,59 @@ def convertassem():
     # print splitins
     for i in range(len(splitins)):
         if(splitins[i].op=='+'):
-            tmp=isregassigned(splitins[i].src1)
-            if(tmp!=-1):
-                b=regname(tmp)
+            if(isdigit(splitins[i].src1[0]) or isdigit(splitins[i].src2[0])):
+                if(isdigit(splitins[i].src1[0]) and isdigit(splitins[i].src2[0])):
+                    tmp=isregassigned(splitins[i].dst)
+                    if(tmp!=-1):
+                        a=regname(tmp)
+                    else:
+                        a=regname(getreg)
+                    print ("movl $" + int(splitins[i].src1[0]))+" "+ str(a))
+                    print ("addl $" + int(splitins[i].src2[0]))+" "+ str(a))
+                else if(isdigit(splitins[i].src1[0])):
+                    tmp=isregassigned(splitins[i].src2)
+                    if(tmp!=-1):
+                        b=regname(tmp)
+                    else:
+                        b=regname(getreg)
+                    tmp=isregassigned(splitins[i].dst)
+                    if(tmp!=-1):
+                        a=regname(tmp)
+                    else:
+                        a=regname(getreg)
+                    print ("movl $" +  str(b)+" "+ str(a))
+                    print ("addl $" + int(splitins[i].src1[0]))+" "+ str(a))
+                else:
+                    tmp=isregassigned(splitins[i].src1)
+                    if(tmp!=-1):
+                        b=regname(tmp)
+                    else:
+                        b=regname(getreg)
+                    tmp=isregassigned(splitins[i].dst)
+                    if(tmp!=-1):
+                        a=regname(tmp)
+                    else:
+                        a=regname(getreg)
+                    print ("movl $" +  str(b)+" "+ str(a))
+                    print ("addl $" + int(splitins[i].src2[0]))+" "+ str(a))
             else:
-                b=regname(getreg)
-            tmp=isregassigned(splitins[i].src2)
-            if(tmp!=-1):
-                c=regname(tmp)
-            else:
-                c=regname(getreg)
-            tmp=isregassigned(splitins[i].dst)
-            if(tmp!=-1):
-                a=regname(tmp)
-            else:
-                a=regname(getreg)
-            print ("movl " + str(c)+" "+ str(a))
-            print ("addl " + str(b)+" "+ str(a))
+                tmp=isregassigned(splitins[i].src1)
+                if(tmp!=-1):
+                    b=regname(tmp)
+                else:
+                    b=regname(getreg)
+                tmp=isregassigned(splitins[i].src2)
+                if(tmp!=-1):
+                    c=regname(tmp)
+                else:
+                    c=regname(getreg)
+                tmp=isregassigned(splitins[i].dst)
+                if(tmp!=-1):
+                    a=regname(tmp)
+                else:
+                    a=regname(getreg)
+                print ("movl " + str(c)+" "+ str(a))
+                print ("addl " + str(b)+" "+ str(a))
 
 
 variables = []
