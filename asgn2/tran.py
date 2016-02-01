@@ -1,4 +1,3 @@
-
 #!/usr/bin/python
 
 import sys
@@ -158,7 +157,27 @@ def getreg(lineno,var):
             regalloc[regtoassign]=var
             return regtoassign
 
-
+def convertassem():
+    # print splitins
+    for i in range(len(splitins)):
+        if(splitins[i].op=='+'):
+            tmp=isregassigned(splitins[i].src1)
+            if(tmp!=-1):
+                b=regname(tmp)
+            else:
+                b=regname(getreg)
+            tmp=isregassigned(splitins[i].src2)
+            if(tmp!=-1):
+                c=regname(tmp)
+            else:
+                c=regname(getreg)
+            tmp=isregassigned(splitins[i].dst)
+            if(tmp!=-1):
+                a=regname(tmp)
+            else:
+                a=regname(getreg)
+            print ("movl " + str(c)+" "+ str(a))
+            print ("addl " + str(b)+" "+ str(a))
 
 
 variables = []
@@ -215,6 +234,7 @@ for i in range(len(nextuse)):
         # print()
 
 
+convertassem()
 
 #print(splitins)
 # for l in splitins:
