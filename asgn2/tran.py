@@ -129,24 +129,24 @@ def regname(regno):
     if(regno==5):
         return '%edx'
 
-def emptyreg(regno):
+def emptyreg(lineno,regno):
     if(regalloc[regno]=='-1'):
         regalloc[regno]=='0DNA'
         return True
     for i in regalloc:
-        if (regalloc[isregassigned[i]]!='0DNA') and i not in nextuse[lineno-1].keys():
+        if regalloc[isregassigned(i)]!='0DNA' and i not in nextuse[lineno-1].keys():
             if(i!='-1'):
-                print( "line no: "+str(lineno)+ " movl  "+str(regname(isregassigned(i))+","+str(i)))
-                print("line no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(i))))
+                print( "empline no: "+str(lineno)+ " movl  "+str(regname(isregassigned(i))+","+str(i)))
+                print("empline no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(i))))
                 regalloc[isregassigned(i)]=regalloc[regno]
                 regalloc[regno]='0DNA'
             else:
-                print("line no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(i))))
+                print("empline no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(i))))
                 regalloc[isregassigned(i)]=regalloc[regno]
                 regalloc[regno]='0DNA'
             # print( "line no: "+str(lineno)+ " movl  "+str(regname(isregassigned(i))+","+str(i)))
-            regtoassign=isregassigned(i)
-            regalloc[regtoassign]='0DNA'
+            # regtoassign=isregassigned(i)
+            # regalloc[regtoassign]='0DNA'
             return True
     tempvar=None
     tempnextuse=-1
@@ -158,8 +158,8 @@ def emptyreg(regno):
         elif(tempnextuse<nextuse[lineno-1][i]):
                 tempvar=i
                 tempnextuse=nextuse[lineno-1][i]
-    print("line no: "+str(lineno)+ "  movl "+str(regname(isregassigned(tempvar))+","+str(tempvar)))
-    print("line no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(tempvar))))
+    print("empline no: "+str(lineno)+ "  movl "+str(regname(isregassigned(tempvar))+","+str(tempvar)))
+    print("empline no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(tempvar))))
     regalloc[isregassigned(tempvar)]=regalloc[regno]
     regalloc[regno]='0DNA'
     return True
@@ -347,8 +347,9 @@ for i in range(len(nextuse)):
         print("line no: "+str(i)+"  "+j+"  ::  "+str(temp))
         # print()
 
-
-convertassem()
+emptyreg(13,4)
+emptyreg(13,5)
+# convertassem()
 
 #print(splitins)
 # for l in splitins:
