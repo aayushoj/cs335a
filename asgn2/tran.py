@@ -16,6 +16,7 @@ class instruction(object):
             self.src2=param[4]
             self.jlno=param[5]
             basicblock.append(int(self.lineno))
+            basicblock.append(int(self.jlno))
             marker.append(int(self.jlno))
         elif (param[1]=="call"):
             basicblock.append(int(self.lineno))
@@ -118,46 +119,84 @@ def isregassigned(var):
 def regname(regno):
     #ebx=1 ,ecx=2, esi=3, edi=4, eax=5, edx=6
     if(regno==0):
-        return 'ebx'
+        return '%ebx'
     if(regno==1):
-        return 'ecx'
+        return '%ecx'
     if(regno==2):
-        return 'esi'
+        return "%esi"
     if(regno==3):
-        return 'edi'
+        return '%edi'
     if(regno==4):
-        return 'eax'
+        return '%eax'
     if(regno==5):
-        return 'edx'
+        return '%edx'
+
+def emptyreg(lineno,regno):
+    if(regalloc[regno]=='-1'):
+        regalloc[regno]=='0DNA'
+        return True
+    for i in regalloc:
+        if regalloc[isregassigned(i)]!='0DNA' and i not in nextuse[lineno-1].keys():
+            if(i!='-1'):
+                print( "empline no: "+str(lineno)+ " movl  "+str(regname(isregassigned(i))+","+str(i)))
+                print("empline no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(i))))
+                regalloc[isregassigned(i)]=regalloc[regno]
+                regalloc[regno]='0DNA'
+            else:
+                print("empline no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(i))))
+                regalloc[isregassigned(i)]=regalloc[regno]
+                regalloc[regno]='0DNA'
+            # print( "line no: "+str(lineno)+ " movl  "+str(regname(isregassigned(i))+","+str(i)))
+            # regtoassign=isregassigned(i)
+            # regalloc[regtoassign]='0DNA'
+            return True
+    tempvar=None
+    tempnextuse=-1
+    for j in range(0,6) and regalloc[j]!='0DNA':
+        i=regalloc[j]
+        if(tempnextuse==-1):
+            tempvar=i
+            tempnextuse=nextuse[lineno-1][i]
+        elif(tempnextuse<nextuse[lineno-1][i]):
+                tempvar=i
+                tempnextuse=nextuse[lineno-1][i]
+    print("empline no: "+str(lineno)+ "  movl "+str(regname(isregassigned(tempvar))+","+str(tempvar)))
+    print("empline no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(tempvar))))
+    regalloc[isregassigned(tempvar)]=regalloc[regno]
+    regalloc[regno]='0DNA'
+    return True
+
+
 
 def getreg(lineno,var):
-    if(splitins[lineno].dst!=None):
-        if(splitins[lineno].op=="/" or splitins[lineno].op=="%"):
-            return None
-        else:
-            for i in range(6):
-                if(regalloc[i]=='-1'):
-                    allocatedreg=i
-                    regalloc[i]=var
-                    return i
-            for i in regalloc:
-                if i not in nextuse[lineno-1].keys():
-                    print( "line no: "+str(lineno)+ "  mov "+str(i)+" %"+str(regname(isregassigned(i))))
-                    regtoassign=isregassigned(i)
-                    regalloc[regtoassign]=var
-                    return regtoassign
-            tempvar=regalloc[0]
-            tempnextuse=nextuse[lineno-1][tempvar]
-            for j in range(1,6):
-                i=regalloc[j]
-                if(tempnextuse<nextuse[lineno-1][i]):
-                    tempvar=i
-                    tempnextuse=nextuse[lineno-1][i]
-            # print("reg ass " + str(isregassigned(tempvar))+ " at" + regname(isregassigned(tempvar)))
-            print("line no: "+str(lineno)+ "  mov "+str(tempvar)+" %"+str(regname(isregassigned(tempvar))))
+    # mode = 0
+    # if(splitins[lineno].op=="/" or splitins[lineno].op=="%"):
+
+
+    ####NOT FOR DIV
+    for i in range(6):
+        if(regalloc[i]=='-1'):
+            # allocatedreg=i
+            regalloc[i]=var
+            return i
+    for i in regalloc:
+        if i not in nextuse[lineno-1].keys():
+            print( "line no: "+str(lineno)+ " movl  "+str(regname(isregassigned(i))+","+str(i)))
             regtoassign=isregassigned(i)
             regalloc[regtoassign]=var
             return regtoassign
+    tempvar=regalloc[0]
+    tempnextuse=nextuse[lineno-1][tempvar]
+    for j in range(1,6):
+        i=regalloc[j]
+        if(tempnextuse<nextuse[lineno-1][i]):
+            tempvar=i
+            tempnextuse=nextuse[lineno-1][i]
+    # print("reg ass " + str(isregassigned(tempvar))+ " at" + regname(isregassigned(tempvar)))
+    print("line no: "+str(lineno)+ "  movl "+str(regname(isregassigned(tempvar))+","+str(tempvar)))
+    regtoassign=isregassigned(i)
+    regalloc[regtoassign]=var
+    return regtoassign
 
 def convertassem():
     # print splitins
@@ -486,8 +525,9 @@ for i in range(len(nextuse)):
         print("line no: "+str(i)+"  "+j+"  ::  "+str(temp))
         # print()
 
-
-convertassem()
+emptyreg(13,4)
+emptyreg(13,5)
+# convertassem()
 
 #print(splitins)
 # for l in splitins:
