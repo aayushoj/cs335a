@@ -181,7 +181,7 @@ def getreg(lineno,var):
             return i
     for i in regalloc:
         if i not in nextuse[lineno-1].keys():
-            print( "line no: "+str(lineno)+ " movl  "+str(regname(isregassigned(i))+","+str(i)))
+            print("movl "+str(regname(isregassigned(i))+" , "+str(i)))
             regtoassign=isregassigned(i)
             regalloc[regtoassign]=var
             return regtoassign
@@ -193,7 +193,7 @@ def getreg(lineno,var):
             tempvar=i
             tempnextuse=nextuse[lineno-1][i]
     # print("reg ass " + str(isregassigned(tempvar))+ " at" + regname(isregassigned(tempvar)))
-    print("line no: "+str(lineno)+ "  movl "+str(regname(isregassigned(tempvar))+","+str(tempvar)))
+    print("movl "+str(regname(isregassigned(tempvar))+" , "+str(tempvar)))
     regtoassign=isregassigned(i)
     regalloc[regtoassign]=var
     return regtoassign
@@ -201,8 +201,28 @@ def getreg(lineno,var):
 def convertassem():
     # print splitins
     for i in range(len(splitins)):
-        print(splitins[i].lineno)
-        if(splitins[i].op=='+'):
+        # print(splitins[i].lineno)
+        if(splitins[i].op == '='):
+            if(splitins[i].src1.isdigit()):
+                tmp=isregassigned(splitins[i].dst)
+                if(tmp!="-1"):
+                    a=regname(tmp)
+                else:
+                    a=regname(getreg(i+1,splitins[i].dst))
+                print("movl $"+ splitins[i].src1 + " , " + str(a))
+            else:
+                tmp=isregassigned(splitins[i].dst)
+                if(tmp!="-1"):
+                    a=regname(tmp)
+                else:
+                    a=regname(getreg(i+1,splitins[i].dst))
+                tmp=isregassigned(splitins[i].src1)
+                if(tmp!="-1"):
+                    b=regname(tmp)
+                else:
+                    b=regname(getreg(i+1,splitins[i].src1))
+                print("movl "+ str(b) + " , " + str(a))
+        elif(splitins[i].op=='+'):
             if(splitins[i].src1.isdigit() or splitins[i].src2.isdigit()):
                 if(splitins[i].src1.isdigit() and splitins[i].src2.isdigit()):
                     tmp=isregassigned(splitins[i].dst)
@@ -514,20 +534,20 @@ print("*************************************************************************
 for i in nextuse:
     print(i)
 print("*********************************************************************************")
-for i in range(len(nextuse)):
-    for j in nextuse[i-1].keys():
-        if(j=='1line'):
-            continue
-        if(isregassigned(j)!="-1"):
-            continue
-        if(isregassigned(j)=="-1"):
-            temp=getreg(i,j)
-        print("line no: "+str(i)+"  "+j+"  ::  "+str(temp))
-        # print()
+# for i in range(len(nextuse)):
+#     for j in nextuse[i-1].keys():
+#         if(j=='1line'):
+#             continue
+#         if(isregassigned(j)!="-1"):
+#             continue
+#         if(isregassigned(j)=="-1"):
+#             temp=getreg(i,j)
+#         print("line no: "+str(i)+"  "+j+"  ::  "+str(temp))
+#         # print()
 
-emptyreg(13,4)
-emptyreg(13,5)
-# convertassem()
+# emptyreg(13,4)
+# emptyreg(13,5)
+convertassem()
 
 #print(splitins)
 # for l in splitins:
