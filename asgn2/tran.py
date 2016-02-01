@@ -129,7 +129,49 @@ def regname(regno):
     if(regno==5):
         return '%edx'
 
+def emptyreg(regno):
+    if(regalloc[regno]=='-1'):
+        regalloc[regno]=='0DNA'
+        return True
+    for i in regalloc:
+        if (regalloc[isregassigned[i]]!='0DNA') and i not in nextuse[lineno-1].keys():
+            if(i!='-1'):
+                print( "line no: "+str(lineno)+ " movl  "+str(regname(isregassigned(i))+","+str(i)))
+                print("line no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(i))))
+                regalloc[isregassigned(i)]=regalloc[regno]
+                regalloc[regno]='0DNA'
+            else:
+                print("line no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(i))))
+                regalloc[isregassigned(i)]=regalloc[regno]
+                regalloc[regno]='0DNA'
+            # print( "line no: "+str(lineno)+ " movl  "+str(regname(isregassigned(i))+","+str(i)))
+            regtoassign=isregassigned(i)
+            regalloc[regtoassign]='0DNA'
+            return True
+    tempvar=None
+    tempnextuse=-1
+    for j in range(0,6) and regalloc[j]!='0DNA':
+        i=regalloc[j]
+        if(tempnextuse==-1):
+            tempvar=i
+            tempnextuse=nextuse[lineno-1][i]
+        elif(tempnextuse<nextuse[lineno-1][i]):
+                tempvar=i
+                tempnextuse=nextuse[lineno-1][i]
+    print("line no: "+str(lineno)+ "  movl "+str(regname(isregassigned(tempvar))+","+str(tempvar)))
+    print("line no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(tempvar))))
+    regalloc[isregassigned(tempvar)]=regalloc[regno]
+    regalloc[regno]='0DNA'
+    return True
+
+
+
 def getreg(lineno,var):
+    # mode = 0
+    # if(splitins[lineno].op=="/" or splitins[lineno].op=="%"):
+
+
+    ####NOT FOR DIV
     for i in range(6):
         if(regalloc[i]=='-1'):
             # allocatedreg=i
