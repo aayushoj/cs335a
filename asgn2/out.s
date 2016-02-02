@@ -37,6 +37,10 @@ v_j:
 	.long 0
 v_q:
 	.long 0
+returnval:
+	.long 0
+returnaddr:
+	.long 0
 .section .data
  
 .section .text
