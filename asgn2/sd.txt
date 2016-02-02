@@ -1,0 +1,43 @@
+[0, 16]
+[]
+*********************************************************************************
+{'a': 3, 'k': 8, '1line': 1}
+{'a': 3, 'k': 8, 'b': 3, '1line': 2}
+{'a': 9, 'k': 8, '1line': 3}
+{'a': 9, 'k': 8, 'l': 6, '1line': 4}
+{'a': 9, 'k': 8, 'j': 6, 'l': 6, '1line': 5}
+{'a': 9, 'k': 8, 'j': 12, 'l': 7, '1line': 6}
+{'a': 9, 'k': 8, 'j': 12, 'l': 8, '1line': 7}
+{'a': 9, 'k': 9, 'j': 12, '1line': 8}
+{'a': 16, 'j': 12, '1line': 9}
+{'a': 16, 'h': 13, 'j': 12, '1line': 10}
+{'a': 16, 'h': 13, 'j': 12, '1line': 11}
+{'a': 16, 'h': 13, '1line': 12}
+{'a': 16, '1line': 13}
+{'a': 16, 'p': 15, '1line': 14}
+{'a': 16, '1line': 15}
+{'1line': 16}
+*********************************************************************************
+movl $2 , %ebx
+movl $7 , %ecx
+addl %ecx , %ebx
+movl $8 , %esi
+movl $9 , %edi
+addl %esi , %edi
+movl %esi , %eax
+addl %esi , %edx
+addl %ebx , %edx
+movl %ecx , b
+movl $2 , %ecx
+movl %esi , l
+movl $4 , %esi
+movl %edi , %edi
+addl $9 , %edi
+movl %ecx , %ecx
+subl $3 , %ecx
+movl %ecx , h
+movl $6 , %ecx
+movl %ecx , %ecx
+addl $7 , %ecx
+movl %ebx , %ebx
+addl $8 , %ebx
