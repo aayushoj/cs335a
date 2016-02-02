@@ -267,6 +267,10 @@ def createdatasection():
             continue
         print(str(i)+":")
         print("\t.long 0")
+    print("returnval:")
+    print("\t.long 0")
+    print("returnaddr:")
+    print("\t.long 0")
     print(".section .data")
     print(" ")
     print(".section .text")
