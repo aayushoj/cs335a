@@ -1,5 +1,5 @@
 #!/usr/bin/python
-    
+
 import sys
 class instruction(object):
     def convert(self, param):
@@ -85,7 +85,7 @@ class instruction(object):
         self.returnc=False       #If we have to return or not(lib func)
 #
 def varname(var):
-    if(var.isdigit()):
+    if(isInt(var)):
         return var
     else:
         return "v_"+var
@@ -221,7 +221,7 @@ def isInt(x):
     else:
         return x.isdigit()
 
-# Self documenting piece of Code 
+# Self documenting piece of Code
 InstrSet=["movl ","addl ", "subl ","imull ","idivl ","xchg "]
 
 def out(mode, str1,str2):
@@ -255,7 +255,7 @@ def out(mode, str1,str2):
 def createdatasection():
     print(".section .data")
     for i in variables :
-        if (i.isdigit()):
+        if (isInt(i)):
             continue
         print(str(i)+":")
         print("\t.long 0")
@@ -417,8 +417,8 @@ for l in splitins2:
     if(len(x)!=1):
         splitins.append(temp)
 basicblock.append(len(splitins))
-for i in splitins:
-    i.printobj()
+# for i in splitins:
+#     i.printobj()
 unique = set(variables)
 variables = list(unique)
 basicblock.sort()
