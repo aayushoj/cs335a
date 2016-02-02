@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
 import sys
+import sys
+sys.stdout = open('out.s', 'w')
+
 class instruction(object):
     def convert(self, param):
         # print(param)
@@ -141,8 +144,12 @@ def emptyreg(lineno,regno):
     if(regalloc[regno]=='-1'):
         regalloc[regno]=='0DNA'
         return True
+    varsinline=[]
+    varsinline.append(splitins[lineno].src1)
+    varsinline.append(splitins[lineno].src2)
+    varsinline.append(splitins[lineno].dst)
     for i in regalloc:
-        if regalloc[isregassigned(i)]!='0DNA' and i not in nextuse[lineno-1].keys():
+        if regalloc[isregassigned(i)]!='0DNA' and i not in nextuse[lineno-1].keys() and i not in varsinline:
             if(i!='-1'):
                 print( "empline no: "+str(lineno)+ " movl  "+str(regname(isregassigned(i))+","+str(i)))
                 print("empline no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(i))))
@@ -156,6 +163,8 @@ def emptyreg(lineno,regno):
     tempvar=None
     tempnextuse=-1
     for j in range(0,6) and regalloc[j]!='0DNA':
+        if regalloc[j] in varsinline:
+            continue
         i=regalloc[j]
         if(tempnextuse==-1):
             tempvar=i

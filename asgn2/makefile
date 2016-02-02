@@ -1,3 +1,6 @@
 all:
-	python tran.py
+	python tran.py newin.txt
 	cat out.s
+
+clean:
+	rm out.s
