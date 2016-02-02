@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+    
 import sys
 class instruction(object):
     def convert(self, param):
@@ -17,6 +17,7 @@ class instruction(object):
             self.jlno=param[5]
             basicblock.append(int(self.lineno))
             basicblock.append(int(self.jlno))
+            # splitins[i].jlno
             marker.append(int(self.jlno))
         elif (param[1]=="call"):
             basicblock.append(int(self.lineno))
@@ -97,19 +98,19 @@ def build_nextusetable():
             newdiction['1line'] = j
             nextuse.insert(basicblock[i-1],newdiction.copy())
             if(splitins[j-1].dst!=None):
-            	if(splitins[j-1].dst in newdiction.keys()):
-                	del newdiction[splitins[j-1].dst]
+                if(splitins[j-1].dst in newdiction.keys()):
+                    del newdiction[splitins[j-1].dst]
             if(splitins[j-1].src1!= None):
-            	if(splitins[j-1].src1.isdigit()==False):
-                	newdiction[splitins[j-1].src1]=j
+                if(isInt(splitins[j-1].src1)==False):
+                    newdiction[splitins[j-1].src1]=j
             if(splitins[j-1].src2!= None):
-            	if(splitins[j-1].src2.isdigit()==False):
-                	newdiction[splitins[j-1].src2]=j
+                if(isInt(splitins[j-1].src2)==False):
+                    newdiction[splitins[j-1].src2]=j
 
     #             print(splitins[j-1].src1)
 
 def isregassigned(var):
-    if(var.isdigit()):
+    if(isInt(var)):
         print("Error Spotted:---" +str(var))
     for i in range(0,6):
         if(regalloc[i]==var):
@@ -197,299 +198,175 @@ def getreg(lineno,var):
     regtoassign=isregassigned(i)
     regalloc[regtoassign]=var
     return regtoassign
+# Amit Comments??
+def regs(i,var):
+    tmp=isregassigned(var)
+    if(tmp!="-1"):
+        a=regname(tmp)
+    else:
+        a=regname(getreg(i+1,var))
+    return a
+
+# Returns whether x is integer or not
+def isInt(x):
+    x=str(x).strip(' ')
+    if(x[0]=='-'):
+        x=x[1:]
+        return x.isdigit()
+    else:
+        return x.isdigit()
+
+# Self documenting piece of Code 
+InstrSet=["movl ","addl ", "subl ","imull ","idivl ","xchg "]
+
+def out(mode, str1,str2):
+    if(isInt(str1)):
+        str1="$"+str(str1)
+    else:
+        str1=str(str1)
+    if(isInt(str2)):
+        str2="$"+str(str2)
+    else:
+        str2=str(str2)
+    str1=str1.strip(' ')
+    str2=str2.strip(' ')
+    if(mode=='M'):
+        Output=InstrSet[0]+str1+" , "+str2
+    elif(mode=='A'):
+        Output=InstrSet[1]+str1+" , "+str2
+    elif(mode=='S'):
+        Output=InstrSet[2]+str1+" , "+str2
+    elif(mode=='I'):
+        Output=InstrSet[3]+str1+" , "+str2
+    elif(mode=='D'):
+        Output=InstrSet[4]+str1+" , "+str2
+    elif(mode=='X'):
+        Output=InstrSet[5]+str1+" , "+str2
+    else:
+        raise ValueError("INVALID MODE:- Don't You know I m Idiot?")
+    print(Output)
+
 
 def convertassem():
     # print splitins
     for i in range(len(splitins)):
         # print(splitins[i].lineno)
         if(splitins[i].op == '='):
-            if(splitins[i].src1.isdigit()):
-                tmp=isregassigned(splitins[i].dst)
-                if(tmp!="-1"):
-                    a=regname(tmp)
-                else:
-                    a=regname(getreg(i+1,splitins[i].dst))
-                print("movl $"+ splitins[i].src1 + " , " + str(a))
+            if(isInt(splitins[i].src1)):
+                a=regs(i,splitins[i].dst)
+                out("M",splitins[i].src1,a)
+                # print("movl $"+ splitins[i].src1 + " , " + str(a))
             else:
-                tmp=isregassigned(splitins[i].dst)
-                if(tmp!="-1"):
-                    a=regname(tmp)
-                else:
-                    a=regname(getreg(i+1,splitins[i].dst))
-                tmp=isregassigned(splitins[i].src1)
-                if(tmp!="-1"):
-                    b=regname(tmp)
-                else:
-                    b=regname(getreg(i+1,splitins[i].src1))
-                print("movl "+ str(b) + " , " + str(a))
+                a=regs(i,splitins[i].dst)
+                b=regs(i,splitins[i].src1)
+                # print("movl "+ str(b) + " , " + str(a))
+                out("M",b,a)
         elif(splitins[i].op=='+'):
-            if(splitins[i].src1.isdigit() or splitins[i].src2.isdigit()):
-                if(splitins[i].src1.isdigit() and splitins[i].src2.isdigit()):
-                    tmp=isregassigned(splitins[i].dst)
-                    if(tmp!="-1"):
-                        a=regname(tmp)
-                    else:
-                        a=regname(getreg(i+1,splitins[i].dst))
-                    print ("movl $" + str(splitins[i].src1)+" , "+ str(a))
-                    print ("addl $" + str(splitins[i].src2)+" , "+ str(a))
-                elif(splitins[i].src1.isdigit()):
-                    tmp=isregassigned(splitins[i].src2)
-                    if(tmp!="-1"):
-                        b=regname(tmp)
-                    else:
-                        b=regname(getreg(i+1,splitins[i].src2))
-                    tmp=isregassigned(splitins[i].dst)
-                    if(tmp!="-1"):
-                        a=regname(tmp)
-                    else:
-                        a=regname(getreg(i+1,splitins[i].dst))
-                    print ("movl " +  str(b)+", "+ str(a))
-                    print ("addl $" + str(splitins[i].src1)+" , "+ str(a))
+            if(isInt(splitins[i].src1) or isInt(splitins[i].src2)):
+                if(isInt(splitins[i].src1) and isInt(splitins[i].src2)):
+                    a=regs(i,splitins[i].dst)
+                    out("M",splitins[i].src1,a)
+                    out("A",splitins[i].src2,a)
+                elif(isInt(splitins[i].src1)):
+                    b=regs(i,splitins[i].src2)
+                    a=regs(i,splitins[i].dst)
+                    out("M",b,a)
+                    out("A",splitins[i].src1,a)
                 else:
-                    tmp=isregassigned(splitins[i].src1)
-                    if(tmp!="-1"):
-                        b=regname(tmp)
-                    else:
-                        b=regname(getreg(i+1,splitins[i].src1))
-                    tmp=isregassigned(splitins[i].dst)
-                    if(tmp!="-1"):
-                        a=regname(tmp)
-                    else:
-                        a=regname(getreg(i+1,splitins[i].dst))
-                    print ("movl " +  str(b)+" , "+ str(a))
-                    print ("addl $" + str(splitins[i].src2)+" , "+ str(a))
+                    b=regs(i,splitins[i].src1)
+                    a=regs(i,splitins[i].dst)
+                    out("M",b,a)
+                    out("A",splitins[i].src2,a)
             else:
                 if(splitins[i].dst !=splitins[i].src1 and splitins[i].dst !=splitins[i].src2):
-                    tmp=isregassigned(splitins[i].src1)
-                    if(tmp!="-1"):
-                        b=regname(tmp)
-                    else:
-                        b=regname(getreg(i+1,splitins[i].src1))
-                    tmp=isregassigned(splitins[i].src2)
-                    if(tmp!="-1"):
-                        c=regname(tmp)
-                    else:
-                        c=regname(getreg(i+1,splitins[i].src2))
-                    tmp=isregassigned(splitins[i].dst)
-                    if(tmp!="-1"):
-                        a=regname(tmp)
-                    else:
-                        a=regname(getreg(i+1,splitins[i].dst))
-                    print ("movl " + str(c)+" , "+ str(a))
-                    print ("addl " + str(b)+" , "+ str(a))
+                    b=regs(i,splitins[i].src1)
+                    c=regs(i,splitins[i].src2)
+                    a=regs(i,splitins[i].dst)
+                    out("M",c,a)
+                    out("A",b,a)
                 elif(splitins[i].dst ==splitins[i].src1 and splitins[i].dst !=splitins[i].src2):
-                    tmp=isregassigned(splitins[i].src2)
-                    if(tmp!="-1"):
-                        c=regname(tmp)
-                    else:
-                        c=regname(getreg(i+1,splitins[i].src2))
-                    tmp=isregassigned(splitins[i].dst)
-                    # print("o" +str(tmp))
-                    if(tmp!="-1"):
-                        a=regname(tmp)
-                    else:
-                        a=regname(getreg(i+1,splitins[i].dst))
-                    # print("o" +str(a))
-                    print ("addl " + str(c)+" , "+ str(a))
+                    c=regs(i,splitins[i].src2)
+                    a=regs(i,splitins[i].dst)
+                    out("A",c,a)
                 elif(splitins[i].dst !=splitins[i].src1 and splitins[i].dst ==splitins[i].src2):
-                    tmp=isregassigned(splitins[i].src1)
-                    if(tmp!="-1"):
-                        b=regname(tmp)
-                    else:
-                        b=regname(getreg(i+1,splitins[i].src1))
-                    tmp=isregassigned(splitins[i].dst)
-                    if(tmp!="-1"):
-                        a=regname(tmp)
-                    else:
-                        a=regname(getreg(i+1,splitins[i].dst))
-                    print ("addl " + str(b)+" , "+ str(a))
+                    b=regs(i,splitins[i].src1)
+                    a=regs(i,splitins[i].dst)
+                    out("A",b,a)
                 elif(splitins[i].dst ==splitins[i].src1 and splitins[i].dst ==splitins[i].src2):
-                    tmp=isregassigned(splitins[i].dst)
-                    if(tmp!="-1"):
-                        a=regname(tmp)
-                    else:
-                        a=regname(getreg(i+1,splitins[i].dst))
-                    print ("addl " + str(a)+" , "+ str(a))
+                    a=regs(i,splitins[i].dst)
+                    out("A",a,a)
 
-        if(splitins[i].op=='-'):
-            if(splitins[i].src1.isdigit() or splitins[i].src2.isdigit()):
-                if(splitins[i].src1.isdigit() and splitins[i].src2.isdigit()):
-                    tmp=isregassigned(splitins[i].dst)
-                    if(tmp!="-1"):
-                        a=regname(tmp)
-                    else:
-                        a=regname(getreg(i+1,splitins[i].dst))
-                    print ("movl $" + str(splitins[i].src1)+" , "+ str(a))
-                    print ("subl $" + str(splitins[i].src2)+" , "+ str(a))
-                elif(splitins[i].src1.isdigit()):
-                    tmp=isregassigned(splitins[i].src2)
-                    if(tmp!="-1"):
-                        b=regname(tmp)
-                    else:
-                        b=regname(getreg(i+1,splitins[i].src2))
-                    tmp=isregassigned(splitins[i].dst)
-                    if(tmp!="-1"):
-                        a=regname(tmp)
-                    else:
-                        a=regname(getreg(i+1,splitins[i].dst))
-                    print ("movl $0 , "+str(a))
-                    print ("subl " +  str(b)+" , "+ str(a))
-                    print ("addl $" + str(splitins[i].src1)+" , "+ str(a))
+        elif(splitins[i].op=='-'):
+            if(isInt(splitins[i].src1) or isInt(splitins[i].src2)):
+                if(isInt(splitins[i].src1) and isInt(splitins[i].src2)):
+                    a=regs(i,splitins[i].dst)
+                    out("M",splitins[i].src1,a)
+                    out("S",splitins[i].src2,a)
+                elif(isInt(splitins[i].src1)):
+                    b=regs(i,splitins[i].src2)
+                    a=regs(i,splitins[i].dst)
+                    out("M",0,a)
+                    out("S",b,a)
+                    out("A",splitins[i].src1,a)
                 else:
-                    tmp=isregassigned(splitins[i].src1)
-                    if(tmp!="-1"):
-                        b=regname(tmp)
-                    else:
-                        b=regname(getreg(i+1,splitins[i].src1))
-                    tmp=isregassigned(splitins[i].dst)
-                    if(tmp!="-1"):
-                        a=regname(tmp)
-                    else:
-                        a=regname(getreg(i+1,splitins[i].dst))
-                    print ("movl " +  str(b)+" , "+ str(a))
-                    print ("subl $" + str(splitins[i].src2)+" , "+ str(a))
+                    b=regs(i,splitins[i].src1)
+                    a=regs(i,splitins[i].dst)
+                    out("M",b,a)
+                    out("S",splitins[i].src2,a)
             else:
                 if(splitins[i].dst !=splitins[i].src1 and splitins[i].dst !=splitins[i].src2):
-                    tmp=isregassigned(splitins[i].src1)
-                    if(tmp!="-1"):
-                        b=regname(tmp)
-                    else:
-                        b=regname(getreg(i+1,splitins[i].src1))
-                    tmp=isregassigned(splitins[i].src2)
-                    if(tmp!="-1"):
-                        c=regname(tmp)
-                    else:
-                        c=regname(getreg(i+1,splitins[i].src2))
-                    tmp=isregassigned(splitins[i].dst)
-                    if(tmp!="-1"):
-                        a=regname(tmp)
-                    else:
-                        a=regname(getreg(i+1,splitins[i].dst))
-                    print ("movl " + str(b)+" , "+ str(a))
-                    print ("subl " + str(c)+" , "+ str(a))
+                    b=regs(i,splitins[i].src1)
+                    c=regs(i,splitins[i].src2)
+                    a=regs(i,splitins[i].dst)
+                    out("M",b,a)
+                    out("S",c,a)
                 elif(splitins[i].dst ==splitins[i].src1 and splitins[i].dst !=splitins[i].src2):
-                    tmp=isregassigned(splitins[i].src2)
-                    if(tmp!="-1"):
-                        c=regname(tmp)
-                    else:
-                        c=regname(getreg(i+1,splitins[i].src2))
-                    tmp=isregassigned(splitins[i].dst)
-                    if(tmp!="-1"):
-                        a=regname(tmp)
-                    else:
-                        a=regname(getreg(i+1,splitins[i].dst))
-                    print ("subl " + str(c)+" , "+ str(a))
+                    c=regs(i,splitins[i].src2)
+                    a=regs(i,splitins[i].dst)
+                    out("S",c,a)
                 elif(splitins[i].dst !=splitins[i].src1 and splitins[i].dst ==splitins[i].src2):
-                    tmp=isregassigned(splitins[i].src1)
-                    if(tmp!="-1"):
-                        b=regname(tmp)
-                    else:
-                        b=regname(getreg(i+1,splitins[i].src1))
-                    tmp=isregassigned(splitins[i].dst)
-                    if(tmp!="-1"):
-                        a=regname(tmp)
-                    else:
-                        a=regname(getreg(i+1,splitins[i].dst))
-                    print ("subl " +  str(a)+" , "+ str(b))
-                    print ("addl " + str(b)+" , "+ str(a))
-                    print ("xchg " + str(a) + " , " + str(b))
+                    b=regs(i,splitins[i].src1)
+                    a=regs(i,splitins[i].dst)
+                    out("S",a,b)
+                    out("A",b,a)
+                    out("X",a,b)
                 elif(splitins[i].dst ==splitins[i].src1 and splitins[i].dst ==splitins[i].src2):
-                    tmp=isregassigned(splitins[i].dst)
-                    if(tmp!="-1"):
-                        a=regname(tmp)
-                    else:
-                        a=regname(getreg(i+1,splitins[i].dst))
-                    print ("subl " + str(a)+" , "+ str(a))
-        # if(splitins[i].op=='*'):
-        #     if(splitins[i].src1.isdigit() or splitins[i].src2.isdigit()):
-        #         if(splitins[i].src1.isdigit() and splitins[i].src2.isdigit()):
-        #             tmp=isregassigned(splitins[i].dst)
-        #             if(tmp!="-1"):
-        #                 a=regname(tmp)
-        #             else:
-        #                 a=regname(getreg(i+1,splitins[i].dst))
-        #             print ("movl $" + str(splitins[i].src1))+" , "+ str(a))
-        #             print ("subl $" + str(splitins[i].src2))+" , "+ str(a))
-        #         else if(splitins[i].src1.isdigit()):
-        #             tmp=isregassigned(splitins[i].src1)
-        #             if(tmp!="-1"):
-        #                 b=regname(tmp)
-        #             else:
-        #                 b=regname(getreg(i+1,splitins[i].src1))
-        #             tmp=isregassigned(splitins[i].dst)
-        #             if(tmp!="-1"):
-        #                 a=regname(tmp)
-        #             else:
-        #                 a=regname(getreg(i+1,splitins[i].dst))
-        #             print ("movl $0 , "+str(a))
-        #             print ("subl $" +  str(b)+" , "+ str(a))
-        #             print ("addl $" + str(splitins[i].src1))+" , "+ str(a))
-        #         else:
-        #             tmp=isregassigned(splitins[i].src2)
-        #             if(tmp!="-1"):
-        #                 b=regname(tmp)
-        #             else:
-        #                 b=regname(getreg(i+1,splitins[i].src2))
-        #             tmp=isregassigned(splitins[i].dst)
-        #             if(tmp!="-1"):
-        #                 a=regname(tmp)
-        #             else:
-        #                 a=regname(getreg(i+1,splitins[i].dst))
-        #             print ("movl $" +  str(b)+" , "+ str(a))
-        #             print ("subl $" + str(splitins[i].src2))+" , "+ str(a))
-        #     else:
-        #         if(splitins[i].dst !=splitins[i].src1 and splitins[i].dst !=splitins[i].src2):
-        #             tmp=isregassigned(splitins[i].src1)
-        #             if(tmp!="-1"):
-        #                 b=regname(tmp)
-        #             else:
-        #                 b=regname(getreg(i+1,splitins[i].src1))
-        #             tmp=isregassigned(splitins[i].src2)
-        #             if(tmp!="-1"):
-        #                 c=regname(tmp)
-        #             else:
-        #                 c=regname(getreg(i+1,splitins[i].src2))
-        #             tmp=isregassigned(splitins[i].dst)
-        #             if(tmp!="-1"):
-        #                 a=regname(tmp)
-        #             else:
-        #                 a=regname(getreg(i+1,splitins[i].dst))
-        #             print ("movl " + str(b)+" , "+ str(a))
-        #             print ("subl " + str(c)+" , "+ str(a))
-        #         elif(splitins[i].dst ==splitins[i].src1 and splitins[i].dst !=splitins[i].src2):
-        #             tmp=isregassigned(splitins[i].src2)
-        #             if(tmp!="-1"):
-        #                 c=regname(tmp)
-        #             else:
-        #                 c=regname(getreg(i+1,splitins[i].src2))
-        #             tmp=isregassigned(splitins[i].dst)
-        #             if(tmp!="-1"):
-        #                 a=regname(tmp)
-        #             else:
-        #                 a=regname(getreg(i+1,splitins[i].dst))
-        #             print ("subl " + str(c)+" , "+ str(a))
-        #         elif(splitins[i].dst !=splitins[i].src1 and splitins[i].dst ==splitins[i].src2):
-        #             tmp=isregassigned(splitins[i].src1)
-        #             if(tmp!="-1"):
-        #                 b=regname(tmp)
-        #             else:
-        #                 b=regname(getreg(i+1,splitins[i].src1))
-        #             tmp=isregassigned(splitins[i].dst)
-        #             if(tmp!="-1"):
-        #                 a=regname(tmp)
-        #             else:
-        #                 a=regname(getreg(i+1,splitins[i].dst))
-        #             print ("subl " +  str(a)+" , "+ str(b))
-        #             print ("addl " + str(b)+" , "+ str(a))
-        #             print ("xchg " + str(a) + " , " + str(b))
-        #         elif(splitins[i].dst ==splitins[i].src1 and splitins[i].dst ==splitins[i].src2):
-                      # tmp=isregassigned(splitins[i].dst)
-        #             if(tmp!="-1"):
-        #                 a=regname(tmp)
-        #             else:
-        #                 a=regname(getreg(i+1,splitins[i].dst))
-        #             print ("subl " + str(a)+" , "+ str(a))
-
+                    a=regs(i,splitins[i].dst)
+                    out("S",a,a)
+        elif(splitins[i].op=='*'):
+            if(isInt(splitins[i].src1) or isInt(splitins[i].src2)):
+                if(isInt(splitins[i].src1) and isInt(splitins[i].src2)):
+                    a=regs(i,splitins[i].dst)
+                    out("M",splitins[i].src1,a)
+                    out("I",splitins[i].src2,a)
+                elif(isInt(splitins[i].src1)):
+                    b=regs(i,splitins[i].src2)
+                    a=regs(i,splitins[i].dst)
+                    out("M",b,a)
+                    out("I",splitins[i].src1,a)
+                else:
+                    b=regs(i,splitins[i].src1)
+                    a=regs(i,splitins[i].dst)
+                    out("M",b,a)
+                    out("I",splitins[i].src2,a)
+            else:
+                if(splitins[i].dst !=splitins[i].src1 and splitins[i].dst !=splitins[i].src2):
+                    b=regs(i,splitins[i].src1)
+                    c=regs(i,splitins[i].src2)
+                    a=regs(i,splitins[i].dst)
+                    out("M",c,a)
+                    out("I",b,a)
+                elif(splitins[i].dst ==splitins[i].src1 and splitins[i].dst !=splitins[i].src2):
+                    c=regs(i,splitins[i].src2)
+                    a=regs(i,splitins[i].dst)
+                    out("I",c,a)
+                elif(splitins[i].dst !=splitins[i].src1 and splitins[i].dst ==splitins[i].src2):
+                    b=regs(i,splitins[i].src1)
+                    a=regs(i,splitins[i].dst)
+                    out("I",b,a)
+                elif(splitins[i].dst ==splitins[i].src1 and splitins[i].dst ==splitins[i].src2):
+                    a=regs(i,splitins[i].dst)
+                    out("I",a,a)
 
 
 variables = []
