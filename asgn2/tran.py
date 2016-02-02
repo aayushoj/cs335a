@@ -26,25 +26,25 @@ class instruction(object):
         elif (param[1]=="ret"):
             self.returnc=True
         elif (param[1]=="label"):
-            # basicblock.append(int(self.lineno))
-            marker.append(int(self.lineno))
+            basicblock.append(int(self.lineno))
+            # marker.append(int(self.lineno))
             self.lbl=True
-            self.lblname=param[2]
+            self.lblname="u_"+param[2]
         elif (param[1]=="print"):
             self.printc=True
-            self.src1=param[2]
+            self.src1=varname(param[2])
         elif (param[1]=="="):
-            self.dst=param[2]
-            self.src1=param[3]
-            variables.append(param[2])
-            variables.append(param[3])
+            self.dst=varname(param[2])
+            self.src1=varname(param[3])
+            variables.append(varname(param[2]))
+            variables.append(varname(param[3]))
         else:
-            self.dst=param[2]
-            self.src1=param[3]
-            self.src2=param[4]
-            variables.append(param[2])
-            variables.append(param[3])
-            variables.append(param[4])
+            self.dst=varname(param[2])
+            self.src1=varname(param[3])
+            self.src2=varname(param[4])
+            variables.append(varname(param[2]))
+            variables.append(varname(param[3]))
+            variables.append(varname(param[4]))
 
     def printobj(self):
         print("line no: "+self.lineno)
@@ -83,6 +83,11 @@ class instruction(object):
         self.inputc=False        #If we have to take input or not(lib func)
         self.returnc=False       #If we have to return or not(lib func)
 #
+def varname(var):
+    if(var.isdigit()):
+        return var
+    else:
+        return "v_"+var
 def build_nextusetable():
     #print(type(basicblock[0]))
     # for i in range(1,len(basicblock)):
@@ -198,6 +203,19 @@ def getreg(lineno,var):
     regalloc[regtoassign]=var
     return regtoassign
 
+def createdatasection():
+    print(".section .data")
+    for i in variables :
+        if (i.isdigit()):
+            continue
+        print(str(i)+":")
+        print("\t.long 0")
+    print(".section .data")
+    print(" ")
+    print(".section .text")
+    print(" ")
+    print(".global _start")
+    print("\n")
 def convertassem():
     # print splitins
     for i in range(len(splitins)):
@@ -522,11 +540,11 @@ for l in splitins2:
     if(len(x)!=1):
         splitins.append(temp)
 basicblock.append(len(splitins))
-# for i in splitins:
-#     i.printobj()
+for i in splitins:
+    i.printobj()
 unique = set(variables)
 variables = list(unique)
-
+basicblock.sort()
 print(basicblock)
 print(marker)
 build_nextusetable()
@@ -547,6 +565,7 @@ print("*************************************************************************
 
 # emptyreg(13,4)
 # emptyreg(13,5)
+createdatasection()
 convertassem()
 
 #print(splitins)
