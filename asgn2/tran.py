@@ -250,7 +250,7 @@ def out(mode, str1="Default",str2="Default"):
     elif(mode=='I'):
         Output=InstrSet[3]+str1+" , "+str2
     elif(mode=='D'):
-        Output=InstrSet[4]+str1+" , "+str2
+        Output=InstrSet[4]+str1
     elif(mode=='X'):
         Output=InstrSet[5]+str1+" , "+str2
     elif(mode=='C'):
@@ -397,14 +397,23 @@ def convertassem():
         elif(splitins[i].op=='/'):
             if(isInt(splitins[i].src1) or isInt(splitins[i].src2)):
                 if(isInt(splitins[i].src1) and isInt(splitins[i].src2)):
-                    a=regs(i,splitins[i].dst)
-                    out("M",splitins[i].src1,a)
-                    out("I",splitins[i].src2,a)
+                    emptyreg(4)
+                    emptyreg(5)
+                    emptyreg(2)
+                    out("M",splitins[i].src1,"%eax")
+                    out("M",splitins[i].src2,"%ecx")
+                    out("C")
+                    out("D","%ecx")
+                    regalloc[4]=splitins[i].dst
+
                 elif(isInt(splitins[i].src1)):
+                    emptyreg(4)
+                    emptyreg(5)
                     b=regs(i,splitins[i].src2)
-                    a=regs(i,splitins[i].dst)
-                    out("M",b,a)
-                    out("I",splitins[i].src1,a)
+                    out("M",splitins[i].src1,"%eax")
+                    out("C")
+                    out("D",b)
+                    regalloc[4]=splitins[i].dst
                 else:
                     b=regs(i,splitins[i].src1)
                     a=regs(i,splitins[i].dst)
