@@ -152,9 +152,6 @@ def emptyreg(lineno,regno):
                 print("empline no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(i))))
                 regalloc[isregassigned(i)]=regalloc[regno]
                 regalloc[regno]='0DNA'
-            # print( "line no: "+str(lineno)+ " movl  "+str(regname(isregassigned(i))+","+str(i)))
-            # regtoassign=isregassigned(i)
-            # regalloc[regtoassign]='0DNA'
             return True
     tempvar=None
     tempnextuse=-1
@@ -222,9 +219,9 @@ def isInt(x):
         return x.isdigit()
 
 # Self documenting piece of Code
-InstrSet=["movl ","addl ", "subl ","imull ","idivl ","xchg "]
+InstrSet=["movl ","addl ", "subl ","imull ","idivl ","xchg ","cdq"]
 
-def out(mode, str1,str2):
+def out(mode, str1="Default",str2="Default"):
     if(isInt(str1)):
         str1="$"+str(str1)
     else:
@@ -247,6 +244,8 @@ def out(mode, str1,str2):
         Output=InstrSet[4]+str1+" , "+str2
     elif(mode=='X'):
         Output=InstrSet[5]+str1+" , "+str2
+    elif(mode=='C'):
+        Output=InstrSet[6]
     else:
         raise ValueError("INVALID MODE:- Don't You know I m Idiot?")
     print(Output)
@@ -265,6 +264,7 @@ def createdatasection():
     print(" ")
     print(".global _start")
     print("\n")
+
 def convertassem():
     # print splitins
     for i in range(len(splitins)):
@@ -352,6 +352,40 @@ def convertassem():
                     a=regs(i,splitins[i].dst)
                     out("S",a,a)
         elif(splitins[i].op=='*'):
+            if(isInt(splitins[i].src1) or isInt(splitins[i].src2)):
+                if(isInt(splitins[i].src1) and isInt(splitins[i].src2)):
+                    a=regs(i,splitins[i].dst)
+                    out("M",splitins[i].src1,a)
+                    out("I",splitins[i].src2,a)
+                elif(isInt(splitins[i].src1)):
+                    b=regs(i,splitins[i].src2)
+                    a=regs(i,splitins[i].dst)
+                    out("M",b,a)
+                    out("I",splitins[i].src1,a)
+                else:
+                    b=regs(i,splitins[i].src1)
+                    a=regs(i,splitins[i].dst)
+                    out("M",b,a)
+                    out("I",splitins[i].src2,a)
+            else:
+                if(splitins[i].dst !=splitins[i].src1 and splitins[i].dst !=splitins[i].src2):
+                    b=regs(i,splitins[i].src1)
+                    c=regs(i,splitins[i].src2)
+                    a=regs(i,splitins[i].dst)
+                    out("M",c,a)
+                    out("I",b,a)
+                elif(splitins[i].dst ==splitins[i].src1 and splitins[i].dst !=splitins[i].src2):
+                    c=regs(i,splitins[i].src2)
+                    a=regs(i,splitins[i].dst)
+                    out("I",c,a)
+                elif(splitins[i].dst !=splitins[i].src1 and splitins[i].dst ==splitins[i].src2):
+                    b=regs(i,splitins[i].src1)
+                    a=regs(i,splitins[i].dst)
+                    out("I",b,a)
+                elif(splitins[i].dst ==splitins[i].src1 and splitins[i].dst ==splitins[i].src2):
+                    a=regs(i,splitins[i].dst)
+                    out("I",a,a)
+        elif(splitins[i].op=='/'):
             if(isInt(splitins[i].src1) or isInt(splitins[i].src2)):
                 if(isInt(splitins[i].src1) and isInt(splitins[i].src2)):
                     a=regs(i,splitins[i].dst)
