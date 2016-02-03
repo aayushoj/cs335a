@@ -241,7 +241,7 @@ def IFGOTO(line):
     SaveContext()
     #Compare
     out('C',a,b)
-    
+    #find labels
     if(isInt(inst.jlno)):
         label="l_"+str(inst.jlno)
     else:
