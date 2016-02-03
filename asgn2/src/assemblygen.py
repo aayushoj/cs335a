@@ -41,10 +41,13 @@ def out(mode='Q',str1="Default",str2="Default"):
         Output=Instr+str1+" , "+str2
     elif(mode=='D'):
         Instr="idivl "
-        Output=Instr+str1+" , "+str2
+        Output=Instr+str1
     elif(mode=='X'):
         Instr="xchg "
         Output=Instr+str1+" , "+str2
+    elif(mode=='CD'):
+        Instr='cdq '
+        Output=Instr
     elif(mode=='C'): #Case of cmpl
         Instr="cmpl "
         Output=Instr+str1+" , "+str2
@@ -73,12 +76,18 @@ def out(mode='Q',str1="Default",str2="Default"):
     print(Output)
 
 def SaveContext():
-    out('M',"%eax",getVar("%eax"))
-    out('M',"%ebx",getVar("%ebx"))
-    out('M',"%ecx",getVar("%ecx"))
-    out('M',"%edx",getVar("%edx"))
-    out('M',"%esi",getVar("%esi"))
-    out('M',"%edi",getVar("%edi"))
+    if(g.regalloc[4]!="-1"):
+        out('M',"%eax",getVar("%eax"))
+    if(g.regalloc[0]!="-1"):
+        out('M',"%ebx",getVar("%ebx"))
+    if(g.regalloc[1]!="-1"):
+        out('M',"%ecx",getVar("%ecx"))
+    if(g.regalloc[5]!="-1"):
+        out('M',"%edx",getVar("%edx"))
+    if(g.regalloc[2]!="-1"):
+        out('M',"%esi",getVar("%esi"))
+    if(g.regalloc[3]!="-1"):
+        out('M',"%edi",getVar("%edi"))
 
 
 def createdatasection():
@@ -139,6 +148,7 @@ def ADD(line):
             out("A",a,a)
 
 def MULL(line):
+    i=line
     if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
         if(isInt(g.splitins[i].src1) and isInt(g.splitins[i].src2)):
             a=regs(i,g.splitins[i].dst)
@@ -174,6 +184,7 @@ def MULL(line):
             out("I",a,a)
 
 def DIVIDE(line):
+    i=line
     if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
         if(isInt(g.splitins[i].src1) and isInt(g.splitins[i].src2)):
             a=regs(i,g.splitins[i].dst)
@@ -189,13 +200,13 @@ def DIVIDE(line):
                     g.regalloc[tmp2]=tmp
                     g.regalloc[4]=g.splitins[i].dst
             out("M",g.splitins[i].src1,a)
-            emptyreg(5)
+            emptyreg(i,5)
             out("M",0,"%edx")
-            tmp = regs(i,str(g.splitins[i].src2))
+            tmp = regs(i,"$"+str(g.splitins[i].src2))
             out("M",g.splitins[i].src2,tmp)
-            out("C")
+            out("CD")
             out("D",tmp)
-            g.regalloc[isregassigned(str(g.splitins[i].src2))]='-1'
+            g.regalloc[isregassigned("$"+str(g.splitins[i].src2))]='-1'
             g.regalloc[5]='-1'
         elif(isInt(g.splitins[i].src1)):
             a=regs(i,g.splitins[i].dst)
@@ -211,10 +222,10 @@ def DIVIDE(line):
                     g.regalloc[tmp2]=tmp
                     g.regalloc[4]=g.splitins[i].dst
             out("M",g.splitins[i].src1,a)
-            emptyreg(5)
+            emptyreg(i,5)
             out("M",0,"%edx")
             b=regs(i,g.splitins[i].src2)
-            out("C")
+            out("CD")
             out("D",b)
             g.regalloc[5]='-1'
         else:
@@ -230,15 +241,17 @@ def DIVIDE(line):
                     out("X",a,"%eax")
                     g.regalloc[tmp2]=tmp
                     g.regalloc[4]=g.splitins[i].dst
-            emptyreg(5)
+            emptyreg(i,5)
             out("M",0,"%edx")
             b=regs(i,g.splitins[i].src1)
-            tmp = regs(i,str(g.splitins[i].src2))
+            print(str(g.splitins[i].src2))
+            print(str(g.splitins[i].src1))
+            tmp = regs(i,"$"+str(g.splitins[i].src2))
             out("M",b,a)
             out("M",g.splitins[i].src2,tmp)
-            out("C")
+            out("CD")
             out("D",tmp)
-            g.regalloc[isregassigned(str(g.splitins[i].src2))]='-1'
+            g.regalloc[isregassigned("$"+str(g.splitins[i].src2))]='-1'
             g.regalloc[5]='-1'
     else:
         if(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
@@ -254,12 +267,12 @@ def DIVIDE(line):
                     out("X",a,"%eax")
                     g.regalloc[tmp2]=tmp
                     g.regalloc[4]=g.splitins[i].dst
-            emptyreg(5)
+            emptyreg(i,5)
             out("M",0,"%edx")
             b=regs(i,g.splitins[i].src1)
             c=regs(i,g.splitins[i].src2)
             out("M",b,a)
-            out("C")
+            out("CD")
             out("D",c)
         elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
             a=regs(i,g.splitins[i].dst)
@@ -274,10 +287,10 @@ def DIVIDE(line):
                     out("X",a,"%eax")
                     g.regalloc[tmp2]=tmp
                     g.regalloc[4]=g.splitins[i].dst
-            emptyreg(5)
+            emptyreg(i,5)
             out("M",0,"%edx")
             c=regs(i,g.splitins[i].src2)
-            out("C")
+            out("CD")
             out("D",c)
         elif(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
             a=regs(i,g.splitins[i].dst)
@@ -292,17 +305,17 @@ def DIVIDE(line):
                     out("X",a,"%eax")
                     g.regalloc[tmp2]=tmp
                     g.regalloc[4]=g.splitins[i].dst
-            emptyreg(5)
+            emptyreg(i,5)
             out("M",0,"%edx")
             b=regs(i,g.splitins[i].src1)
             c=regs(i,'xcpp')
             out("M",a,c)
             out("M",b,a)
-            out("C")
+            out("CD")
             out("D",c)
             g.regalloc[isregassigned('xcpp')]='-1'
         elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
-           a=regs(i,g.splitins[i].dst)
+            a=regs(i,g.splitins[i].dst)
             if(g.regalloc[4]=='-1'):
                 out("M",a,"%eax")
                 g.regalloc[isregassigned(g.splitins[i].dst)]=-1
@@ -314,12 +327,13 @@ def DIVIDE(line):
                     out("X",a,"%eax")
                     g.regalloc[tmp2]=tmp
                     g.regalloc[4]=g.splitins[i].dst
-            emptyreg(5)
+            emptyreg(i,5)
             out("M",0,"%edx")
-            out("C")
+            out("CD")
             out("D",a)
 
 def SUB(line):
+    i=line
     if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
         if(isInt(g.splitins[i].src1) and isInt(g.splitins[i].src2)):
             a=regs(i,g.splitins[i].dst)
@@ -377,15 +391,15 @@ def IFGOTO(line):
         a="$"+str(inst.src1)
     else:
         a=regs(i,inst.src1)
+    print(a)
     #read b if needed
     if(isInt(inst.src2)):
         b="$"+str(inst.src2)
     else:
         b=regs(i,inst.src2)
+    print(b)
     SaveContext()
-    #Compare
     out('C',a,b)
-    
     if(isInt(inst.jlno)):
         label="l_"+str(inst.jlno)
     else:
@@ -402,6 +416,7 @@ def IFGOTO(line):
     elif(inst.cmpltype=='l'):
         out("JL",label)
     else:
+        raise ValueError("INVALID LABEL:-  IFGOTO() in file assemblygen.py")
 
 def convertassem():
     # print g.splitins
@@ -422,7 +437,7 @@ def convertassem():
             MULL(i)
         elif(g.splitins[i].op=='/'):
             DIVIDE(i)
-        elif(g.splitins[i].param[1]=='ifgoto'):
+        elif(g.splitins[i].op=='ifgoto'):
             IFGOTO(i)
         else:
             raise ValueError("INVALID MODE:- Don't You know I m Idiot?")
