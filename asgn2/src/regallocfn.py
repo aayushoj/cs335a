@@ -176,7 +176,7 @@ def getVar(str1):
         x=g.regalloc[5]
     else:
         raise ValueError("INVALID MODE:- Don't You know I m Idiot?")
-    if(x=="-1"):
+    if(x=="-1"||x[0]=="$"):
         x="NULL"
     return x
 

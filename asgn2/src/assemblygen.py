@@ -76,17 +76,17 @@ def out(mode='Q',str1="Default",str2="Default"):
     print(Output)
 
 def SaveContext():
-    if(g.regalloc[4]!="-1"):
+    if(getVar("%eax")!="NULL"):
         out('M',"%eax",getVar("%eax"))
-    if(g.regalloc[0]!="-1"):
+    if(getVar("%ebx")!="NULL"):
         out('M',"%ebx",getVar("%ebx"))
-    if(g.regalloc[1]!="-1"):
+    if(getVar("%ecx")!="NULL"):
         out('M',"%ecx",getVar("%ecx"))
-    if(g.regalloc[5]!="-1"):
+    if(getVar("%edx")!="NULL"):
         out('M',"%edx",getVar("%edx"))
-    if(g.regalloc[2]!="-1"):
+    if(getVar("%esi")!="NULL"):
         out('M',"%esi",getVar("%esi"))
-    if(g.regalloc[3]!="-1"):
+    if(getVar("%edi")!="NULL"):
         out('M',"%edi",getVar("%edi"))
 
 
@@ -383,23 +383,55 @@ def EQUAL(line):
         # print("movl "+ str(b) + " , " + str(a))
         out("M",b,a)
 
+
+def revert(inst):
+    inst.src1,inst.src2=inst.scr2,inst.src1
+    if(inst.cmpltype=='eq'):
+        inst.cmpltype='eq'
+    elif(inst.cmpltype=='leq'):
+        inst.cmpltype='g'
+    elif(inst.cmpltype=='geq'):
+        inst.cmpltype='l'
+    elif(inst.cmpltype=='g'):
+        inst.cmpltype='leq'
+    elif(inst.cmpltype=='l'):
+        inst.cmpltype='geq'
+    else:
+        raise ValueError("INVALID COMPARISON TYPE:- Don't You know Maths?")
+    return inst
+
+
+
 def IFGOTO(line):
     i=line
     inst=g.splitins[i]
-    #read a if needed
-    if(isInt(inst.src1)):
-        a="$"+str(inst.src1)
-    else:
-        a=regs(i,inst.src1)
-    print(a)
-    #read b if needed
-    if(isInt(inst.src2)):
-        b="$"+str(inst.src2)
-    else:
-        b=regs(i,inst.src2)
-    print(b)
+    if(!isInt(inst.src1) and isInt(inst.src2)):
+        inst=revert(inst)
+    elif(isInt(inst.src1) and isInt(inst.src2)):
+        if(isInt(inst.src1)):
+            a="$"+str(inst.src1)
+        else:
+            a=regs(i,inst.src1)
+        print(a)
+        b=regs(i,"$"+str(inst.src2))
+
+        print(b)
+    else
+        if(isInt(inst.src1)):
+            a="$"+str(inst.src1)
+        else:
+            a=regs(i,inst.src1)
+        print(a)
+        #read b if needed
+        if(isInt(inst.src2)):
+            b="$"+str(inst.src2)
+        else:
+            b=regs(i,inst.src2)
+        print(b)
     SaveContext()
     out('C',a,b)
+    if(isInt(inst.src1) and isInt(inst.src2)):
+        g.regalloc[isregassigned("$"+str(inst.src2))]='-1'
 
     if(isInt(inst.jlno)):
         label="l_"+str(inst.jlno)
