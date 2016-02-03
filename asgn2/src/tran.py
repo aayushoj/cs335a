@@ -32,13 +32,13 @@ def codegen(infile):
     unique = set(g.variables)
     g.variables = list(unique)
     g.basicblock.sort()
-    print(g.basicblock)
-    print(g.marker)
+    g.debug(g.basicblock)
+    g.debug(g.marker)
     build_nextusetable()
-    print("*********************************************************************************")
+    g.debug("*********************************************************************************")
     for i in g.nextuse:
-        print(i)
-    print("*********************************************************************************")
+        g.debug(i)
+    g.debug("*********************************************************************************")
     createdatasection()
     convertassem()
 if __name__ == '__main__':

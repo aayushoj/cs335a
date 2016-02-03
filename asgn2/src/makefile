@@ -1,10 +1,10 @@
 all:
-	python tran.py newin.txt
+	python3 tran.py newin.txt
 	cat out.s
 
 clean:
-	rm out.s
+	rm *.o *.pyc *.s
 
-compile:
-	as -32 --gstabs out.s -o out.o
-	ld -m elf_i386 out.o
+%.o: %.s
+	as -32 --gstabs $< -o $@
+	ld -m elf_i386 $@

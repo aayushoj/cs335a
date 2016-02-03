@@ -190,7 +190,7 @@ def DIVIDE(line):
             a=regs(i,g.splitins[i].dst)
             if(g.regalloc[4]=='-1'):
                 out("M",a,"%eax")
-                g.regalloc[isregassigned(g.splitins[i].dst)]=-1
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
                 g.regalloc[4]=g.splitins[i].dst
             else:
                 if(a!='%eax'):
@@ -212,7 +212,7 @@ def DIVIDE(line):
             a=regs(i,g.splitins[i].dst)
             if(g.regalloc[4]=='-1'):
                 out("M",a,"%eax")
-                g.regalloc[isregassigned(g.splitins[i].dst)]=-1
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
                 g.regalloc[4]=g.splitins[i].dst
             else:
                 if(a!='%eax'):
@@ -232,7 +232,7 @@ def DIVIDE(line):
             a=regs(i,g.splitins[i].dst)
             if(g.regalloc[4]=='-1'):
                 out("M",a,"%eax")
-                g.regalloc[isregassigned(g.splitins[i].dst)]=-1
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
                 g.regalloc[4]=g.splitins[i].dst
             else:
                 if(a!='%eax'):
@@ -244,8 +244,8 @@ def DIVIDE(line):
             emptyreg(i,5)
             out("M",0,"%edx")
             b=regs(i,g.splitins[i].src1)
-            print(str(g.splitins[i].src2))
-            print(str(g.splitins[i].src1))
+            g.debug(str(g.splitins[i].src2))
+            g.debug(str(g.splitins[i].src1))
             tmp = regs(i,"$"+str(g.splitins[i].src2))
             out("M",b,a)
             out("M",g.splitins[i].src2,tmp)
@@ -258,7 +258,7 @@ def DIVIDE(line):
             a=regs(i,g.splitins[i].dst)
             if(g.regalloc[4]=='-1'):
                 out("M",a,"%eax")
-                g.regalloc[isregassigned(g.splitins[i].dst)]=-1
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
                 g.regalloc[4]=g.splitins[i].dst
             else:
                 if(a!='%eax'):
@@ -278,7 +278,7 @@ def DIVIDE(line):
             a=regs(i,g.splitins[i].dst)
             if(g.regalloc[4]=='-1'):
                 out("M",a,"%eax")
-                g.regalloc[isregassigned(g.splitins[i].dst)]=-1
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
                 g.regalloc[4]=g.splitins[i].dst
             else:
                 if(a!='%eax'):
@@ -296,7 +296,7 @@ def DIVIDE(line):
             a=regs(i,g.splitins[i].dst)
             if(g.regalloc[4]=='-1'):
                 out("M",a,"%eax")
-                g.regalloc[isregassigned(g.splitins[i].dst)]=-1
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
                 g.regalloc[4]=g.splitins[i].dst
             else:
                 if(a!='%eax'):
@@ -318,7 +318,7 @@ def DIVIDE(line):
             a=regs(i,g.splitins[i].dst)
             if(g.regalloc[4]=='-1'):
                 out("M",a,"%eax")
-                g.regalloc[isregassigned(g.splitins[i].dst)]=-1
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
                 g.regalloc[4]=g.splitins[i].dst
             else:
                 if(a!='%eax'):
@@ -385,7 +385,7 @@ def EQUAL(line):
 
 
 def revert(inst):
-    inst.src1,inst.src2=inst.scr2,inst.src1
+    inst.src1,inst.src2=inst.src2,inst.src1
     if(inst.cmpltype=='eq'):
         inst.cmpltype='eq'
     elif(inst.cmpltype=='leq'):
@@ -405,29 +405,33 @@ def revert(inst):
 def IFGOTO(line):
     i=line
     inst=g.splitins[i]
-    if(!isInt(inst.src1) and isInt(inst.src2)):
+    if(not isInt(inst.src1) and isInt(inst.src2)):
         inst=revert(inst)
+        #read a
+        a="$"+str(inst.src1)
+        g.debug(a)
+        #read b if needed
+        b=regs(i,inst.src2)
+        g.debug(b)
     elif(isInt(inst.src1) and isInt(inst.src2)):
         if(isInt(inst.src1)):
             a="$"+str(inst.src1)
-        else:
-            a=regs(i,inst.src1)
-        print(a)
+        g.debug(a)
         b=regs(i,"$"+str(inst.src2))
-
-        print(b)
-    else
+        g.debug(b)
+    else:
+        #read a if needed
         if(isInt(inst.src1)):
             a="$"+str(inst.src1)
         else:
             a=regs(i,inst.src1)
-        print(a)
+        g.debug(a)
         #read b if needed
         if(isInt(inst.src2)):
             b="$"+str(inst.src2)
         else:
             b=regs(i,inst.src2)
-        print(b)
+        g.debug(b)
     SaveContext()
     out('C',a,b)
     if(isInt(inst.src1) and isInt(inst.src2)):
