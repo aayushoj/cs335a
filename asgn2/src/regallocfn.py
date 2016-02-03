@@ -137,3 +137,37 @@ def regs(i,var):
     else:
         a=regname(getreg(i+1,var))
     return a
+
+
+#Function added by Aayush
+#getVar(reg) returns variables mapped to register "reg"
+def getVar(str1):
+    if(str1=="%ebx"):
+        return regalloc[0]
+    elif(str1=="%ecx"):
+        return regalloc[1]
+    elif(str1=="%esi"):
+        return regalloc[2]
+    elif(str1=="%edi"):
+        return regalloc[3]
+    elif(str1=="%eax"):
+        return regalloc[4]
+    elif(str1=="%edx"):
+        return regalloc[5]
+    else:
+        raise ValueError("INVALID MODE:- Don't You know I m Idiot?")
+
+
+
+# if(regno==0):
+#         return '%ebx'
+#     if(regno==1):
+#         return '%ecx'
+#     if(regno==2):
+#         return "%esi"
+#     if(regno==3):
+#         return '%edi'
+#     if(regno==4):
+#         return '%eax'
+#     if(regno==5):
+#         return '%edx'
