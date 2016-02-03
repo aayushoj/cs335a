@@ -38,7 +38,7 @@ def build_nextusetable():
 
 def isregassigned(var):
     if(isInt(var)):
-        error("File:regallocfn.py=> isregassinged(): Error Spotted:---" +str(var))
+        g.error("File:regallocfn.py=> isregassinged(): Error Spotted:---" +str(var))
     for i in range(0,6):
         if(g.regalloc[i]==var):
             return i
@@ -121,7 +121,7 @@ def getreg(lineno,var):
         varsinline.append(g.splitins[lineno-1].src2)
         varsinline.append(g.splitins[lineno-1].dst)
     else:
-        error("Error GOT file: regallocfn.py => getreg()")
+        g.error("Error GOT file: regallocfn.py => getreg()")
     for i in range(6):
         if(g.regalloc[i]=='-1'):
             # allocatedreg=i
