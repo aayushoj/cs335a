@@ -18,11 +18,11 @@ class instruction(object):
             self.jmp=True
             self.cmpl=True
             self.cmpltype=param[2]
-            self.src1=param[3]
-            self.src2=param[4]
+            self.src1=varname(param[3])
+            self.src2=varname(param[4])
             self.jlno=param[5]
             g.basicblock.append(int(self.lineno))
-            g.basicblock.append(int(self.jlno))
+            g.basicblock.append(int(self.jlno)-1)
             # g.splitins[i].jlno
             g.marker.append(int(self.jlno))
         elif (param[1]=="call"):
@@ -33,7 +33,7 @@ class instruction(object):
         elif (param[1]=="ret"):
             self.returnc=True
         elif (param[1]=="label"):
-            g.basicblock.append(int(self.lineno))
+            # g.basicblock.append(int(self.lineno))
             # g.marker.append(int(self.lineno))
             self.lbl=True
             self.lblname="u_"+param[2]

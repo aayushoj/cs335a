@@ -1,3 +1,6 @@
+#
+#TODO: RETURN 
+#
 import globalvars as g
 from regallocfn import *
 
@@ -94,6 +97,7 @@ def createdatasection():
     print(".section .text")
     print(" ")
     print(".global _start")
+    print("\n\n _start:")
     print("\n")
 
 
@@ -367,14 +371,46 @@ def EQUAL(line):
 
 def IFGOTO(line):
     i=line
+    inst=g.splitins[i]
+    #read a if needed
+    if(isInt(inst.src1)):
+        a="$"+str(inst.src1)
+    else:
+        a=regs(i,inst.src1)
+    #read b if needed
+    if(isInt(inst.src2)):
+        b="$"+str(inst.src2)
+    else:
+        b=regs(i,inst.src2)
+    SaveContext()
+    #Compare
+    out('C',a,b)
+    
+    if(isInt(inst.jlno)):
+        label="l_"+str(inst.jlno)
+    else:
+        label="u_"+str(inst.jlno)
+    #cmpltype #remove it
+    if(inst.cmpltype=='eq'):
+        out("JE",label)
+    elif(inst.cmpltype=='leq'):
+        out("JLE",label)
+    elif(inst.cmpltype=='geq'):
+        out("JGE",label)
+    elif(inst.cmpltype=='g'):
+        out("JG",label)
+    elif(inst.cmpltype=='l'):
+        out("JL",label)
+    else:
+
 def convertassem():
     # print g.splitins
     for k in g.marker:
-        g.splitins[k].lbl=True
-        g.splitins[k].lblname="L_"+str(k)
+        g.splitins[k-1].lbl=True
+        g.splitins[k-1].lblname="l_"+str(k)
     for i in range(len(g.splitins)):
         if(g.splitins[i].lbl==True):
-            print(g.splitins[i].lblname+":")
+            print("\n"+g.splitins[i].lblname+":")
         # print(g.splitins[i].lineno)
         if(g.splitins[i].op == '='):
             EQUAL(i)
