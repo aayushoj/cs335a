@@ -57,17 +57,18 @@ def createdatasection():
     print(".section .text")
     print(" ")
     print(".global _start")
+    print("\n\n _start:")
     print("\n")
 
 
 def convertassem():
     # print g.splitins
     for k in g.marker:
-        g.splitins[k].lbl=True
-        g.splitins[k].lblname="L_"+str(k)
+        g.splitins[k-1].lbl=True
+        g.splitins[k-1].lblname="L_"+str(k)
     for i in range(len(g.splitins)):
         if(g.splitins[i].lbl==True):
-            print(g.splitins[i].lblname+":")
+            print("\n"+g.splitins[i].lblname+":")
         # print(g.splitins[i].lineno)
         if(g.splitins[i].op == '='):
             if(isInt(g.splitins[i].src1)):
