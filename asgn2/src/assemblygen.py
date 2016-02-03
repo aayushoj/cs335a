@@ -11,9 +11,9 @@ def isInt(x):
         return x.isdigit()
 
 # Self documenting piece of Code
-InstrSet=["movl ","addl ", "subl ","imull ","idivl ","xchg "]
+# InstrSet=["movl ","addl ", "subl ","imull ","idivl ","xchg ","jmp ","je ","jge ","jg ","jl ","jle ","cmpl "]
 
-def out(mode, str1,str2):
+def out(mode='Q',str1="Default",str2="Default"):
     if(isInt(str1)):
         str1="$"+str(str1)
     else:
@@ -25,20 +25,57 @@ def out(mode, str1,str2):
     str1=str1.strip(' ')
     str2=str2.strip(' ')
     if(mode=='M'):
-        Output=InstrSet[0]+str1+" , "+str2
+        Instr="movl "
+        Output=Instr+str1+" , "+str2
     elif(mode=='A'):
-        Output=InstrSet[1]+str1+" , "+str2
+        Instr="addl "
+        Output=Instr+str1+" , "+str2
     elif(mode=='S'):
-        Output=InstrSet[2]+str1+" , "+str2
+        Instr="movl "
+        Output=Instr+str1+" , "+str2
     elif(mode=='I'):
-        Output=InstrSet[3]+str1+" , "+str2
+        Instr="imull "
+        Output=Instr+str1+" , "+str2
     elif(mode=='D'):
-        Output=InstrSet[4]+str1+" , "+str2
+        Instr="idivl "
+        Output=Instr+str1+" , "+str2
     elif(mode=='X'):
-        Output=InstrSet[5]+str1+" , "+str2
+        Instr="xchg "
+        Output=Instr+str1+" , "+str2
+    elif(mode=='C'): #Case of cmpl
+        Instr="cmpl "
+        Output=Instr+str1+" , "+str2
+    elif(mode[0]=='J'):
+        spec=mode[1:]
+        if(spec=="MP"): # Case of jmp
+            Instr="jmp "
+            Output=Instr+str1
+        elif(spec=="E"): #Case of je
+            Instr="je "
+            Output=Instr+str1
+        elif(spec=="GE"): #Case of jge
+            Instr="jge "
+            Output=Instr+str1
+        elif(spec=="G"): #Case of jg
+            Instr="jg "
+            Output=Instr+str1
+        elif(spec=="L"): #Case of jl
+            Instr="jl "
+            Output=Instr+str1
+        elif(spec=="LE"): #Case of jle
+            Instr="jle "
+            Output=Instr+str1
     else:
         raise ValueError("INVALID MODE:- Don't You know I m Idiot?")
     print(Output)
+
+def SaveContext():
+    out('M',"%eax",getVar("%eax"))
+    out('M',"%ebx",getVar("%ebx"))
+    out('M',"%ecx",getVar("%ecx"))
+    out('M',"%edx",getVar("%edx"))
+    out('M',"%esi",getVar("%esi"))
+    out('M',"%edi",getVar("%edi"))
 
 
 def createdatasection():
@@ -61,6 +98,132 @@ def createdatasection():
     print("\n")
 
 
+
+def ADD(line):
+    i=line
+    if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
+        if(isInt(g.splitins[i].src1) and isInt(g.splitins[i].src2)):
+            a=regs(i,g.splitins[i].dst)
+            out("M",g.splitins[i].src1,a)
+            out("A",g.splitins[i].src2,a)
+        elif(isInt(g.splitins[i].src1)):
+            b=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("M",b,a)
+            out("A",g.splitins[i].src1,a)
+        else:
+            b=regs(i,g.splitins[i].src1)
+            a=regs(i,g.splitins[i].dst)
+            out("M",b,a)
+            out("A",g.splitins[i].src2,a)
+    else:
+        if(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
+            b=regs(i,g.splitins[i].src1)
+            c=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("M",c,a)
+            out("A",b,a)
+        elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
+            c=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("A",c,a)
+        elif(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
+            b=regs(i,g.splitins[i].src1)
+            a=regs(i,g.splitins[i].dst)
+            out("A",b,a)
+        elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
+            a=regs(i,g.splitins[i].dst)
+            out("A",a,a)
+
+def MULL(line):
+    if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
+        if(isInt(g.splitins[i].src1) and isInt(g.splitins[i].src2)):
+            a=regs(i,g.splitins[i].dst)
+            out("M",g.splitins[i].src1,a)
+            out("I",g.splitins[i].src2,a)
+        elif(isInt(g.splitins[i].src1)):
+            b=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("M",b,a)
+            out("I",g.splitins[i].src1,a)
+        else:
+            b=regs(i,g.splitins[i].src1)
+            a=regs(i,g.splitins[i].dst)
+            out("M",b,a)
+            out("I",g.splitins[i].src2,a)
+    else:
+        if(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
+            b=regs(i,g.splitins[i].src1)
+            c=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("M",c,a)
+            out("I",b,a)
+        elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
+            c=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("I",c,a)
+        elif(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
+            b=regs(i,g.splitins[i].src1)
+            a=regs(i,g.splitins[i].dst)
+            out("I",b,a)
+        elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
+            a=regs(i,g.splitins[i].dst)
+            out("I",a,a)
+
+#def DIV(line):
+
+def SUB(line):
+    if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
+        if(isInt(g.splitins[i].src1) and isInt(g.splitins[i].src2)):
+            a=regs(i,g.splitins[i].dst)
+            out("M",g.splitins[i].src1,a)
+            out("S",g.splitins[i].src2,a)
+        elif(isInt(g.splitins[i].src1)):
+            b=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("M",0,a)
+            out("S",b,a)
+            out("A",g.splitins[i].src1,a)
+        else:
+            b=regs(i,g.splitins[i].src1)
+            a=regs(i,g.splitins[i].dst)
+            out("M",b,a)
+            out("S",g.splitins[i].src2,a)
+    else:
+        if(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
+            b=regs(i,g.splitins[i].src1)
+            c=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("M",b,a)
+            out("S",c,a)
+        elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
+            c=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("S",c,a)
+        elif(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
+            b=regs(i,g.splitins[i].src1)
+            a=regs(i,g.splitins[i].dst)
+            out("S",a,b)
+            out("A",b,a)
+            out("X",a,b)
+        elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
+            a=regs(i,g.splitins[i].dst)
+            out("S",a,a)
+
+def EQUAL(line):
+    i=line
+    if(isInt(g.splitins[i].src1)):
+        a=regs(i,g.splitins[i].dst)
+        out("M",g.splitins[i].src1,a)
+        # print("movl $"+ g.splitins[i].src1 + " , " + str(a))
+    else:
+        a=regs(i,g.splitins[i].dst)
+        b=regs(i,g.splitins[i].src1)
+        # print("movl "+ str(b) + " , " + str(a))
+        out("M",b,a)
+
+def IFGOTO(line):
+    i=line
 def convertassem():
     # print g.splitins
     for k in g.marker:
@@ -71,119 +234,14 @@ def convertassem():
             print("\n"+g.splitins[i].lblname+":")
         # print(g.splitins[i].lineno)
         if(g.splitins[i].op == '='):
-            if(isInt(g.splitins[i].src1)):
-                a=regs(i,g.splitins[i].dst)
-                out("M",g.splitins[i].src1,a)
-                # print("movl $"+ g.splitins[i].src1 + " , " + str(a))
-            else:
-                a=regs(i,g.splitins[i].dst)
-                b=regs(i,g.splitins[i].src1)
-                # print("movl "+ str(b) + " , " + str(a))
-                out("M",b,a)
+            EQUAL(i)
         elif(g.splitins[i].op=='+'):
-            if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
-                if(isInt(g.splitins[i].src1) and isInt(g.splitins[i].src2)):
-                    a=regs(i,g.splitins[i].dst)
-                    out("M",g.splitins[i].src1,a)
-                    out("A",g.splitins[i].src2,a)
-                elif(isInt(g.splitins[i].src1)):
-                    b=regs(i,g.splitins[i].src2)
-                    a=regs(i,g.splitins[i].dst)
-                    out("M",b,a)
-                    out("A",g.splitins[i].src1,a)
-                else:
-                    b=regs(i,g.splitins[i].src1)
-                    a=regs(i,g.splitins[i].dst)
-                    out("M",b,a)
-                    out("A",g.splitins[i].src2,a)
-            else:
-                if(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
-                    b=regs(i,g.splitins[i].src1)
-                    c=regs(i,g.splitins[i].src2)
-                    a=regs(i,g.splitins[i].dst)
-                    out("M",c,a)
-                    out("A",b,a)
-                elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
-                    c=regs(i,g.splitins[i].src2)
-                    a=regs(i,g.splitins[i].dst)
-                    out("A",c,a)
-                elif(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
-                    b=regs(i,g.splitins[i].src1)
-                    a=regs(i,g.splitins[i].dst)
-                    out("A",b,a)
-                elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
-                    a=regs(i,g.splitins[i].dst)
-                    out("A",a,a)
-
+            ADD(i)
         elif(g.splitins[i].op=='-'):
-            if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
-                if(isInt(g.splitins[i].src1) and isInt(g.splitins[i].src2)):
-                    a=regs(i,g.splitins[i].dst)
-                    out("M",g.splitins[i].src1,a)
-                    out("S",g.splitins[i].src2,a)
-                elif(isInt(g.splitins[i].src1)):
-                    b=regs(i,g.splitins[i].src2)
-                    a=regs(i,g.splitins[i].dst)
-                    out("M",0,a)
-                    out("S",b,a)
-                    out("A",g.splitins[i].src1,a)
-                else:
-                    b=regs(i,g.splitins[i].src1)
-                    a=regs(i,g.splitins[i].dst)
-                    out("M",b,a)
-                    out("S",g.splitins[i].src2,a)
-            else:
-                if(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
-                    b=regs(i,g.splitins[i].src1)
-                    c=regs(i,g.splitins[i].src2)
-                    a=regs(i,g.splitins[i].dst)
-                    out("M",b,a)
-                    out("S",c,a)
-                elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
-                    c=regs(i,g.splitins[i].src2)
-                    a=regs(i,g.splitins[i].dst)
-                    out("S",c,a)
-                elif(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
-                    b=regs(i,g.splitins[i].src1)
-                    a=regs(i,g.splitins[i].dst)
-                    out("S",a,b)
-                    out("A",b,a)
-                    out("X",a,b)
-                elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
-                    a=regs(i,g.splitins[i].dst)
-                    out("S",a,a)
+            SUB(i)
         elif(g.splitins[i].op=='*'):
-            if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
-                if(isInt(g.splitins[i].src1) and isInt(g.splitins[i].src2)):
-                    a=regs(i,g.splitins[i].dst)
-                    out("M",g.splitins[i].src1,a)
-                    out("I",g.splitins[i].src2,a)
-                elif(isInt(g.splitins[i].src1)):
-                    b=regs(i,g.splitins[i].src2)
-                    a=regs(i,g.splitins[i].dst)
-                    out("M",b,a)
-                    out("I",g.splitins[i].src1,a)
-                else:
-                    b=regs(i,g.splitins[i].src1)
-                    a=regs(i,g.splitins[i].dst)
-                    out("M",b,a)
-                    out("I",g.splitins[i].src2,a)
-            else:
-                if(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
-                    b=regs(i,g.splitins[i].src1)
-                    c=regs(i,g.splitins[i].src2)
-                    a=regs(i,g.splitins[i].dst)
-                    out("M",c,a)
-                    out("I",b,a)
-                elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
-                    c=regs(i,g.splitins[i].src2)
-                    a=regs(i,g.splitins[i].dst)
-                    out("I",c,a)
-                elif(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
-                    b=regs(i,g.splitins[i].src1)
-                    a=regs(i,g.splitins[i].dst)
-                    out("I",b,a)
-                elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
-                    a=regs(i,g.splitins[i].dst)
-                    out("I",a,a)
-
+            MULL(i)
+        elif(g.splitins[i].param[1]=='ifgoto'):
+            IFGOTO(i)
+        else:
+            raise ValueError("INVALID MODE:- Don't You know I m Idiot?")
