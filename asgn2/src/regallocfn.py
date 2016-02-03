@@ -31,7 +31,9 @@ def build_nextusetable():
             if(g.splitins[j-1].src2!= None):
                 if(isInt(g.splitins[j-1].src2)==False):
                     newdiction[g.splitins[j-1].src2]=j
-
+    # newdiction={}
+    # newdiction['1line'] = len(g.splitins)+1
+    # g.nextuse.insert(len(g.splitins)+1,newdiction.copy())
     #             print(g.splitins[j-1].src1)
 
 def isregassigned(var):
@@ -66,7 +68,7 @@ def emptyreg(lineno,regno):
     varsinline.append(g.splitins[lineno].src2)
     varsinline.append(g.splitins[lineno].dst)
     for i in g.regalloc:
-        if g.regalloc[isregassigned(i)]!='0DNA' and i not in g.nextuse[lineno-1].keys() and i not in varsinline:
+        if g.regalloc[isregassigned(i)]!='0DNA' or i not in g.nextuse[lineno-1].keys() or i not in varsinline:
             if(i!='-1'):
                 print( "empline no: "+str(lineno)+ " movl  "+str(regname(isregassigned(i))+","+str(i)))
                 print("empline no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(i))))
@@ -108,16 +110,25 @@ def getreg(lineno,var):
     # if var not in g.nextuse[lineno-1].keys():
     #     return var
     varsinline=[]
-    varsinline.append(g.splitins[lineno].src1)
-    varsinline.append(g.splitins[lineno].src2)
-    varsinline.append(g.splitins[lineno].dst)
+    # print(lineno)
+    # print(len(g.splitins))
+    # print(g.splitins[lineno-1].src1)
+    # print(g.splitins[lineno-1].src2)
+    # print(g.splitins[lineno-1].op)
+    # print(g.splitins[lineno-1].dst)
+    if(lineno<=len(g.splitins)):
+        varsinline.append(g.splitins[lineno-1].src1)
+        varsinline.append(g.splitins[lineno-1].src2)
+        varsinline.append(g.splitins[lineno-1].dst)
+    else:
+        print("Error GOT")
     for i in range(6):
         if(g.regalloc[i]=='-1'):
             # allocatedreg=i
             g.regalloc[i]=var
             return regname(i)
     for i in g.regalloc:
-        if i not in g.nextuse[lineno-1].keys() and i not in varsinline:
+        if i not in g.nextuse[lineno-1].keys() or i not in varsinline:
             print("movl "+str(regname(isregassigned(i))+" , "+str(i)))
             regtoassign=isregassigned(i)
             g.regalloc[regtoassign]=var
@@ -152,31 +163,20 @@ def regs(i,var):
 #getVar(reg) returns variables mapped to register "reg"
 def getVar(str1):
     if(str1=="%ebx"):
-        return regalloc[0]
+        x=g.regalloc[0]
     elif(str1=="%ecx"):
-        return regalloc[1]
+        x=g.regalloc[1]
     elif(str1=="%esi"):
-        return regalloc[2]
+        x=g.regalloc[2]
     elif(str1=="%edi"):
-        return regalloc[3]
+        x=g.regalloc[3]
     elif(str1=="%eax"):
-        return regalloc[4]
+        x=g.regalloc[4]
     elif(str1=="%edx"):
-        return regalloc[5]
+        x=g.regalloc[5]
     else:
         raise ValueError("INVALID MODE:- Don't You know I m Idiot?")
+    if(x=="-1"):
+        x="NULL"
+    return x
 
-
-
-# if(regno==0):
-#         return '%ebx'
-#     if(regno==1):
-#         return '%ecx'
-#     if(regno==2):
-#         return "%esi"
-#     if(regno==3):
-#         return '%edi'
-#     if(regno==4):
-#         return '%eax'
-#     if(regno==5):
-#         return '%edx'
