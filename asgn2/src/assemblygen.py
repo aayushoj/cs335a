@@ -194,11 +194,12 @@ def DIVIDE(line):
                 g.regalloc[4]=g.splitins[i].dst
             else:
                 if(a!='%eax'):
-                    tmp=regalloc[4]
+                    tmp=g.regalloc[4]
                     tmp2 = isregassigned(g.splitins[i].dst)
                     out("X",a,"%eax")
                     g.regalloc[tmp2]=tmp
                     g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
             out("M",g.splitins[i].src1,a)
             emptyreg(i,5)
             out("M",0,"%edx")
@@ -208,7 +209,7 @@ def DIVIDE(line):
             out("D",tmp)
             g.regalloc[isregassigned("$"+str(g.splitins[i].src2))]='-1'
             g.regalloc[5]='-1'
-        elif(isInt(g.splitins[i].src1)):
+        elif(isInt(g.splitins[i].src1) and (g.splitins[i].src2!=g.splitins[i].dst)):
             a=regs(i,g.splitins[i].dst)
             if(g.regalloc[4]=='-1'):
                 out("M",a,"%eax")
@@ -216,17 +217,41 @@ def DIVIDE(line):
                 g.regalloc[4]=g.splitins[i].dst
             else:
                 if(a!='%eax'):
-                    tmp=regalloc[4]
+                    tmp=g.regalloc[4]
                     tmp2 = isregassigned(g.splitins[i].dst)
                     out("X",a,"%eax")
                     g.regalloc[tmp2]=tmp
                     g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
             out("M",g.splitins[i].src1,a)
             emptyreg(i,5)
             out("M",0,"%edx")
             b=regs(i,g.splitins[i].src2)
             out("CD")
             out("D",b)
+            g.regalloc[5]='-1'
+        elif(isInt(g.splitins[i].src1) and (g.splitins[i].src2==g.splitins[i].dst)):
+            a=regs(i,g.splitins[i].dst)
+            if(g.regalloc[4]=='-1'):
+                out("M",a,"%eax")
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
+                g.regalloc[4]=g.splitins[i].dst
+            else:
+                if(a!='%eax'):
+                    tmp=g.regalloc[4]
+                    tmp2 = isregassigned(g.splitins[i].dst)
+                    out("X",a,"%eax")
+                    g.regalloc[tmp2]=tmp
+                    g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
+            emptyreg(i,5)
+            out("M",0,"%edx")
+            c=regs(i,'xcpp')
+            out("M",a,c)
+            out("M",g.splitins[i].src1,a)
+            out("CD")
+            out("D",c)
+            g.regalloc[isregassigned('xcpp')]='-1'
             g.regalloc[5]='-1'
         else:
             a=regs(i,g.splitins[i].dst)
@@ -236,11 +261,12 @@ def DIVIDE(line):
                 g.regalloc[4]=g.splitins[i].dst
             else:
                 if(a!='%eax'):
-                    tmp=regalloc[4]
+                    tmp=g.regalloc[4]
                     tmp2 = isregassigned(g.splitins[i].dst)
                     out("X",a,"%eax")
                     g.regalloc[tmp2]=tmp
                     g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
             emptyreg(i,5)
             out("M",0,"%edx")
             b=regs(i,g.splitins[i].src1)
@@ -262,11 +288,12 @@ def DIVIDE(line):
                 g.regalloc[4]=g.splitins[i].dst
             else:
                 if(a!='%eax'):
-                    tmp=regalloc[4]
+                    tmp=g.regalloc[4]
                     tmp2 = isregassigned(g.splitins[i].dst)
                     out("X",a,"%eax")
                     g.regalloc[tmp2]=tmp
                     g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
             emptyreg(i,5)
             out("M",0,"%edx")
             b=regs(i,g.splitins[i].src1)
@@ -274,6 +301,7 @@ def DIVIDE(line):
             out("M",b,a)
             out("CD")
             out("D",c)
+            g.regalloc[5]='-1'
         elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
             a=regs(i,g.splitins[i].dst)
             if(g.regalloc[4]=='-1'):
@@ -282,16 +310,18 @@ def DIVIDE(line):
                 g.regalloc[4]=g.splitins[i].dst
             else:
                 if(a!='%eax'):
-                    tmp=regalloc[4]
+                    tmp=g.regalloc[4]
                     tmp2 = isregassigned(g.splitins[i].dst)
                     out("X",a,"%eax")
                     g.regalloc[tmp2]=tmp
                     g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
             emptyreg(i,5)
             out("M",0,"%edx")
             c=regs(i,g.splitins[i].src2)
             out("CD")
             out("D",c)
+            g.regalloc[5]='-1'
         elif(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
             a=regs(i,g.splitins[i].dst)
             if(g.regalloc[4]=='-1'):
@@ -300,11 +330,12 @@ def DIVIDE(line):
                 g.regalloc[4]=g.splitins[i].dst
             else:
                 if(a!='%eax'):
-                    tmp=regalloc[4]
+                    tmp=g.regalloc[4]
                     tmp2 = isregassigned(g.splitins[i].dst)
                     out("X",a,"%eax")
                     g.regalloc[tmp2]=tmp
                     g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
             emptyreg(i,5)
             out("M",0,"%edx")
             b=regs(i,g.splitins[i].src1)
@@ -314,6 +345,7 @@ def DIVIDE(line):
             out("CD")
             out("D",c)
             g.regalloc[isregassigned('xcpp')]='-1'
+            g.regalloc[5]='-1'
         elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
             a=regs(i,g.splitins[i].dst)
             if(g.regalloc[4]=='-1'):
@@ -322,15 +354,209 @@ def DIVIDE(line):
                 g.regalloc[4]=g.splitins[i].dst
             else:
                 if(a!='%eax'):
-                    tmp=regalloc[4]
+                    tmp=g.regalloc[4]
                     tmp2 = isregassigned(g.splitins[i].dst)
                     out("X",a,"%eax")
                     g.regalloc[tmp2]=tmp
                     g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
             emptyreg(i,5)
             out("M",0,"%edx")
             out("CD")
             out("D",a)
+            g.regalloc[5]='-1'
+def MOD(line):
+    i=line
+    if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
+        if(isInt(g.splitins[i].src1) and isInt(g.splitins[i].src2)):
+            a=regs(i,g.splitins[i].dst)
+            if(g.regalloc[4]=='-1'):
+                out("M",a,"%eax")
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
+                g.regalloc[4]=g.splitins[i].dst
+            else:
+                if(a!='%eax'):
+                    tmp=g.regalloc[4]
+                    tmp2 = isregassigned(g.splitins[i].dst)
+                    out("X",a,"%eax")
+                    g.regalloc[tmp2]=tmp
+                    g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
+            out("M",g.splitins[i].src1,a)
+            emptyreg(i,5)
+            out("M",0,"%edx")
+            tmp = regs(i,"$"+str(g.splitins[i].src2))
+            out("M",g.splitins[i].src2,tmp)
+            out("CD")
+            out("D",tmp)
+            out("M","%edx",a)
+            g.regalloc[isregassigned("$"+str(g.splitins[i].src2))]='-1'
+            g.regalloc[5]='-1'
+        elif(isInt(g.splitins[i].src1) and (g.splitins[i].src2!=g.splitins[i].dst)):
+            a=regs(i,g.splitins[i].dst)
+            if(g.regalloc[4]=='-1'):
+                out("M",a,"%eax")
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
+                g.regalloc[4]=g.splitins[i].dst
+            else:
+                if(a!='%eax'):
+                    tmp=g.regalloc[4]
+                    tmp2 = isregassigned(g.splitins[i].dst)
+                    out("X",a,"%eax")
+                    g.regalloc[tmp2]=tmp
+                    g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
+            out("M",g.splitins[i].src1,a)
+            emptyreg(i,5)
+            out("M",0,"%edx")
+            b=regs(i,g.splitins[i].src2)
+            out("CD")
+            out("D",b)
+            out("M","%edx",a)
+            g.regalloc[5]='-1'
+        elif(isInt(g.splitins[i].src1) and (g.splitins[i].src2==g.splitins[i].dst)):
+            a=regs(i,g.splitins[i].dst)
+            if(g.regalloc[4]=='-1'):
+                out("M",a,"%eax")
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
+                g.regalloc[4]=g.splitins[i].dst
+            else:
+                if(a!='%eax'):
+                    tmp=g.regalloc[4]
+                    tmp2 = isregassigned(g.splitins[i].dst)
+                    out("X",a,"%eax")
+                    g.regalloc[tmp2]=tmp
+                    g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
+            emptyreg(i,5)
+            out("M",0,"%edx")
+            c=regs(i,'xcpp')
+            out("M",a,c)
+            out("M",g.splitins[i].src1,a)
+            out("CD")
+            out("D",c)
+            out("M","%edx",a)
+            g.regalloc[isregassigned('xcpp')]='-1'
+            g.regalloc[5]='-1'
+        else:
+            a=regs(i,g.splitins[i].dst)
+            if(g.regalloc[4]=='-1'):
+                out("M",a,"%eax")
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
+                g.regalloc[4]=g.splitins[i].dst
+            else:
+                if(a!='%eax'):
+                    tmp=g.regalloc[4]
+                    tmp2 = isregassigned(g.splitins[i].dst)
+                    out("X",a,"%eax")
+                    g.regalloc[tmp2]=tmp
+                    g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
+            emptyreg(i,5)
+            out("M",0,"%edx")
+            b=regs(i,g.splitins[i].src1)
+            g.debug(str(g.splitins[i].src2))
+            g.debug(str(g.splitins[i].src1))
+            tmp = regs(i,"$"+str(g.splitins[i].src2))
+            out("M",b,a)
+            out("M",g.splitins[i].src2,tmp)
+            out("CD")
+            out("D",tmp)
+            out("M","%edx",a)
+            g.regalloc[isregassigned("$"+str(g.splitins[i].src2))]='-1'
+            g.regalloc[5]='-1'
+    else:
+        if(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
+            a=regs(i,g.splitins[i].dst)
+            if(g.regalloc[4]=='-1'):
+                out("M",a,"%eax")
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
+                g.regalloc[4]=g.splitins[i].dst
+            else:
+                if(a!='%eax'):
+                    tmp=g.regalloc[4]
+                    tmp2 = isregassigned(g.splitins[i].dst)
+                    out("X",a,"%eax")
+                    g.regalloc[tmp2]=tmp
+                    g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
+            emptyreg(i,5)
+            a='%eax'
+            # print("a..... =" + str(a))
+            out("M",0,"%edx")
+            b=regs(i,g.splitins[i].src1)
+            c=regs(i,g.splitins[i].src2)
+            out("M",b,a)
+            out("CD")
+            out("D",c)
+            out("M","%edx",a)
+            g.regalloc[5]='-1'
+        elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
+            a=regs(i,g.splitins[i].dst)
+            if(g.regalloc[4]=='-1'):
+                out("M",a,"%eax")
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
+                g.regalloc[4]=g.splitins[i].dst
+            else:
+                if(a!='%eax'):
+                    tmp=g.regalloc[4]
+                    tmp2 = isregassigned(g.splitins[i].dst)
+                    out("X",a,"%eax")
+                    g.regalloc[tmp2]=tmp
+                    g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
+            emptyreg(i,5)
+            out("M",0,"%edx")
+            c=regs(i,g.splitins[i].src2)
+            out("CD")
+            out("D",c)
+            out("M","%edx",a)
+            g.regalloc[5]='-1'
+        elif(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
+            a=regs(i,g.splitins[i].dst)
+            if(g.regalloc[4]=='-1'):
+                out("M",a,"%eax")
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
+                g.regalloc[4]=g.splitins[i].dst
+            else:
+                if(a!='%eax'):
+                    tmp=g.regalloc[4]
+                    tmp2 = isregassigned(g.splitins[i].dst)
+                    out("X",a,"%eax")
+                    g.regalloc[tmp2]=tmp
+                    g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
+            emptyreg(i,5)
+            out("M",0,"%edx")
+            b=regs(i,g.splitins[i].src1)
+            c=regs(i,'xcpp')
+            out("M",a,c)
+            out("M",b,a)
+            out("CD")
+            out("D",c)
+            out("M","%edx",a)
+            g.regalloc[isregassigned('xcpp')]='-1'
+            g.regalloc[5]='-1'
+        elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
+            a=regs(i,g.splitins[i].dst)
+            if(g.regalloc[4]=='-1'):
+                out("M",a,"%eax")
+                g.regalloc[isregassigned(g.splitins[i].dst)]='-1'
+                g.regalloc[4]=g.splitins[i].dst
+            else:
+                if(a!='%eax'):
+                    tmp=g.regalloc[4]
+                    tmp2 = isregassigned(g.splitins[i].dst)
+                    out("X",a,"%eax")
+                    g.regalloc[tmp2]=tmp
+                    g.regalloc[4]=g.splitins[i].dst
+            a='%eax'
+            emptyreg(i,5)
+            out("M",0,"%edx")
+            out("CD")
+            out("D",a)
+            out("M","%edx",a)
+            g.regalloc[5]='-1'
 
 def SUB(line):
     i=line
@@ -474,6 +700,8 @@ def convertassem():
             MULL(i)
         elif(g.splitins[i].op=='/'):
             DIVIDE(i)
+        elif(g.splitins[i].op=='%'):
+            MOD(i)
         elif(g.splitins[i].op=='ifgoto'):
             IFGOTO(i)
         else:

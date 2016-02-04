@@ -64,18 +64,21 @@ def emptyreg(lineno,regno):
         g.regalloc[regno]=='0DNA'
         return True
     varsinline=[]
-    varsinline.append(g.splitins[lineno].src1)
-    varsinline.append(g.splitins[lineno].src2)
-    varsinline.append(g.splitins[lineno].dst)
+    varsinline.append(g.splitins[lineno-1].src1)
+    varsinline.append(g.splitins[lineno-1].src2)
+    varsinline.append(g.splitins[lineno-1].dst)
     for i in g.regalloc:
-        if g.regalloc[isregassigned(i)]!='0DNA' or i not in g.nextuse[lineno-1].keys() or i not in varsinline:
+        if g.regalloc[isregassigned(i)]!='0DNA' and i not in g.nextuse[lineno-1].keys() and i not in varsinline:
             if(i!='-1'):
                 g.debug( "empline no: "+str(lineno)+ " movl  "+str(regname(isregassigned(i))+","+str(i)))
+                print("movl  "+str(regname(isregassigned(i))+" , "+str(i)))
                 g.debug("empline no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(i))))
+                print("movl "+regname(regno)+" , "+str(regname(isregassigned(i))))
                 g.regalloc[isregassigned(i)]=g.regalloc[regno]
                 g.regalloc[regno]='0DNA'
             else:
                 g.debug("empline no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(i))))
+                print("movl "+regname(regno)+" , "+str(regname(isregassigned(i))))
                 g.regalloc[isregassigned(i)]=g.regalloc[regno]
                 g.regalloc[regno]='0DNA'
             # print( "line no: "+str(lineno)+ " movl  "+str(regname(isregassigned(i))+","+str(i)))
@@ -95,7 +98,9 @@ def emptyreg(lineno,regno):
                 tempvar=i
                 tempnextuse=g.nextuse[lineno-1][i]
     g.debug("empline no: "+str(lineno)+ "  movl "+str(regname(isregassigned(tempvar))+","+str(tempvar)))
+    print("movl "+str(regname(isregassigned(tempvar))+" , "+str(tempvar)))
     g.debug("empline no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(tempvar))))
+    print("movl "+regname(regno)+" , "+str(regname(isregassigned(tempvar))))
     g.regalloc[isregassigned(tempvar)]=g.regalloc[regno]
     g.regalloc[regno]='0DNA'
     return True
@@ -122,13 +127,17 @@ def getreg(lineno,var):
         varsinline.append(g.splitins[lineno-1].dst)
     else:
         g.error("Error GOT file: regallocfn.py => getreg()")
+    if(lineno==34):
+        g.splitins[lineno-1].printobj()
+        g.debug(varsinline)
+        g.debug(g.regalloc)
     for i in range(6):
         if(g.regalloc[i]=='-1'):
             # allocatedreg=i
             g.regalloc[i]=var
             return regname(i)
     for i in g.regalloc:
-        if i not in g.nextuse[lineno-1].keys() or i not in varsinline:
+        if i not in g.nextuse[lineno-1].keys() and i not in varsinline:
             print("movl "+str(regname(isregassigned(i))+" , "+str(i)))
             regtoassign=isregassigned(i)
             g.regalloc[regtoassign]=var
