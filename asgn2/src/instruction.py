@@ -42,6 +42,9 @@ class instruction(object):
         elif (param[1]=="print"):
             self.printc=True
             self.src1=varname(param[2])
+        elif (param[1]=="input"):
+            self.inputc=True
+            self.src1=varname(param[2])
         elif (param[1]=="="):
             self.dst=varname(param[2])
             self.src1=varname(param[3])

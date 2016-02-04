@@ -104,10 +104,14 @@ def SaveContext():
         out('M',"%esi",getVar("%esi"))
     if(getVar("%edi")!="NULL"):
         out('M',"%edi",getVar("%edi"))
+    # for i in range(0,6):
+    #     g.regalloc[i]='-1'
 
 
 def createdatasection():
     print(".section .data")
+    strIO="format_input:\n\t.ascii \"%d\\0\"\nformat_output:\n \t.ascii \"%d\\n\\0\"\nL_INPUT:\n\t.long 0"
+    print(strIO)
     for i in g.variables :
         if (isInt(i)):
             continue
@@ -381,7 +385,7 @@ def DIVIDE(line):
             out("CD")
             out("D",a)
             g.regalloc[5]='-1'
-            
+
 def MOD(line):
     i=line
     if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
@@ -659,6 +663,10 @@ def revert(inst):
 
 
 def IFGOTO(line):
+    # for i in range(0,6):
+    #     g.debug(i)
+    #     if(g.regalloc[i]!='-1'):
+    #         g.debug("i dont know why?")
     i=line
     inst=g.splitins[i]
     if(not isInt(inst.src1) and isInt(inst.src2)):
@@ -711,14 +719,29 @@ def IFGOTO(line):
     else:
         raise ValueError("INVALID LABEL:-  IFGOTO() in file assemblygen.py")
 
-def Func(line):
+def FUNC(line):
     i=line
     out("CA",g.splitins[i].funcname)
 
-def Ret():
+def RET(line):
     out("M","%ebp","%esp")
     out("PO","%ebp")
     out("R")
+
+def INPUT(line):
+    i=line
+    inp=regs(i,g.splitins[i].src1)
+    out("PU","$L_INPUT")
+    out("PU","$format_input")
+    out("CA","scanf")
+    out("M","L_INPUT",inp)
+
+def PRINT(line):
+    i=line
+    inp=regs(i,g.splitins[i].src1)
+    out("PU",inp)
+    out("PU","$format_output")
+    out("CA","printf")
 
 def print_functions():
     g.debug(g.marker)
@@ -729,6 +752,7 @@ def print_functions():
 #     print("\tmovl $1,%eax\n\tmovl $0,%ebx\n\tint $0x80")
 def convertassem():
     flag=1
+    fgl =0
     # print g.splitins
     createdatasection()
     g.debug(g.marker)
@@ -747,6 +771,7 @@ def convertassem():
                     out("M",1,"%eax")
                     out("M",0,"%ebx")
                     out("int","$0x80")
+                    fgl=1
                 flag=0
                 print("\n"+g.splitins[i].lblname+":")
                 out("PU","%ebp")
@@ -769,11 +794,22 @@ def convertassem():
         elif(g.splitins[i].op=='ifgoto'):
             IFGOTO(i)
         elif(g.splitins[i].func==True):
-            Func(i)
+            FUNC(i)
         elif(g.splitins[i].returnc==True):
-            Ret()
+            RET(i)
         elif(g.splitins[i].lbl==True):
             continue;
+        elif(g.splitins[i].inputc==True):
+            INPUT(i)
+        elif(g.splitins[i].printc==True):
+            PRINT(i)
         else:
             g.splitins[i].printobj()
             raise ValueError("INVALID MODE:- Don't You know I m Idiot?")
+    if(fgl==0):
+        print("_exit:")
+        SaveContext()
+        out("M",1,"%eax")
+        out("M",0,"%ebx")
+        out("int","$0x80")
+
