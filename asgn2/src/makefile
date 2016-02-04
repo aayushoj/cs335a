@@ -6,5 +6,5 @@ clean:
 	rm *.o *.pyc *.s
 
 %.o: %.s
-	as -32 --gstabs $< -o $@
+	as --32 --gstabs $< -o $@
 	ld -m elf_i386 $@

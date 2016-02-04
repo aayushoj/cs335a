@@ -34,7 +34,7 @@ def out(mode='Q',str1="Default",str2="Default"):
         Instr="addl "
         Output=Instr+str1+" , "+str2
     elif(mode=='S'):
-        Instr="movl "
+        Instr="subl "
         Output=Instr+str1+" , "+str2
     elif(mode=='I'):
         Instr="imull "
@@ -113,18 +113,17 @@ def createdatasection():
             continue
         print(str(i)+":")
         print("\t.long 0")
-    print("returnval:")
-    print("\t.long 0")
-    print("returnaddr:")
-    print("\t.long 0")
+    # print("returnval:")
+    # print("\t.long 0")
+    # print("returnaddr:")
+    # print("\t.long 0")
     print(".section .data")
     print(" ")
     print(".section .text")
     print(" ")
     print(".global _start")
     print_functions()
-    print("\n\n _start:")
-    print("\n")
+    print("\n _start:")
 
 
 
@@ -382,6 +381,7 @@ def DIVIDE(line):
             out("CD")
             out("D",a)
             g.regalloc[5]='-1'
+            
 def MOD(line):
     i=line
     if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
@@ -583,16 +583,29 @@ def SUB(line):
             out("M",g.splitins[i].src1,a)
             out("S",g.splitins[i].src2,a)
         elif(isInt(g.splitins[i].src1)):
-            b=regs(i,g.splitins[i].src2)
-            a=regs(i,g.splitins[i].dst)
-            out("M",0,a)
-            out("S",b,a)
-            out("A",g.splitins[i].src1,a)
+            if(g.splitins[i].dst!=g.splitins[i].src1):
+                b=regs(i,g.splitins[i].src2)
+                a=regs(i,g.splitins[i].dst)
+                out("M",0,a)
+                out("S",b,a)
+                out("A",g.splitins[i].src1,a)
+            else:
+                a=regs(i,g.splitins[i].dst)
+                tmp=regs(i,"xxpp")
+                out("M",a,tmp)
+                out("M",g.splitins[i].src1,a)
+                out("S",tmp,a)
+                g.regalloc[isregassigned('xxpp')]='-1'
         else:
-            b=regs(i,g.splitins[i].src1)
-            a=regs(i,g.splitins[i].dst)
-            out("M",b,a)
-            out("S",g.splitins[i].src2,a)
+            g.debug("something is fishyd")
+            if(g.splitins[i].dst!=g.splitins[i].src1):
+                b=regs(i,g.splitins[i].src1)
+                a=regs(i,g.splitins[i].dst)
+                out("M",b,a)
+                out("S",g.splitins[i].src2,a)
+            else:
+                a=regs(i,g.splitins[i].dst)
+                out("S",g.splitins[i].src2,a)
     else:
         if(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
             b=regs(i,g.splitins[i].src1)
@@ -710,10 +723,10 @@ def Ret():
 def print_functions():
     g.debug(g.marker)
     for i in g.marker:
-        if g.splitins[i-1].lbl==True:
-            print(".type "+g.splitins[i-1].lblname+" , @function\n")
-def printexit():
-    print("\tmovl $1,%eax\n\tmovl $0,%ebx\n\tint $0x80")
+        if g.splitins[i].lbl==True:
+            print(".type "+g.splitins[i].lblname+" , @function\n")
+# def printexit():
+#     print("\tmovl $1,%eax\n\tmovl $0,%ebx\n\tint $0x80")
 def convertassem():
     flag=1
     # print g.splitins

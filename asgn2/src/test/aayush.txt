@@ -4,7 +4,7 @@
 4, label, fac
 5, ifgoto, eq, n, 1, 10
 6, *, b, b, n
-7, +, n, n, -1
+7, -, n, n, 1
 8, call, fac
 9, ret
 10, ret

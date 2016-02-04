@@ -40,6 +40,6 @@ def codegen(infile):
         g.debug(i)
     g.debug("*********************************************************************************")
     convertassem()
-    printexit()
+    # printexit()
 if __name__ == '__main__':
     codegen(sys.argv[1])
