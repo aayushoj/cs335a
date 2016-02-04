@@ -84,9 +84,12 @@ def out(mode='Q',str1="Default",str2="Default"):
         Output=Instr+str1
     elif(mode[0]=="R"):
         Output="ret"
+    elif(mode=="int"):
+        Instr="int "
+        Output=Instr+str1
     else:
         raise ValueError("INVALID MODE:- Don't You know I m Idiot?")
-    print(Output)
+    print('\t'+Output)
 
 def SaveContext():
     if(getVar("%eax")!="NULL"):
@@ -119,6 +122,7 @@ def createdatasection():
     print(".section .text")
     print(" ")
     print(".global _start")
+    print_functions()
     print("\n\n _start:")
     print("\n")
 
@@ -703,18 +707,39 @@ def Ret():
     out("PO","%ebp")
     out("R")
 
+def print_functions():
+    g.debug(g.marker)
+    for i in g.marker:
+        if g.splitins[i-1].lbl==True:
+            print(".type "+g.splitins[i-1].lblname+" , @function\n")
+def printexit():
+    print("\tmovl $1,%eax\n\tmovl $0,%ebx\n\tint $0x80")
 def convertassem():
+    flag=1
     # print g.splitins
+    createdatasection()
+    g.debug(g.marker)
     for k in g.marker:
-        g.splitins[k-1].lbl=True
-        g.splitins[k-1].lblname="l_"+str(k)
+        if(g.splitins[k].lbl==False):
+            # g.splitins[k-1].lbl=True
+            g.debug("dekh le"+str(k))
+            g.splitins[k].lblname="l_"+g.splitins[k].lineno
     for i in range(len(g.splitins)):
-        if(g.splitins[i].lbl==True ):
-            print("\n"+g.splitins[i].lblname+":")
-            out("PU","%ebp")
-            out("M","%esp","%ebp")
-        elif(g.splitins[i].func):
-            print
+        if i in g.marker:
+            g.debug("i am here"+str(i))
+            if(g.splitins[i].lbl==True ):
+                if(flag==1):
+                    print("_exit:")
+                    SaveContext()
+                    out("M",1,"%eax")
+                    out("M",0,"%ebx")
+                    out("int","$0x80")
+                flag=0
+                print("\n"+g.splitins[i].lblname+":")
+                out("PU","%ebp")
+                out("M","%esp","%ebp")
+            else:
+                print("\n"+str(g.splitins[i].lblname)+":")
         # print(g.splitins[i].lineno)
         if(g.splitins[i].op == '='):
             EQUAL(i)
@@ -735,7 +760,7 @@ def convertassem():
         elif(g.splitins[i].returnc==True):
             Ret()
         elif(g.splitins[i].lbl==True):
-            continue
+            continue;
         else:
-            # g.splitins[i].printobj()
+            g.splitins[i].printobj()
             raise ValueError("INVALID MODE:- Don't You know I m Idiot?")

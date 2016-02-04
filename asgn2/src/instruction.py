@@ -25,18 +25,18 @@ class instruction(object):
             g.basicblock.append(int(self.lineno))
             g.basicblock.append(int(self.jlno)-1)
             # g.splitins[i].jlno
-            g.marker.append(int(self.jlno))
+            g.marker.append(int(self.jlno)-1)
         elif (param[1]=="call"):
             g.basicblock.append(int(self.lineno))
             g.basicblock.append(int(self.lineno)+1)
             self.func=True
-            self.funcname=param[2]
+            self.funcname="u_"+param[2]
         elif (param[1]=="ret"):
             self.returnc=True
         elif (param[1]=="label"):
             # print("i m here")
             # g.basicblock.append(int(self.lineno))
-            # g.marker.append(int(self.lineno))
+            g.marker.append(int(self.lineno)-1)
             self.lbl=True
             self.lblname="u_"+param[2]
         elif (param[1]=="print"):

@@ -39,7 +39,7 @@ def codegen(infile):
     for i in g.nextuse:
         g.debug(i)
     g.debug("*********************************************************************************")
-    createdatasection()
     convertassem()
+    printexit()
 if __name__ == '__main__':
     codegen(sys.argv[1])

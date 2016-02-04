@@ -32,13 +32,14 @@
 32, call, fac
 33, call, foo
 34, ifgoto, leq, a, 50, 2
+35, label, ret
 36, ret
 37, label, foo
-38, print, a
+38, =, a, 1
 39, ret
 40, label, fac
-41, ifgoto, eq, a, 1, ret
-42, *, n, m
+41, ifgoto, eq, a, 1, 44
+42, *, n, n, m
 43, -, n, n, 1
-44, call fac
+44, call, fac
 45, ret
