@@ -755,19 +755,15 @@ def print_functions():
             print(".type "+g.splitins[i].lblname+" , @function\n")
 # def printexit():
 #     print("\tmovl $1,%eax\n\tmovl $0,%ebx\n\tint $0x80")
-def convertassem():
-    flag=1
-    fgl =0
-    # print g.splitins
-    createdatasection()
-    g.debug(g.marker)
+def updatejumpttrgt():
     for k in g.marker:
         if(g.splitins[k].lbl==False):
             # g.splitins[k-1].lbl=True
             g.debug("dekh le"+str(k))
             g.splitins[k].lblname="l_"+g.splitins[k].lineno
-    for i in range(len(g.splitins)):
-        if i in g.marker:
+
+def printlabelname(i,flag,fgl):
+    if i in g.marker:
             g.debug("i am here"+str(i))
             if(g.splitins[i].lbl==True ):
                 if(flag==1):
@@ -783,6 +779,17 @@ def convertassem():
                 out("M","%esp","%ebp")
             else:
                 print("\n"+str(g.splitins[i].lblname)+":")
+    return flag,fgl
+    
+def convertassem():
+    flag=1
+    fgl =0
+    # print g.splitins
+    createdatasection()
+    g.debug(g.marker)
+    updatejumpttrgt()
+    for i in range(len(g.splitins)):
+        flag,fgl=printlabelname(i,flag,fgl)       #If any
         # print(g.splitins[i].lineno)
         if(g.splitins[i].op == '='):
             EQUAL(i)

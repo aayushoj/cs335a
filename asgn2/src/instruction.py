@@ -3,9 +3,16 @@ import globalvars as g
 
 def varname(var):
     if(isInt(var)):
-        return var
+        return var,None
+    elif(var.find("[")!=-1):
+        n=var.find("[")
+        m=var.find("]")
+        index=var[n+1:m]
+        g.variables.append("v_"+var[0:n])
+        return "v_"+var[0:n],index
     else:
-        return "v_"+var
+        g.variables.append("v_"+var)
+        return "v_"+var,None
 
 class instruction(object):
     def convert(self, param):
@@ -19,8 +26,8 @@ class instruction(object):
             self.jmp=True
             self.cmpl=True
             self.cmpltype=param[2]
-            self.src1=varname(param[3])
-            self.src2=varname(param[4])
+            self.src1,self.src1index=varname(param[3])
+            self.src2,self.src2index=varname(param[4])
             self.jlno=param[5]
             g.basicblock.append(int(self.lineno))
             g.basicblock.append(int(self.jlno)-1)
@@ -41,23 +48,23 @@ class instruction(object):
             self.lblname="u_"+param[2]
         elif (param[1]=="print"):
             self.printc=True
-            self.src1=varname(param[2])
+            self.src1,self.src1index=varname(param[2])
         elif (param[1]=="input"):
             self.inputc=True
-            self.src1=varname(param[2])
+            self.src1,self.src1index=varname(param[2])
         elif (param[1]=="="):
-            self.dst=varname(param[2])
-            self.src1=varname(param[3])
-            g.variables.append(varname(param[2]))
-            g.variables.append(varname(param[3]))
+            self.dst,self.dstindex=varname(param[2])
+            self.src1,self.src1index=varname(param[3])
+            # g.variables.append(varname(param[2]))
+            # g.variables.append(varname(param[3]))
         else:
             # print(param)
-            self.dst=varname(param[2])
-            self.src1=varname(param[3])
-            self.src2=varname(param[4])
-            g.variables.append(varname(param[2]))
-            g.variables.append(varname(param[3]))
-            g.variables.append(varname(param[4]))
+            self.dst,self.dstindex=varname(param[2])
+            self.src1,self.src1index=varname(param[3])
+            self.src2,self.src2index=varname(param[4])
+            # g.variables.append(varname(param[2]))
+            # g.variables.append(varname(param[3]))
+            # g.variables.append(varname(param[4]))
 
     def printobj(self):
        g.debug("line no: "+self.lineno)
@@ -82,8 +89,11 @@ class instruction(object):
         self.lineno=0
         self.op=None             #operator
         self.dst=None            #destination
+        self.dstindex=None       #Only for Array
         self.src1=None           #source1
+        self.src1index=None      #Only For Array   
         self.src2=None           #source2
+        self.src2index=None      #Only For Array
         self.jmp=False           #if jump or not
         self.cmpl=False          #if compare or not
         self.cmpltype=None
