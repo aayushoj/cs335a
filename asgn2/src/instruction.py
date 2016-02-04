@@ -14,6 +14,7 @@ class instruction(object):
             return 0
         self.lineno=param[0]
         self.op=param[1]
+        # print(param)
         if (param[1]=="ifgoto"):
             self.jmp=True
             self.cmpl=True
@@ -33,6 +34,7 @@ class instruction(object):
         elif (param[1]=="ret"):
             self.returnc=True
         elif (param[1]=="label"):
+            # print("i m here")
             # g.basicblock.append(int(self.lineno))
             # g.marker.append(int(self.lineno))
             self.lbl=True
@@ -46,6 +48,7 @@ class instruction(object):
             g.variables.append(varname(param[2]))
             g.variables.append(varname(param[3]))
         else:
+            # print(param)
             self.dst=varname(param[2])
             self.src1=varname(param[3])
             self.src2=varname(param[4])
