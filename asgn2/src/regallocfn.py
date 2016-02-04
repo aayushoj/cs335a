@@ -110,7 +110,7 @@ def emptyreg(lineno,regno):
 def getreg(lineno,var):
     # mode = 0
     # if(g.splitins[lineno].op=="/" or g.splitins[lineno].op=="%"):
-
+    # print("Abcd")
     ####NOT FOR DIV
     # if var not in g.nextuse[lineno-1].keys():
     #     return var
@@ -127,18 +127,19 @@ def getreg(lineno,var):
         varsinline.append(g.splitins[lineno-1].dst)
     else:
         g.error("Error GOT file: regallocfn.py => getreg()")
-    if(lineno==34):
-        g.splitins[lineno-1].printobj()
-        g.debug(varsinline)
-        g.debug(g.regalloc)
+    # if(lineno==34):
+    #     g.splitins[lineno-1].printobj()
+    #     g.debug(varsinline)
+    #     g.debug(g.regalloc)
     for i in range(6):
         if(g.regalloc[i]=='-1'):
             # allocatedreg=i
             g.regalloc[i]=var
+            print("\tmovl "+var+" , "+regname(i))
             return regname(i)
     for i in g.regalloc:
         if i not in g.nextuse[lineno-1].keys() and i not in varsinline:
-            print("movl "+str(regname(isregassigned(i))+" , "+str(i)))
+            print("\tmovl "+str(regname(isregassigned(i))+" , "+str(i)))
             regtoassign=isregassigned(i)
             g.regalloc[regtoassign]=var
             return regname(regtoassign)
@@ -152,7 +153,7 @@ def getreg(lineno,var):
             tempvar=i
             tempnextuse=g.nextuse[lineno-1][i]
     # print("reg ass " + str(isregassigned(tempvar))+ " at" + regname(isregassigned(tempvar)))
-    print("movl "+str(regname(isregassigned(tempvar))+" , "+str(tempvar)))
+    print("\tmovl "+str(regname(isregassigned(tempvar))+" , "+str(tempvar)))
     # if(tempvar==var):
     #     return var
     regtoassign=isregassigned(i)

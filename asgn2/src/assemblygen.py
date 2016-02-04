@@ -92,6 +92,7 @@ def out(mode='Q',str1="Default",str2="Default"):
     print('\t'+Output)
 
 def SaveContext():
+    # print("SaveContext")
     if(getVar("%eax")!="NULL"):
         out('M',"%eax",getVar("%eax"))
     if(getVar("%ebx")!="NULL"):
@@ -104,8 +105,8 @@ def SaveContext():
         out('M',"%esi",getVar("%esi"))
     if(getVar("%edi")!="NULL"):
         out('M',"%edi",getVar("%edi"))
-    # for i in range(0,6):
-    #     g.regalloc[i]='-1'
+    for i in range(0,6):
+        g.regalloc[i]='-1'
 
 
 def createdatasection():
@@ -663,12 +664,15 @@ def revert(inst):
 
 
 def IFGOTO(line):
-    # for i in range(0,6):
-    #     g.debug(i)
-    #     if(g.regalloc[i]!='-1'):
-    #         g.debug("i dont know why?")
+    for i in range(0,6):
+        g.debug(i)
+        if(g.regalloc[i]!='-1'):
+            g.debug("i dont know why?")
+
+
     i=line
     inst=g.splitins[i]
+    SaveContext()
     if(not isInt(inst.src1) and isInt(inst.src2)):
         inst=revert(inst)
         #read a
@@ -696,7 +700,7 @@ def IFGOTO(line):
         else:
             b=regs(i,inst.src2)
         g.debug(b)
-    SaveContext()
+
     out('C',a,b)
     if(isInt(inst.src1) and isInt(inst.src2)):
         g.regalloc[isregassigned("$"+str(inst.src2))]='-1'
@@ -721,6 +725,7 @@ def IFGOTO(line):
 
 def FUNC(line):
     i=line
+    SaveContext()
     out("CA",g.splitins[i].funcname)
 
 def RET(line):
