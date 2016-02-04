@@ -1,5 +1,5 @@
 #
-#TODO: RETURN 
+#TODO: RETURN
 #
 import globalvars as g
 from regallocfn import *
@@ -71,6 +71,19 @@ def out(mode='Q',str1="Default",str2="Default"):
         elif(spec=="LE"): #Case of jle
             Instr="jle "
             Output=Instr+str1
+    elif(mode[0]=='P'):
+        spec=mode[1]
+        if(spec=="U"):
+            Instr="pushl "
+            Output=Instr+str1
+        elif(spec=="O"):
+            Instr="popl "
+            Output=Instr+str1
+    elif(mode[:2]=="CA"):
+        Instr="call "
+        Output=Instr+str1
+    elif(mode[0]=="R"):
+        Output="ret"
     else:
         raise ValueError("INVALID MODE:- Don't You know I m Idiot?")
     print(Output)
@@ -455,14 +468,27 @@ def IFGOTO(line):
     else:
         raise ValueError("INVALID LABEL:-  IFGOTO() in file assemblygen.py")
 
+def Func(line):
+    i=line
+    out("CA",g.splitins[i].funcname)
+
+def Ret():
+    out("M","%ebp","%esp")
+    out("PO","%ebp")
+    out("R")
+
 def convertassem():
     # print g.splitins
     for k in g.marker:
         g.splitins[k-1].lbl=True
         g.splitins[k-1].lblname="l_"+str(k)
     for i in range(len(g.splitins)):
-        if(g.splitins[i].lbl==True):
+        if(g.splitins[i].lbl==True ):
             print("\n"+g.splitins[i].lblname+":")
+            out("PU","%ebp")
+            out("M","%esp","%ebp")
+        elif(g.splitins[i].func):
+            print
         # print(g.splitins[i].lineno)
         if(g.splitins[i].op == '='):
             EQUAL(i)
@@ -476,5 +502,12 @@ def convertassem():
             DIVIDE(i)
         elif(g.splitins[i].op=='ifgoto'):
             IFGOTO(i)
+        elif(g.splitins[i].func==True):
+            Func(i)
+        elif(g.splitins[i].returnc==True):
+            Ret()
+        elif(g.splitins[i].lbl==True):
+            continue
         else:
+            # g.splitins[i].printobj()
             raise ValueError("INVALID MODE:- Don't You know I m Idiot?")

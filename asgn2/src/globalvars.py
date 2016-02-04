@@ -3,7 +3,7 @@ from logging import *
 
 # FORMAT = "[%(levelname)s:%(filename)s:%(lineno)s] %(message)s"
 FORMAT = "%(message)s"
-basicConfig(format=FORMAT,level=ERROR)
+basicConfig(format=FORMAT,level=DEBUG)
 
 variables = []
 basicblock=[]
