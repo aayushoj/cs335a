@@ -814,6 +814,7 @@ def convertassem():
         elif(g.splitins[i].inputc==True):
             INPUT(i)
         elif(g.splitins[i].printc==True):
+            g.debug("Print Called")
             PRINT(i)
         else:
             g.splitins[i].printobj()

@@ -47,6 +47,7 @@ class instruction(object):
             self.lbl=True
             self.lblname="u_"+param[2]
         elif (param[1]=="print"):
+            g.debug("printer")
             self.printc=True
             self.src1,self.src1index=varname(param[2])
         elif (param[1]=="input"):
