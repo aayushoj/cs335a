@@ -135,7 +135,8 @@ def getreg(lineno,var):
         if(g.regalloc[i]=='-1'):
             # allocatedreg=i
             g.regalloc[i]=var
-            print("\tmovl "+var+" , "+regname(i))
+            if(not('tempac'in var)):
+                print("\tmovl "+var+" , "+regname(i))
             return regname(i)
     for i in g.regalloc:
         if i not in g.nextuse[lineno-1].keys() and i not in varsinline:
@@ -161,6 +162,7 @@ def getreg(lineno,var):
     return regname(regtoassign)
 # Amit Comments??
 def regs(i,var):
+
     tmp=isregassigned(var)
     if(tmp!="-1"):
         a=regname(tmp)

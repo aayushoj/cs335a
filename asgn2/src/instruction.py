@@ -8,10 +8,10 @@ def varname(var):
         n=var.find("[")
         m=var.find("]")
         index=var[n+1:m]
-        g.variables.append("v_"+var[0:n])
+        g.variables.append(("v_"+var[0:n],1))
         return "v_"+var[0:n],index
     else:
-        g.variables.append("v_"+var)
+        g.variables.append(("v_"+var,0))
         return "v_"+var,None
 
 class instruction(object):

@@ -110,12 +110,21 @@ def SaveContext():
 
 
 def createdatasection():
+    tempvar=['tempac1','tempac2','tempac3','tempac4','tempac5','tempac6']
     print(".section .data")
     strIO="format_input:\n\t.ascii \"%d\\0\"\nformat_output:\n \t.ascii \"%d\\n\\0\"\nL_INPUT:\n\t.long 0"
     print(strIO)
+    # print("array_block:")
+    # print("\t.fill 100")
     for i in g.variables :
         if (isInt(i)):
             continue
+        print(str(i[0])+":")
+        if(i[1]==0):
+            print("\t.long 0")
+        else:
+            print("\t.fill 100")
+    for i in tempvar :
         print(str(i)+":")
         print("\t.long 0")
     # print("returnval:")
@@ -267,12 +276,12 @@ def DIVIDE(line):
             a='%eax'
             emptyreg(i,5)
             out("M",0,"%edx")
-            c=regs(i,'xcpp')
+            c=regs(i,'tempac1')
             out("M",a,c)
             out("M",g.splitins[i].src1,a)
             out("CD")
             out("D",c)
-            g.regalloc[isregassigned('xcpp')]='-1'
+            g.regalloc[isregassigned('tempac1')]='-1'
             g.regalloc[5]='-1'
         else:
             a=regs(i,g.splitins[i].dst)
@@ -360,12 +369,12 @@ def DIVIDE(line):
             emptyreg(i,5)
             out("M",0,"%edx")
             b=regs(i,g.splitins[i].src1)
-            c=regs(i,'xcpp')
+            c=regs(i,'tempac2')
             out("M",a,c)
             out("M",b,a)
             out("CD")
             out("D",c)
-            g.regalloc[isregassigned('xcpp')]='-1'
+            g.regalloc[isregassigned('tempac2')]='-1'
             g.regalloc[5]='-1'
         elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
             a=regs(i,g.splitins[i].dst)
@@ -452,13 +461,13 @@ def MOD(line):
             a='%eax'
             emptyreg(i,5)
             out("M",0,"%edx")
-            c=regs(i,'xcpp')
+            c=regs(i,'tempac3')
             out("M",a,c)
             out("M",g.splitins[i].src1,a)
             out("CD")
             out("D",c)
             out("M","%edx",a)
-            g.regalloc[isregassigned('xcpp')]='-1'
+            g.regalloc[isregassigned('tempac3')]='-1'
             g.regalloc[5]='-1'
         else:
             a=regs(i,g.splitins[i].dst)
@@ -551,13 +560,13 @@ def MOD(line):
             emptyreg(i,5)
             out("M",0,"%edx")
             b=regs(i,g.splitins[i].src1)
-            c=regs(i,'xcpp')
+            c=regs(i,'tempac4')
             out("M",a,c)
             out("M",b,a)
             out("CD")
             out("D",c)
             out("M","%edx",a)
-            g.regalloc[isregassigned('xcpp')]='-1'
+            g.regalloc[isregassigned('tempac4')]='-1'
             g.regalloc[5]='-1'
         elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
             a=regs(i,g.splitins[i].dst)
@@ -588,7 +597,7 @@ def SUB(line):
             out("M",g.splitins[i].src1,a)
             out("S",g.splitins[i].src2,a)
         elif(isInt(g.splitins[i].src1)):
-            if(g.splitins[i].dst!=g.splitins[i].src1):
+            if(g.splitins[i].dst!=g.splitins[i].src2):
                 b=regs(i,g.splitins[i].src2)
                 a=regs(i,g.splitins[i].dst)
                 out("M",0,a)
@@ -596,11 +605,11 @@ def SUB(line):
                 out("A",g.splitins[i].src1,a)
             else:
                 a=regs(i,g.splitins[i].dst)
-                tmp=regs(i,"xxpp")
+                tmp=regs(i,"tempac5")
                 out("M",a,tmp)
                 out("M",g.splitins[i].src1,a)
                 out("S",tmp,a)
-                g.regalloc[isregassigned('xxpp')]='-1'
+                g.regalloc[isregassigned('tempac5')]='-1'
         else:
             g.debug("something is fishyd")
             if(g.splitins[i].dst!=g.splitins[i].src1):
@@ -634,7 +643,72 @@ def SUB(line):
 
 def EQUAL(line):
     i=line
-    if(isInt(g.splitins[i].src1)):
+    if(g.splitins[i].dstindex!=None and isInt(g.splitins[i].src1)):
+        if(isInt(g.splitins[i].dstindex)):
+            emptyreg(i,5)
+            out("M",g.splitins[i].dstindex,"%edx")
+            tmp=regs(i,"tempac6")
+            # print("movl $array_block , "+tmp)
+            out("M","$"+str(g.splitins[i].dst),tmp)
+            # print("movl $"+g.splitins[i].src1+ " , "+ "("+tmp+",%edx,4)")
+            out("M",g.splitins[i].src1,"("+tmp+",%edx,4)")
+            g.regalloc[5]='-1'
+        else:
+            emptyreg(i,4)
+            tmp = regs(i,"v_"+g.splitins[i].dstindex)
+            # print("movl $array_block , %eax")
+            out("M","$"+str(g.splitins[i].dst),"%eax")
+            # print("movl $"+g.splitins[i].src1+ " , "+ "(%eax"+","+tmp+",4)")
+            out("M",g.splitins[i].src1,"(%eax"+","+tmp+",4)")
+            g.regalloc[4]='-1'
+    elif(g.splitins[i].dstindex!=None and (not isInt(g.splitins[i].src1))):
+        if(isInt(g.splitins[i].dstindex)):
+            emptyreg(i,5)
+            emptyreg(i,4)
+            b= regs(i,g.splitins[i].src1)
+            out("M",g.splitins[i].dstindex,"%edx")
+            # print("movl $array_block , %eax")
+            out("M","$"+str(g.splitins[i].dst),"%eax")
+            # print("movl "+b+ " , "+ "(%eax+,%edx,4)")
+            out("M",b,"(%eax,%edx,4)")
+            g.regalloc[5]='-1'
+            g.regalloc[4]='-1'
+        else:
+            emptyreg(i,4)
+            tmp = regs(i,"v_"+g.splitins[i].dstindex)
+            b= regs(i,g.splitins[i].src1)
+            if(tmp==b):
+                print("error in EQUAL registers same")
+            # print("movl $array_block , %eax")
+            out("M","$"+str(g.splitins[i].dst),"%eax")
+            # print("movl "+b+ " , "+ "(%eax"+","+tmp+",4)")
+            out("M",b,"(%eax"+","+tmp+",4)")
+            g.regalloc[4]='-1'
+
+    elif(g.splitins[i].src1index!=None):
+        if(isInt(g.splitins[i].src1index)):
+            emptyreg(i,5)
+            emptyreg(i,4)
+            out("M",g.splitins[i].src1index,"%edx")
+            a=regs(i,g.splitins[i].dst)
+            # print("movl $array_block , %eax")
+            out("M","$"+str(g.splitins[i].src1),"%eax")
+            # print("movl (%eax,%edx,4) , "+a)
+            out("M","(%eax,%edx,4)",a)
+            g.regalloc[5]='-1'
+            g.regalloc[4]='-1'
+        else:
+            emptyreg(i,4)
+            a = regs(i,g.splitins[i].dst)
+            tmp = regs(i,"v_"+g.splitins[i].src1index)
+            if(tmp==a):
+                print("error in EQUAL registers same")
+            # print("movl $array_block , %eax")
+            out("M","$"+str(g.splitins[i].src1),"%eax")
+            # print("movl (%eax,"+tmp+",4) , "+a)
+            out("M","(%eax,"+tmp+",4)",a)
+            g.regalloc[4]='-1'
+    elif(isInt(g.splitins[i].src1)):
         a=regs(i,g.splitins[i].dst)
         out("M",g.splitins[i].src1,a)
         # print("movl $"+ g.splitins[i].src1 + " , " + str(a))
