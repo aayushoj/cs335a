@@ -738,15 +738,13 @@ def revert(inst):
 
 
 def IFGOTO(line):
+    i=line
+    inst=g.splitins[i]
+    # SaveContext()
     for i in range(0,6):
         g.debug(i)
         if(g.regalloc[i]!='-1'):
             g.debug("i dont know why?")
-
-
-    i=line
-    inst=g.splitins[i]
-    SaveContext()
     if(not isInt(inst.src1) and isInt(inst.src2)):
         inst=revert(inst)
         #read a
@@ -784,6 +782,7 @@ def IFGOTO(line):
     else:
         label="u_"+str(inst.jlno)
     #cmpltype #remove it
+    SaveContext()
     if(inst.cmpltype=='eq'):
         out("JE",label)
     elif(inst.cmpltype=='leq'):
@@ -803,6 +802,7 @@ def FUNC(line):
     out("CA",g.splitins[i].funcname)
 
 def RET(line):
+    SaveContext()
     out("M","%ebp","%esp")
     out("PO","%ebp")
     out("R")
@@ -817,7 +817,8 @@ def INPUT(line):
 
 def PRINT(line):
     i=line
-    inp=regs(i,g.splitins[i].src1)
+    if(not isInt(g.splitins[i].src1)):
+        inp=regs(i,g.splitins[i].src1)
     out("PU",inp)
     out("PU","$format_output")
     out("CA","printf")
@@ -865,6 +866,8 @@ def convertassem():
     for i in range(len(g.splitins)):
         flag,fgl=printlabelname(i,flag,fgl)       #If any
         # print(g.splitins[i].lineno)
+        # if(i in g.marker):
+        #     SaveContext()
         if(g.splitins[i].op == '='):
             EQUAL(i)
         elif(g.splitins[i].op=='+'):
@@ -888,6 +891,7 @@ def convertassem():
         elif(g.splitins[i].inputc==True):
             INPUT(i)
         elif(g.splitins[i].printc==True):
+            g.debug("Print Called")
             PRINT(i)
         else:
             g.splitins[i].printobj()
