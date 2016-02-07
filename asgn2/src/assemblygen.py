@@ -60,6 +60,9 @@ def out(mode='Q',str1="Default",str2="Default"):
     elif(mode=='XO'):
         Instr="xor "
         Output= Instr + str1+" , "+ str2
+    elif(mode=='NO'):
+        Instr="not "
+        Output= Instr + str1
     elif(mode[0]=='J'):
         spec=mode[1:]
         if(spec=="MP"): # Case of jmp
@@ -834,6 +837,17 @@ def XOR(line):
         elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
             a=regs(i,g.splitins[i].dst)
             out("XO",a,a)
+def NOT(line):
+    i=line
+    if(isInt(g.splitins[i].src1)):
+        a=regs(i,g.splitins[i].dst)
+        out("M",g.splitins[i].src1,a)
+        out("NO", a)
+    else:
+        a=regs(i,g.splitins[i].dst)
+        b=regs(i,g.splitins[i].src1)
+        out("M",b,a)
+        out("NO",a)
 
 def revert(inst):
     inst.src1,inst.src2=inst.src2,inst.src1
@@ -1024,6 +1038,8 @@ def convertassem():
             OR(i)
         elif(g.splitins[i].op== 'xor'):
             XOR(i)
+        elif(g.splitins[i].op== 'not'):
+            NOT(i)
         elif(g.splitins[i].func==True):
             FUNC(i)
         elif(g.splitins[i].returnc==True):

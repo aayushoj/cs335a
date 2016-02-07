@@ -53,7 +53,7 @@ class instruction(object):
         elif (param[1]=="input"):
             self.inputc=True
             self.src1,self.src1index=varname(param[2])
-        elif (param[1]=="="):
+        elif (param[1]=="=" or param[1]=='not'):
             self.dst,self.dstindex=varname(param[2])
             self.src1,self.src1index=varname(param[3])
             # g.variables.append(varname(param[2]))
