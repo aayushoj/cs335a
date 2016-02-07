@@ -1,15 +1,15 @@
 There are four main files for this assignment:
-1)tran.py: This reads the Highlevel Intermediate language. First it break each line into it's respective parameters, operations etc. For each line it calls a instruction class which returns an object after which the contents of that line is passed so that the object defines that line that is to say that it saves what operations is involves in this line, what are the parameters etc. After that we build the next use table so that we can use it to allocate register during runtime as the number of registers available are very limited (6 to be precise in x86). convertassem is called after this which converts the HIR language code into x86 assembly code.  
+1)tran.py: This reads the Highlevel Intermediate language. First it break each line into it's respective parameters, operations etc. For each line it calls a instruction class which returns an object after which the contents of that line is passed so that the object defines that line that is to say that it saves what operations is involves in this line, what are the parameters etc. It also takes care when a basic block has ended and repectively append the start and ending line of it. After that we build the next use table so that we can use it to allocate register during runtime as the number of registers available are very limited (6 to be precise in x86). convertassem is called after this which converts the HIR language code into x86 assembly code.  
 
 2)instruction.py: This defines the class instruction which in which an object has attributes like src1 which stands for source, funcname which stores the function name and so on. convert is a methid for this object which take a list which contains the contents of the lines already splitted by use of ",". We check the various possibilities for the first parameter like ifgoto, operations like +,-,/ etc. , label(definition of a function), ret and so on and we assign the various attributes of the object respectively. varname check for the identity of the variables whether it is just an integer or is it just a variable or an array element. For the last two it add a prefix of "v_" to them. printobject can be used to print the various attributes of the object.
 
 
-3)assemblygen.py:
+3)assemblygen.py: This file convert the whole program to assembly code. First it creates the data section by calling the createdatasection function. The function defines all the temporary variables, variables defined by the program, it also enlist all the functions by calling print_functions which iterated over the lines so find all the places where a function is defined. It then updates all the places where we have jump statements and label the respective line which are the destinations of those jumps. After this it goes over line by line and translate the lines into assembly code taking care of the various nuances that might arise. It also has input and print statements which uses the predefined scanf and printf functions. Out functions manages all type of outputs/generations in the final assembly file centrally. SaveContext is called whenever a basic block ends which save the contents of the the registers back to ther respective variables
 
 
 4)regallocfn.py: This 
 
-5)globalvars.py:
+5)globalvars.py: Defines the various global variables that we are using like variable list, basic block list, next use tables etc.
 
 
 
