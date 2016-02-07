@@ -925,19 +925,39 @@ def RET(line):
 
 def INPUT(line):
     i=line
-    inp=regs(i,g.splitins[i].src1)
-    out("PU","$L_INPUT")
-    out("PU","$format_input")
-    out("CA","scanf")
-    out("M","L_INPUT",inp)
+    tmpo = g.regalloc[4]
+    if(tmpo!='-1'):
+        out("M","%eax",tmpo)
+        inp=regs(i,g.splitins[i].src1)
+        out("PU","$L_INPUT")
+        out("PU","$format_input")
+        out("CA","scanf")
+        out("M","L_INPUT",inp)
+        g.regalloc[4]='-1'
+    else:
+        inp=regs(i,g.splitins[i].src1)
+        out("PU","$L_INPUT")
+        out("PU","$format_input")
+        out("CA","scanf")
+        out("M","L_INPUT",inp)
 
 def PRINT(line):
     i=line
-    if(not isInt(g.splitins[i].src1)):
-        inp=regs(i,g.splitins[i].src1)
-    out("PU",inp)
-    out("PU","$format_output")
-    out("CA","printf")
+    tmpo= g.regalloc[4]
+    if(tmpo!= '-1'):
+        out("M","%eax",tmpo)
+        if(not isInt(g.splitins[i].src1)):
+            inp=regs(i,g.splitins[i].src1)
+        out("PU",inp)
+        out("PU","$format_output")
+        out("CA","printf")
+        g.regalloc[4]='-1'
+    else:
+        if(not isInt(g.splitins[i].src1)):
+            inp=regs(i,g.splitins[i].src1)
+        out("PU",inp)
+        out("PU","$format_output")
+        out("CA","printf")
 
 def print_functions():
     g.debug(g.marker)
