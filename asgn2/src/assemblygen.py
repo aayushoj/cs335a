@@ -51,6 +51,15 @@ def out(mode='Q',str1="Default",str2="Default"):
     elif(mode=='C'): #Case of cmpl
         Instr="cmpl "
         Output=Instr+str1+" , "+str2
+    elif(mode=='AN'):
+        Instr="and "
+        Output=Instr+str1+" , "+str2
+    elif(mode=='OR'):
+        Instr="or "
+        Output= Instr + str1+" , "+ str2
+    elif(mode=='XO'):
+        Instr="xor "
+        Output= Instr + str1+" , "+ str2
     elif(mode[0]=='J'):
         spec=mode[1:]
         if(spec=="MP"): # Case of jmp
@@ -718,6 +727,113 @@ def EQUAL(line):
         # print("movl "+ str(b) + " , " + str(a))
         out("M",b,a)
 
+def AND(line):
+    i=line
+    if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
+        if(isInt(g.splitins[i].src1) and isInt(g.splitins[i].src2)):
+            a=regs(i,g.splitins[i].dst)
+            out("M",g.splitins[i].src1,a)
+            out("AN",g.splitins[i].src2,a)
+        elif(isInt(g.splitins[i].src1)):
+            b=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("M",b,a)
+            out("AN",g.splitins[i].src1,a)
+        else:
+            b=regs(i,g.splitins[i].src1)
+            a=regs(i,g.splitins[i].dst)
+            out("M",b,a)
+            out("AN",g.splitins[i].src2,a)
+    else:
+        if(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
+            b=regs(i,g.splitins[i].src1)
+            c=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("M",c,a)
+            out("AN",b,a)
+        elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
+            c=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("AN",c,a)
+        elif(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
+            b=regs(i,g.splitins[i].src1)
+            a=regs(i,g.splitins[i].dst)
+            out("AN",b,a)
+        elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
+            a=regs(i,g.splitins[i].dst)
+            out("AN",a,a)
+
+def OR(line):
+    i=line
+    if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
+        if(isInt(g.splitins[i].src1) and isInt(g.splitins[i].src2)):
+            a=regs(i,g.splitins[i].dst)
+            out("M",g.splitins[i].src1,a)
+            out("OR",g.splitins[i].src2,a)
+        elif(isInt(g.splitins[i].src1)):
+            b=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("M",b,a)
+            out("OR",g.splitins[i].src1,a)
+        else:
+            b=regs(i,g.splitins[i].src1)
+            a=regs(i,g.splitins[i].dst)
+            out("M",b,a)
+            out("OR",g.splitins[i].src2,a)
+    else:
+        if(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
+            b=regs(i,g.splitins[i].src1)
+            c=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("M",c,a)
+            out("OR",b,a)
+        elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
+            c=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("OR",c,a)
+        elif(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
+            b=regs(i,g.splitins[i].src1)
+            a=regs(i,g.splitins[i].dst)
+            out("OR",b,a)
+        elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
+            a=regs(i,g.splitins[i].dst)
+            out("OR",a,a)
+
+def XOR(line):
+    i=line
+    if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
+        if(isInt(g.splitins[i].src1) and isInt(g.splitins[i].src2)):
+            a=regs(i,g.splitins[i].dst)
+            out("M",g.splitins[i].src1,a)
+            out("XO",g.splitins[i].src2,a)
+        elif(isInt(g.splitins[i].src1)):
+            b=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("M",b,a)
+            out("XO",g.splitins[i].src1,a)
+        else:
+            b=regs(i,g.splitins[i].src1)
+            a=regs(i,g.splitins[i].dst)
+            out("M",b,a)
+            out("XO",g.splitins[i].src2,a)
+    else:
+        if(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
+            b=regs(i,g.splitins[i].src1)
+            c=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("M",c,a)
+            out("XO",b,a)
+        elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst !=g.splitins[i].src2):
+            c=regs(i,g.splitins[i].src2)
+            a=regs(i,g.splitins[i].dst)
+            out("XO",c,a)
+        elif(g.splitins[i].dst !=g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
+            b=regs(i,g.splitins[i].src1)
+            a=regs(i,g.splitins[i].dst)
+            out("XO",b,a)
+        elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
+            a=regs(i,g.splitins[i].dst)
+            out("XO",a,a)
 
 def revert(inst):
     inst.src1,inst.src2=inst.src2,inst.src1
@@ -882,6 +998,12 @@ def convertassem():
             MOD(i)
         elif(g.splitins[i].op=='ifgoto'):
             IFGOTO(i)
+        elif(g.splitins[i].op== 'and'):
+            AND(i)
+        elif(g.splitins[i].op== 'or'):
+            OR(i)
+        elif(g.splitins[i].op== 'xor'):
+            XOR(i)
         elif(g.splitins[i].func==True):
             FUNC(i)
         elif(g.splitins[i].returnc==True):
