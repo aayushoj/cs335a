@@ -1,6 +1,8 @@
 from assemblygen import *
 import globalvars as g
 
+#Breaks string representation of array to array name and index
+#if not array returns (Variable name,None)
 def varname(var):
     if(isInt(var)):
         return var,None
@@ -15,6 +17,8 @@ def varname(var):
         return "v_"+var,None
 
 class instruction(object):
+    # convert each line of code to an object instruction class
+    # also finds basicblocks and labels 
     def convert(self, param):
         # print(param)
         if(len(param)==1):
@@ -66,7 +70,8 @@ class instruction(object):
             # g.variables.append(varname(param[2]))
             # g.variables.append(varname(param[3]))
             # g.variables.append(varname(param[4]))
-
+    # prints an object of this class
+    # Only for debugging purposes
     def printobj(self):
        g.debug("line no: "+self.lineno)
        g.debug("op: "+self.op)
@@ -85,7 +90,7 @@ class instruction(object):
        g.debug("input: "+str(self.inputc))
        g.debug("return: "+str(self.returnc))
        g.debug("\n")
-
+    # Used for initialisation
     def __init__(self):
         self.lineno=0
         self.op=None             #operator

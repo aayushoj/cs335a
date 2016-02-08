@@ -1,6 +1,4 @@
-#
-#TODO: RETURN
-#
+
 import globalvars as g
 from regallocfn import *
 
@@ -13,9 +11,7 @@ def isInt(x):
     else:
         return x.isdigit()
 
-# Self documenting piece of Code
-# InstrSet=["movl ","addl ", "subl ","imull ","idivl ","xchg ","jmp ","je ","jge ","jg ","jl ","jle ","cmpl "]
-
+# Use to print instructions in assembly
 def out(mode='Q',str1="Default",str2="Default"):
     if(isInt(str1)):
         str1="$"+str(str1)
@@ -103,6 +99,7 @@ def out(mode='Q',str1="Default",str2="Default"):
         raise ValueError("INVALID MODE:- Don't You know I m Idiot?")
     print('\t'+Output)
 
+# Saves Context before going to next basic block called before jumps. 
 def SaveContext():
     # print("SaveContext")
     if(getVar("%eax")!="NULL"):
@@ -117,10 +114,11 @@ def SaveContext():
         out('M',"%esi",getVar("%esi"))
     if(getVar("%edi")!="NULL"):
         out('M',"%edi",getVar("%edi"))
+    # Reset the mapping of register to variables
     for i in range(0,6):
         g.regalloc[i]='-1'
 
-
+# Creates the data secction for assembly code
 def createdatasection():
     tempvar=['tempac1','tempac2','tempac3','tempac4','tempac5','tempac6']
     print(".section .data")
@@ -151,8 +149,7 @@ def createdatasection():
     print_functions()
     print("\n _start:")
 
-
-
+#handles all cases of addition
 def ADD(line):
     i=line
     if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
@@ -189,6 +186,7 @@ def ADD(line):
             a=regs(i,g.splitins[i].dst)
             out("A",a,a)
 
+#handles all cases of Multiplication
 def MULL(line):
     i=line
     if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
@@ -225,6 +223,7 @@ def MULL(line):
             a=regs(i,g.splitins[i].dst)
             out("I",a,a)
 
+#handles all cases of division
 def DIVIDE(line):
     i=line
     if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
@@ -408,6 +407,7 @@ def DIVIDE(line):
             out("D",a)
             g.regalloc[5]='-1'
 
+#handles all cases of modulus operation
 def MOD(line):
     i=line
     if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
@@ -601,6 +601,7 @@ def MOD(line):
             out("M","%edx",a)
             g.regalloc[5]='-1'
 
+#handles all cases of substraction
 def SUB(line):
     i=line
     if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
@@ -653,6 +654,7 @@ def SUB(line):
             a=regs(i,g.splitins[i].dst)
             out("S",a,a)
 
+#handles all cases of assignment
 def EQUAL(line):
     i=line
     if(g.splitins[i].dstindex!=None and isInt(g.splitins[i].src1)):
@@ -730,6 +732,7 @@ def EQUAL(line):
         # print("movl "+ str(b) + " , " + str(a))
         out("M",b,a)
 
+#handles all cases of bitwise and
 def AND(line):
     i=line
     if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
@@ -766,6 +769,7 @@ def AND(line):
             a=regs(i,g.splitins[i].dst)
             out("AN",a,a)
 
+#handles all cases of bitwise or
 def OR(line):
     i=line
     if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
@@ -802,6 +806,7 @@ def OR(line):
             a=regs(i,g.splitins[i].dst)
             out("OR",a,a)
 
+#handles all cases of bitwise xor
 def XOR(line):
     i=line
     if(isInt(g.splitins[i].src1) or isInt(g.splitins[i].src2)):
@@ -837,6 +842,8 @@ def XOR(line):
         elif(g.splitins[i].dst ==g.splitins[i].src1 and g.splitins[i].dst ==g.splitins[i].src2):
             a=regs(i,g.splitins[i].dst)
             out("XO",a,a)
+
+#handles all cases of bitwise not
 def NOT(line):
     i=line
     if(isInt(g.splitins[i].src1)):
@@ -849,6 +856,7 @@ def NOT(line):
         out("M",b,a)
         out("NO",a)
 
+# sometimes for optimality we will revert comparisons
 def revert(inst):
     inst.src1,inst.src2=inst.src2,inst.src1
     if(inst.cmpltype=='eq'):
@@ -865,8 +873,7 @@ def revert(inst):
         raise ValueError("INVALID COMPARISON TYPE:- Don't You know Maths?")
     return inst
 
-
-
+# handles all cases of ifgoto instruction
 def IFGOTO(line):
     i=line
     inst=g.splitins[i]
@@ -911,7 +918,7 @@ def IFGOTO(line):
         label="l_"+str(inst.jlno)
     else:
         label="u_"+str(inst.jlno)
-    #cmpltype #remove it
+    #Save Context before jump
     SaveContext()
     if(inst.cmpltype=='eq'):
         out("JE",label)
@@ -924,19 +931,25 @@ def IFGOTO(line):
     elif(inst.cmpltype=='l'):
         out("JL",label)
     else:
+        #For debugging
         raise ValueError("INVALID LABEL:-  IFGOTO() in file assemblygen.py")
 
+# handles instruction call :
+# this instruction calls a function
 def FUNC(line):
     i=line
     SaveContext()
     out("CA",g.splitins[i].funcname)
 
+# handles all cases of ret 
 def RET(line):
     SaveContext()
     out("M","%ebp","%esp")
     out("PO","%ebp")
     out("R")
 
+# handles instruction:- input, a
+# uses C-function scanf for this
 def INPUT(line):
     i=line
     tmpo = g.regalloc[4]
@@ -955,6 +968,8 @@ def INPUT(line):
         out("CA","scanf")
         out("M","L_INPUT",inp)
 
+# handles instruction:- print, a
+# uses C-function printf for this
 def PRINT(line):
     i=line
     tmpo= g.regalloc[4]
@@ -973,23 +988,25 @@ def PRINT(line):
         out("PU","$format_output")
         out("CA","printf")
 
+# defines labels to be function in Assembly Code
 def print_functions():
     g.debug(g.marker)
     for i in g.marker:
         if g.splitins[i].lbl==True:
             print(".type "+g.splitins[i].lblname+" , @function\n")
-# def printexit():
-#     print("\tmovl $1,%eax\n\tmovl $0,%ebx\n\tint $0x80")
+
+# UNCOMMENTED
 def updatejumpttrgt():
     for k in g.marker:
         if(g.splitins[k].lbl==False):
             # g.splitins[k-1].lbl=True
-            g.debug("dekh le"+str(k))
+            g.debug("Lets see: "+str(k))
             g.splitins[k].lblname="l_"+g.splitins[k].lineno
 
+#prints labels on required lines of Assembly Code
 def printlabelname(i,flag,fgl):
     if i in g.marker:
-            g.debug("i am here"+str(i))
+            g.debug("Check It:- "+str(i))
             if(g.splitins[i].lbl==True ):
                 if(flag==1):
                     print("_exit:")
@@ -1005,19 +1022,18 @@ def printlabelname(i,flag,fgl):
             else:
                 print("\n"+str(g.splitins[i].lblname)+":")
     return flag,fgl
-    
+
+#Converts every instruction to corresponding assembly code
 def convertassem():
     flag=1
     fgl =0
-    # print g.splitins
+    #Create data section of Assembly Code
     createdatasection()
     g.debug(g.marker)
+    # UNCOMMENTED
     updatejumpttrgt()
     for i in range(len(g.splitins)):
-        flag,fgl=printlabelname(i,flag,fgl)       #If any
-        # print(g.splitins[i].lineno)
-        # if(i in g.marker):
-        #     SaveContext()
+        flag,fgl=printlabelname(i,flag,fgl)
         if(g.splitins[i].op == '='):
             EQUAL(i)
         elif(g.splitins[i].op=='+'):
@@ -1049,9 +1065,9 @@ def convertassem():
         elif(g.splitins[i].inputc==True):
             INPUT(i)
         elif(g.splitins[i].printc==True):
-            g.debug("Print Called")
             PRINT(i)
         else:
+            #Only for debugging
             g.splitins[i].printobj()
             raise ValueError("INVALID MODE:- Don't You know I m Idiot?")
     if(fgl==0):
@@ -1060,4 +1076,3 @@ def convertassem():
         out("M",1,"%eax")
         out("M",0,"%ebx")
         out("int","$0x80")
-

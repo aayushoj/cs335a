@@ -1,6 +1,6 @@
 import globalvars as g
 
-
+#returns true if string x represent a integer otherwise False
 def isInt(x):
     x=str(x).strip(' ')
     if(x[0]=='-'):
@@ -8,6 +8,8 @@ def isInt(x):
         return x.isdigit()
     else:
         return x.isdigit()
+
+#builds nextusetable for all program points
 def build_nextusetable():
     #print(type(basicblock[0]))
     # for i in range(1,len(basicblock)):
@@ -36,6 +38,7 @@ def build_nextusetable():
     # g.nextuse.insert(len(g.splitins)+1,newdiction.copy())
     #             print(g.splitins[j-1].src1)
 
+# Returns which register is assgined to var and if no variable assigned returns '-1'
 def isregassigned(var):
     if(isInt(var)):
         g.error("File:regallocfn.py=> isregassinged(): Error Spotted:---" +str(var))
@@ -44,6 +47,7 @@ def isregassigned(var):
             return i
     return "-1"
 
+# Mapping register to some integer
 def regname(regno):
     #ebx=1 ,ecx=2, esi=3, edi=4, eax=5, edx=6
     if(regno==0):
@@ -58,7 +62,8 @@ def regname(regno):
         return '%eax'
     if(regno==5):
         return '%edx'
-
+#eptyreg(lineno,reg) empties register reg using NextUseHeurestic
+#(uses lineno for next use table and to take care of not removing variables of that line)
 def emptyreg(lineno,regno):
     if(g.regalloc[regno]=='-1'):
         g.regalloc[regno]=='0DNA'
@@ -105,8 +110,7 @@ def emptyreg(lineno,regno):
     g.regalloc[regno]='0DNA'
     return True
 
-
-
+# Assigns a register to variable var.(Essentially main logic behind NextUseHeuristic)
 def getreg(lineno,var):
     # mode = 0
     # if(g.splitins[lineno].op=="/" or g.splitins[lineno].op=="%"):
@@ -160,7 +164,8 @@ def getreg(lineno,var):
     regtoassign=isregassigned(i)
     g.regalloc[regtoassign]=var
     return regname(regtoassign)
-# Amit Comments??
+
+# Assigns a register to varisble, var, if not already assigned and returns register name
 def regs(i,var):
 
     tmp=isregassigned(var)
@@ -170,7 +175,7 @@ def regs(i,var):
         a=getreg(i+1,var)
     return a
 
-#getVar(reg) returns variables mapped to register "reg"
+# getVar(reg) returns variables mapped to register "reg"
 def getVar(str1):
     if(str1=="%ebx"):
         x=g.regalloc[0]
