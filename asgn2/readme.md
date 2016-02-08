@@ -7,25 +7,16 @@ There are four main files for this assignment:
 3)assemblygen.py: This file convert the whole program to assembly code. First it creates the data section by calling the createdatasection function. The function defines all the temporary variables, variables defined by the program, it also enlist all the functions by calling print_functions which iterated over the lines so find all the places where a function is defined. It then updates all the places where we have jump statements and label the respective line which are the destinations of those jumps. After this it goes over line by line and translate the lines into assembly code taking care of the various nuances that might arise. It also has input and print statements which uses the predefined scanf and printf functions. Out functions manages all type of outputs/generations in the final assembly file centrally. SaveContext is called whenever a basic block ends which save the contents of the the registers back to ther respective variables
 
 
-4)regallocfn.py: This 
+4)regallocfn.py: This file contains the functions which are required for register allocation to the variables. This file also contains the function build_next_use to build next use table for register allocation. There are two functions getreg and emptyreg to allocate a register to a variable. getreg is used to allocate a register to the variable (var in its param). It does so by first checking for any empty register. If it finds one, it allocates this register to var else it then checks for any variable in the registers which is not having any next use. If it finds one, it first saves the variable in that register in memory and allocates this register to the variable. If this also fails then it looks for a varable having the furthest next use, spill it and move it back to the memory and allocates this register to the variable. Emptyreg also works in the similar way but it allocates a specific register to the variable (it is used by division and modulo operators).
+
+Apart from these, there are some helper functions such as isregassigned which simply checks if the varable is assigned any register and one regname function which translates register number to registers name (we defined a map between register no and register name) and one more function which simply returns the variable stored in that variable.
 
 5)globalvars.py: Defines the various global variables that we are using like variable list, basic block list, next use tables etc.
 
-
-
-
-getreg(lineno,var):
-first check if there is any destination involved or not. Though it might not be reqd bt lets see if nt we  will remove it
-
-second division mod or non division which is currently TODO item
-
-if not then what it does is ki it simply allocates a register to the var specefied.
-How??
-first check if there is some reg which is yet to be assigned. if there is , then return that
-
-if not then check if there is any var in reg which is not having any next use. If we find one such reg, we save it in memory and allocate this reg to var
-
-else we then iterate through all the registers in nextuse and find the the variable currently assigned a reg having its farthest use. We then move this reg's value back in memory and then we will assign this register to the var
-
-
-a lot is left to be done
+Brief description of our three address code:
+1. +. a, b, c represents a=b+c and similarily for sub, mul, divide and modulus
+2. and, a, b, c represents a= b&c and similarily for or and xor
+3. not, a, b represents a=!b
+4. print, a represents printf a
+5. input, a represets scanf a
+6. Array: At max one array element will be opearated on in one line. The parser will make sure that whenever a line has more than one operands as array elements, it will change/break the line such that there is at max one array operations and the operator is equal. It will use temp variables as a delegate for these array elements in the calculations/operations involved.
