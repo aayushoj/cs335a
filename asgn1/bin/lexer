@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import ply.lex as lex
 import sys
 from ply.lex import TOKEN
@@ -24,7 +25,7 @@ class MyLexer(object):
     Alphabets = r'([a-zA-Z])'
     Numeric = r'([0-9])'
     Alphanum = r'([a-zA-Z0-9])'
-    Special = r'([\]!%\^&*()-+={}|~[\;:<>?,./#@`_])'
+    Special = r'([\]!%\^&$*()-+={}|~[\;:<>?,./#@`_])'
     Graphic = r'([a-zA-Z0-9]|'+ Special + r')'
     IdentifierStart = r'([0-9a-zA-Z$_])'
     Identifier = r'[a-zA-Z$_][a-zA-Z0-9$_]*'
@@ -34,15 +35,14 @@ class MyLexer(object):
 
     Separator = r'[;,.(){}[\] \"\']'
     Comments = r'(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|(//.*)'
-    # incomplete
     Operator = r'(=|<|>|<=|>=|\+|-|\*|/|==|\+\+|--|~|!|%|<<|>>|>>>|instanceof|!=|&|\^|\||&&|\|\||[+\-*/%&\^|]=|<<=|>>=|>>>=)'
 
+    FloatingLiteral=r'(([0-9]+)?\.([0-9]+)((e|E)((\+|-)?[0-9]+))?([fFdD])?|[0-9]+(e|E)(\+|-)?[0-9]+)'
     IntegerLiteral=r'[0-9]+'
-    FloatingLiteral=r'([0-9]+(e|E)(\+|-)?[0-9]+|([0-9]+)?\.([0-9]+)((e|E)((\+|-)?[0-9]+))?)'
     BooleanLiteral=r'(true|false|TRUE|FALSE)'
     CharacterLiteral=r'(\'(' + Graphic + r'|\ |\\[n\\ta"\'])\')'
     StringLiteral=r'(\"(' + Graphic + r'|\ |\\[n\\ta"\'])*\")'
-    Literals= r'('+IntegerLiteral+r'|null|'+FloatingLiteral+r'|'+BooleanLiteral+r'|'+CharacterLiteral+r'|'+StringLiteral+r')'
+    Literals= r'('+FloatingLiteral+r'|null|'+IntegerLiteral+r'|'+BooleanLiteral+r'|'+CharacterLiteral+r'|'+StringLiteral+r')'
     Illegals = r'('+IntegerLiteral + r'[a-zA-Z]+)'
 
     # A regular expression rule with some action code
@@ -60,7 +60,7 @@ class MyLexer(object):
     def t_Keyword(self, t):
         self.Num_Keyword+=1;
         self.lexer.lexpos-=1;
-        self.Set_Keyword.add(t.value)
+        self.Set_Keyword.add(t.value[:-1])
         return t
 
     @TOKEN(Identifier)

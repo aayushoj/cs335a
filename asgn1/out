@@ -1,0 +1,2076 @@
+Line :: 1  Illegal entry '
+{
+	public static void main(String[] args)
+	{	int[] list ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+		int sum = sumListEnhanced(list);
+		System.out.println("Sum of elements in list: " + sum);
+
+		System.out.println("Original List");
+		printList(list);
+		System.out.println("Calling addOne");
+		addOne(list);
+		System.out.println("List after call to addOne");
+		printList(list);
+		System.out.println("Calling addOneError");
+		addOneError(list);
+		System.out.println("List after call to addOneError. Note elements of list did not change.");
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 2  Illegal entry '
+	public static void main(String[] args)
+	{	int[] list ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+		int sum = sumListEnhanced(list);
+		System.out.println("Sum of elements in list: " + sum);
+
+		System.out.println("Original List");
+		printList(list);
+		System.out.println("Calling addOne");
+		addOne(list);
+		System.out.println("List after call to addOne");
+		printList(list);
+		System.out.println("Calling addOneError");
+		addOneError(list);
+		System.out.println("List after call to addOneError. Note elements of list did not change.");
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 3  Illegal entry '
+	{	int[] list ={1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+		int sum = sumListEnhanced(list);
+		System.out.println("Sum of elements in list: " + sum);
+
+		System.out.println("Original List");
+		printList(list);
+		System.out.println("Calling addOne");
+		addOne(list);
+		System.out.println("List after call to addOne");
+		printList(list);
+		System.out.println("Calling addOneError");
+		addOneError(list);
+		System.out.println("List after call to addOneError. Note elements of list did not change.");
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 4  Illegal entry '
+		int sum = sumListEnhanced(list);
+		System.out.println("Sum of elements in list: " + sum);
+
+		System.out.println("Original List");
+		printList(list);
+		System.out.println("Calling addOne");
+		addOne(list);
+		System.out.println("List after call to addOne");
+		printList(list);
+		System.out.println("Calling addOneError");
+		addOneError(list);
+		System.out.println("List after call to addOneError. Note elements of list did not change.");
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 5  Illegal entry '
+		System.out.println("Sum of elements in list: " + sum);
+
+		System.out.println("Original List");
+		printList(list);
+		System.out.println("Calling addOne");
+		addOne(list);
+		System.out.println("List after call to addOne");
+		printList(list);
+		System.out.println("Calling addOneError");
+		addOneError(list);
+		System.out.println("List after call to addOneError. Note elements of list did not change.");
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 6  Illegal entry '
+
+		System.out.println("Original List");
+		printList(list);
+		System.out.println("Calling addOne");
+		addOne(list);
+		System.out.println("List after call to addOne");
+		printList(list);
+		System.out.println("Calling addOneError");
+		addOneError(list);
+		System.out.println("List after call to addOneError. Note elements of list did not change.");
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 7  Illegal entry '
+		System.out.println("Original List");
+		printList(list);
+		System.out.println("Calling addOne");
+		addOne(list);
+		System.out.println("List after call to addOne");
+		printList(list);
+		System.out.println("Calling addOneError");
+		addOneError(list);
+		System.out.println("List after call to addOneError. Note elements of list did not change.");
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 8  Illegal entry '
+		printList(list);
+		System.out.println("Calling addOne");
+		addOne(list);
+		System.out.println("List after call to addOne");
+		printList(list);
+		System.out.println("Calling addOneError");
+		addOneError(list);
+		System.out.println("List after call to addOneError. Note elements of list did not change.");
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 9  Illegal entry '
+		System.out.println("Calling addOne");
+		addOne(list);
+		System.out.println("List after call to addOne");
+		printList(list);
+		System.out.println("Calling addOneError");
+		addOneError(list);
+		System.out.println("List after call to addOneError. Note elements of list did not change.");
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 10  Illegal entry '
+		addOne(list);
+		System.out.println("List after call to addOne");
+		printList(list);
+		System.out.println("Calling addOneError");
+		addOneError(list);
+		System.out.println("List after call to addOneError. Note elements of list did not change.");
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 11  Illegal entry '
+		System.out.println("List after call to addOne");
+		printList(list);
+		System.out.println("Calling addOneError");
+		addOneError(list);
+		System.out.println("List after call to addOneError. Note elements of list did not change.");
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 12  Illegal entry '
+		printList(list);
+		System.out.println("Calling addOneError");
+		addOneError(list);
+		System.out.println("List after call to addOneError. Note elements of list did not change.");
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 13  Illegal entry '
+		System.out.println("Calling addOneError");
+		addOneError(list);
+		System.out.println("List after call to addOneError. Note elements of list did not change.");
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 14  Illegal entry '
+		addOneError(list);
+		System.out.println("List after call to addOneError. Note elements of list did not change.");
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 15  Illegal entry '
+		System.out.println("List after call to addOneError. Note elements of list did not change.");
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 16  Illegal entry '
+		printList(list);
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 17  Illegal entry '
+	}
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 18  Illegal entry '
+
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 19  Illegal entry '
+
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 20  Illegal entry '
+	public static int 1024sumListEnhanced(int[] list)
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 21  Illegal entry '1024sumListEnhanced'
+Line :: 21  Illegal entry '
+	{	int total = 0;
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 22  Illegal entry '
+		for(int val : list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 23  Illegal entry ': list)
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 23  Illegal entry '
+		{	total += val;
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 24  Illegal entry '
+		}
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 25  Illegal entry '
+		return total;
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 26  Illegal entry '
+	}
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 27  Illegal entry '
+
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 28  Illegal entry '
+	public static int ~sumListOld(int[] list)
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 29  Illegal entry '
+	{	int total = 0;
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 30  Illegal entry '
+		for(int i = 0; i < list.length; i++)
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 31  Illegal entry '
+		{	total += list[i];
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 32  Illegal entry '
+			System.out.println( list[i] );
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 33  Illegal entry '
+		}
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 34  Illegal entry '
+		return total;
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 35  Illegal entry '
+	}
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 36  Illegal entry '
+
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 37  Illegal entry '
+
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 38  Illegal entry '
+	public static void @@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 39  Illegal entry '@@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 39  Illegal entry '@!!addOneError(int[] list)
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 39  Illegal entry '
+	{	for(int val : list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 40  Illegal entry ': list)
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 40  Illegal entry '
+		{	val = val + 1;
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 41  Illegal entry '
+		}
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 42  Illegal entry '
+	}
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 43  Illegal entry '
+
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 44  Illegal entry '
+
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 45  Illegal entry '
+	public static void "?"addOne(int[] list)
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 46  Illegal entry '
+	{	for(int i = 0; i < list.length; i++)
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 47  Illegal entry '
+		{	list[i]++;
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 48  Illegal entry '
+		}
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 49  Illegal entry '
+	}
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 50  Illegal entry '
+
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 51  Illegal entry '
+	public static void printList(int[] list)
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 52  Illegal entry '
+	{	System.out.println("index, value");
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 53  Illegal entry '
+		for(int i = 0; i < list.length; i++)
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 54  Illegal entry '
+		{	System.out.println(i + ", " + list[i]);
+		}
+	}
+
+
+
+}
+'
+Line :: 55  Illegal entry '
+		}
+	}
+
+
+
+}
+'
+Line :: 56  Illegal entry '
+	}
+
+
+
+}
+'
+Line :: 57  Illegal entry '
+
+
+
+}
+'
+Line :: 58  Illegal entry '
+
+
+}
+'
+Line :: 59  Illegal entry '
+
+}
+'
+Line :: 60  Illegal entry '
+}
+'
+Line :: 61  Illegal entry '
+'
+Token			Occurrances				Lexemes
+-----------------------------------------------------------------------------------------------------
+
+Keyword				41			return, for, int, void, class, static, public
+
+Literals			25			10, "index, value", 0, "List after call to addOneError. Note elements of list did not change.", ", ", "Sum of elements in list: ", "?", "Original List", 1, "Calling addOne", 3, 2, 5, 4, 7, 6, 9, 8, "List after call to addOne", "Calling addOneError"
+
+Operator			30			!, +, =, <, ~
+
+Separator			160			), (, ,, ., ;, }, {, ], [
+
+Identifier			92			total, sumListEnhanced, String, val, EnhancedFor, printList, sum, args, list, System, addOne, i, sumListOld, println, length, main, addOneError, out
