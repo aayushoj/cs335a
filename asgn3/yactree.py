@@ -71,7 +71,7 @@ def tree(p):
 def expand(p,prefx,sufx):
     if p.child==[]:
         return str(p.token)
-    print prefx+str(p.token) + sufx
+    print prefx+ "<b>"+ str(p.token) +"</b>"  + sufx + "</br>"
     suf = ""
     for x in range(len(p.child)-1,-1,-1):
         pre = prefx
@@ -83,7 +83,7 @@ def expand(p,prefx,sufx):
         # print suf
         suf = expand(p.child[x],pre,suf+sufx)+" " + suf
         if len(p.child[x].child)>1:
-            print pre + suf +sufx
+            print pre + suf +sufx + "</br>"
     return suf
 
 
