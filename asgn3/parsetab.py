@@ -5,9 +5,9 @@ _tabversion = '3.2'
 
 _lr_method = 'LALR'
 
-_lr_signature = '\x91\x95\xa5\xf7\xe0^bz\xc0\xf4\x04\xf9Z\xebA\xba'
+_lr_signature = '\x8fB\xbfa\x01\xe3\xcf\xa1"\x8f\xaa\xe2\xdc\xe8\xb62'
     
-_lr_action_items = {'NAME':([0,2,5,7,11,12,13,14,],[1,8,8,8,8,8,8,8,]),')':([3,8,9,10,16,17,18,19,20,],[-9,-10,-7,16,-8,-4,-3,-5,-6,]),'(':([0,2,5,7,11,12,13,14,],[5,5,5,5,5,5,5,5,]),'+':([1,3,6,8,9,10,15,16,17,18,19,20,],[-10,-9,12,-10,-7,12,12,-8,-4,-3,-5,-6,]),'*':([1,3,6,8,9,10,15,16,17,18,19,20,],[-10,-9,13,-10,-7,13,13,-8,13,13,-5,-6,]),'-':([0,1,2,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,],[2,-10,2,-9,2,11,2,-10,-7,11,2,2,2,2,11,-8,-4,-3,-5,-6,]),'NUMBER':([0,2,5,7,11,12,13,14,],[3,3,3,3,3,3,3,3,]),'/':([1,3,6,8,9,10,15,16,17,18,19,20,],[-10,-9,14,-10,-7,14,14,-8,14,14,-5,-6,]),'=':([1,],[7,]),'$end':([1,3,4,6,8,9,15,16,17,18,19,20,],[-10,-9,0,-2,-10,-7,-1,-8,-4,-3,-5,-6,]),}
+_lr_action_items = {'Keyword':([0,2,4,10,11,12,13,14,],[1,1,1,1,1,1,1,1,]),')':([1,7,8,9,15,17,18,19,20,],[-9,-10,-7,15,-8,-4,-3,-5,-6,]),'(':([0,2,4,10,11,12,13,14,],[4,4,4,4,4,4,4,4,]),'+':([1,5,6,7,8,9,15,16,17,18,19,20,],[-9,-10,12,-10,-7,12,-8,12,-4,-3,-5,-6,]),'*':([1,5,6,7,8,9,15,16,17,18,19,20,],[-9,-10,13,-10,-7,13,-8,13,13,13,-5,-6,]),'-':([0,1,2,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,],[2,-9,2,2,-10,11,-10,-7,11,2,2,2,2,2,-8,11,-4,-3,-5,-6,]),'/':([1,5,6,7,8,9,15,16,17,18,19,20,],[-9,-10,14,-10,-7,14,-8,14,14,14,-5,-6,]),'Identifier':([0,2,4,10,11,12,13,14,],[5,7,7,7,7,7,7,7,]),'=':([5,],[10,]),'$end':([1,3,5,6,7,8,15,16,17,18,19,20,],[-9,0,-10,-2,-10,-7,-8,-1,-4,-3,-5,-6,]),}
 
 _lr_action = { }
 for _k, _v in _lr_action_items.items():
@@ -16,7 +16,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'expression':([0,2,5,7,11,12,13,14,],[6,9,10,15,17,18,19,20,]),'statement':([0,],[4,]),}
+_lr_goto_items = {'expression':([0,2,4,10,11,12,13,14,],[6,8,9,16,17,18,19,20,]),'statement':([0,],[3,]),}
 
 _lr_goto = { }
 for _k, _v in _lr_goto_items.items():
@@ -26,14 +26,14 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> statement","S'",1,None,None,None),
-  ('statement -> NAME = expression','statement',3,'p_statement_assign','yacc.py',56),
-  ('statement -> expression','statement',1,'p_statement_expr','yacc.py',60),
-  ('expression -> expression + expression','expression',3,'p_expression_binop','yacc.py',64),
-  ('expression -> expression - expression','expression',3,'p_expression_binop','yacc.py',65),
-  ('expression -> expression * expression','expression',3,'p_expression_binop','yacc.py',66),
-  ('expression -> expression / expression','expression',3,'p_expression_binop','yacc.py',67),
-  ('expression -> - expression','expression',2,'p_expression_uminus','yacc.py',74),
-  ('expression -> ( expression )','expression',3,'p_expression_group','yacc.py',78),
-  ('expression -> NUMBER','expression',1,'p_expression_number','yacc.py',82),
-  ('expression -> NAME','expression',1,'p_expression_name','yacc.py',86),
+  ('statement -> Identifier = expression','statement',3,'p_statement_assign','untitled.py',161),
+  ('statement -> expression','statement',1,'p_statement_expr','untitled.py',165),
+  ('expression -> expression + expression','expression',3,'p_expression_binop','untitled.py',169),
+  ('expression -> expression - expression','expression',3,'p_expression_binop','untitled.py',170),
+  ('expression -> expression * expression','expression',3,'p_expression_binop','untitled.py',171),
+  ('expression -> expression / expression','expression',3,'p_expression_binop','untitled.py',172),
+  ('expression -> - expression','expression',2,'p_expression_uminus','untitled.py',179),
+  ('expression -> ( expression )','expression',3,'p_expression_group','untitled.py',183),
+  ('expression -> Keyword','expression',1,'p_expression_number','untitled.py',187),
+  ('expression -> Identifier','expression',1,'p_expression_name','untitled.py',191),
 ]
