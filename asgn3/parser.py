@@ -214,7 +214,155 @@ def p_ArgumentList(p):
     '''ArgumentList : Expression
             | ArgumentList SEPCOMMA Expression
     '''
-
+def p_NewAllocationExpression(p):
+    '''NewAllocationExpression : PlainNewAllocationExpression
+                    | QualifiedName SEPDOT PlainNewAllocationExpression
+    '''
+def p_PlainNewAllocationExpression(p):
+    '''PlainNewAllocationExpression :  ArrayAllocationExpression
+                        | ClassAllocationExpression
+                        | ArrayAllocationExpression SEPLEFTPARAN SEPRIGHTPARAN
+                        | ClassAllocationExpression SEPLEFTPARAN SEPRIGHTPARAN
+                        | ArrayAllocationExpression SEPLEFTPARAN ArrayInitializers SEPRIGHTPARAN
+                        | ClassAllocationExpression SEPLEFTPARAN FieldDeclarations SEPRIGHTPARAN
+    '''
+def p_ClassAllocationExpression(p):
+    '''ClassAllocationExpression : KEYNEW TypeName SEPLEFTBRACE ArgumentList SEPRIGHTBRACE
+                        | KEYNEW TypeName SEPLEFTBRACE SEPRIGHTBRACE
+    '''
+def p_ArrayAllocationExpression(p):
+    '''ArrayAllocationExpression : KEYNEW TypeName DimExprs Dims
+                            | KEYNEW TypeName DimExprs
+                            | KEYNEW TypeName Dims
+    '''
+def p_DimExprs(p):
+    '''DimExprs : DimExpr
+                | DimExprs DimExpr
+    '''
+def p_DimExpr(p):
+    '''DimExpr : SEPLEFTSQBR Expression SEPRIGHTSQBR
+    '''
+def p_Dims(p):
+    '''Dims : SEPLEFTSQBR SEPRIGHTSQBR
+            | Dims SEPLEFTSQBR SEPRIGHTSQBR
+    '''
+def p_PostfixExpression(p):
+    '''PostfixExpression : PrimaryExpression
+                    | RealPostfixExpression
+    '''
+def p_RealPostfixExpression(p):
+    '''RealPostfixExpression : PostfixExpression OPINCREMENT
+                    | PostfixExpression OPDECREMENT
+    '''
+def p_UnaryExpression(p):
+    '''UnaryExpression : OPINCREMENT UnaryExpression
+                | OPDECREMENT UnaryExpression
+                | ArithmeticUnaryOperator CastExpression
+                | LogicalUnaryExpression
+    '''
+def p_LogicalUnaryExpression(p):
+    '''LogicalUnaryExpression : PostfixExpression
+                        | LogicalUnaryOperator UnaryExpression
+    '''
+def p_LogicalUnaryOperator(p):
+    '''LogicalUnaryOperator : OPTILDE
+                         | OPNOT 
+    '''
+def p_ArithmeticUnaryOperator(p):
+    '''ArithmeticUnaryOperator : OPPLUS
+                            | OPMINUS
+    '''
+def p_CastExpression(p) :
+    ''' CastExpression : UnaryExpression
+                | SEPLEFTBRACE PrimitiveTypeExpression SEPRIGHTBRACE CastExpression
+                | SEPLEFTBRACE ClassTypeExpression SEPRIGHTBRACE CastExpression
+                | SEPLEFTBRACE Expression SEPRIGHTBRACE LogicalUnaryExpression
+    '''
+def p_PrimitiveTypeExpression(p):
+    '''PrimitiveTypeExpression : PrimitiveType
+                    | PrimitiveType Dims
+    '''
+def p_ClassTypeExpression(p):
+    '''ClassTypeExpression : QualifiedName Dims
+    '''
+def p_MultiplicativeExpression(p):
+    '''MultiplicativeExpression : CastExpression
+                    | MultiplicativeExpression OPMULTIPLY CastExpression
+                    | MultiplicativeExpression OPDIVIDE CastExpression
+                    | MultiplicativeExpression OPMOD CastExpression
+    '''
+def p_AdditiveExpression(p):
+    '''AdditiveExpression : MultiplicativeExpression
+                        | AdditiveExpression OPPLUS MultiplicativeExpression
+                        | AdditiveExpression OPMINUS MultiplicativeExpression
+    '''
+def p_ShiftExpression(p):
+    '''ShiftExpression : AdditiveExpression
+                    | ShiftExpression OPLEFTSHIFT AdditiveExpression
+                    | ShiftExpression OPRIGHTSHIFT AdditiveExpression
+                    | ShiftExpression OPLOGICALSHIFT AdditiveExpression
+    '''
+def p_RelationalExpression(p):
+    '''RelationalExpression : ShiftExpression
+                        | RelationalExpression OPLESSER ShiftExpression
+                        | RelationalExpression OPGREATER ShiftExpression
+                        | RelationalExpression OPLESSEQ ShiftExpression
+                        | RelationalExpression OPGREATEQ ShiftExpression
+                        | RelationalExpression OPINSTANCEOF TypeSpecifier
+    '''
+def p_EqualityExpression(p):
+    '''EqualityExpression : RelationalExpression
+                        | EqualityExpression OPCHECKEQ RelationalExpression
+                        | EqualityExpression OPNOTEQ RelationalExpression
+    '''
+def p_AndExpression(p):
+    '''AndExpression : EqualityExpression
+                    | AndExpression OPBINAND EqualityExpression
+    '''
+def p_ExclusiveOrExpression(p):
+    '''ExclusiveOrExpression : AndExpression
+                    | ExclusiveOrExpression OPXOR AndExpression
+    '''
+def p_InclusiveOrExpression(p):
+    '''InclusiveOrExpression : ExclusiveOrExpression
+                        | InclusiveOrExpression OPBINOR ExclusiveOrExpression
+    '''
+def p_ConditionalAndExpression(p):
+    '''ConditionalAndExpression : InclusiveOrExpression
+                            | ConditionalAndExpression OPBINANDEQ InclusiveOrExpression
+    '''
+def p_ConditionalOrExpression(p):
+    '''ConditionalOrExpression : ConditionalAndExpression
+                        | ConditionalOrExpression OPOR ConditionalAndExpression
+    '''
+def p_ConditionalExpression(p):
+    ''' ConditionalExpression : ConditionalOrExpression
+                        | ConditionalOrExpression OPTERNARY Expression SEPCOLON ConditionalExpression
+    '''
+def p_AssignmentExpression(p):
+    '''AssignmentExpression : ConditionalExpression
+                        | UnaryExpression AssignmentOperator AssignmentExpression
+    '''
+def p_AssignmentOperator(p):
+    ''' AssignmentOperator : OPEQUAL
+                        | OPMULTIPLYEQ
+                        | OPDIVIDEEQ
+                        | OPMODEQ
+                        | OPPLUSEQ
+                        | OPMINUSEQ
+                        | OPLEFTSHIFTEQ
+                        | OPRIGHTSHIFTEQ
+                        | OPLOGICALSHIFTEQ
+                        | OPBINANDEQ
+                        | OPXOREQ
+                        | OPBINOREQ
+    '''
+def p_Expression(p):
+    '''Expression : AssignmentExpression
+    '''
+def p_ConstantExpression(p):
+    '''ConstantExpression : ConditionalExpression
+    '''
 def p_error(p):
     if p == None:
         print "You missed something at the end"
