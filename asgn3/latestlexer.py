@@ -13,7 +13,8 @@ tokens = (
     'StringLiteral',
     'Separator',
     'Comments',
-    'Operator'
+    'Operator',
+    'OP_DIM'
 )
 
 # Regular expression rules for simple tokens
@@ -38,7 +39,7 @@ CharacterLiteral=r'(\'(' + Graphic + r'|\ |\\[n\\ta"\'])\')'
 StringLiteral=r'(\"(' + Graphic + r'|\ |\\[n\\ta"\'])*\")'
 # Literals= r'('+FloatingLiteral+r'|null|'+IntegerLiteral+r'|'+BooleanLiteral+r'|'+CharacterLiteral+r'|'+StringLiteral+r')'
 Illegals = r'('+IntegerLiteral + r'[a-zA-Z]+)'
-
+OP_DIM=r'\[[\t ]*\]'
 # A regular expression rule with some action code
 # Note addition of self parameter since we're in a class
 @TOKEN(Comments)
@@ -87,6 +88,11 @@ def t_CharacterLiteral(t):
 
 @TOKEN(StringLiteral)
 def t_StringLiteral(t):
+    return t
+
+@TOKEN(OP_DIM)
+def t_OP_DIM(t):
+    # t.type = separators[t.value]
     return t
 
 @TOKEN(Separator)
