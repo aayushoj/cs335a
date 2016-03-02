@@ -3,18 +3,28 @@ import ply.lex as lex
 import sys
 import ply.yacc as yacc
 from latestlexer import tokens
-
+import logging
 # print tokens
 
-def p_program(p):
-    '''program : importstatements '''
+# def p_program(p):
+#     '''program : Importstatements '''
 
-def p_importstatements(p):
-    '''importstatements : importstatement
-                    | importstatements importstatement
+def p_CompilationUnit(p):
+    '''CompilationUnit : ProgramFile
     '''
-def p_importstatement(p):
-    '''importstatement : KEYIMPORT QualifiedName Semicolons
+
+def p_ProgramFile(p):
+    ''' ProgramFile : Importstatements TypeDeclarationOptSemi
+                | Importstatements
+                | TypeDeclarationOptSemi
+    '''
+
+def p_Importstatements(p):
+    '''Importstatements : Importstatement
+                    | Importstatements Importstatement
+    '''
+def p_Importstatement(p):
+    '''Importstatement : KEYIMPORT QualifiedName Semicolons
                     | KEYIMPORT QualifiedName SEPDOT OPMULTIPLY Semicolons
     '''
 def p_QualifiedName(p):
@@ -26,18 +36,15 @@ def p_Semicolons(p):
                 | Semicolons SEPSEMICOLON
     '''
 def p_TypeSpecifier(p):
-    '''TypeSpecifier : TypeName
-                | TypeName Dims               
+    '''TypeSpecifier : TypeName 
+            | TypeName Dims              
     '''
 #don't know what is Dims
-def p_Semicolons(p):
-    '''Semicolons : SEPSEMICOLON
-                | Semicolons SEPSEMICOLON
-    '''
 def p_TypeName(p):
     '''TypeName : PrimitiveType
             | QualifiedName
     '''
+
 def p_PrimitiveType(p):
     '''PrimitiveType : KEYBOOLEAN
                 | KEYCHAR
@@ -49,47 +56,175 @@ def p_PrimitiveType(p):
                 | KEYVOID
                 | KEYFLOAT
     '''
-def p_ClassNameList(p):
-    '''ClassNameList : QualifiedName
-                 | ClassNameList SEPCOMMA QualifiedName
+
+# def p_ClassNameList(p):
+#     '''ClassNameList : QualifiedName
+#                  | ClassNameList SEPCOMMA QualifiedName
+#     '''
+
+
+
+
+def p_TypeDeclarationOptSemi(p):
+    '''TypeDeclarationOptSemi : TypeDeclaration
+                    | TypeDeclaration Semicolons
     '''
-# def p_CompliationUnit(p):
-#     '''CompliationUnit : ProgramFile
-#     '''
-# def p_ProgramFile(p):
-#     ''' ProgramFile : PackageStatement ImportStatements TypeDeclarations
-#                 | PackageStatement ImportStatements
-#                 | PackageStatement TypeDeclarations
-#                 | ImportStatements TypeDeclarations
-#                 | PackageStatement
-#                 | ImportStatements
-#                 | TypeDeclarations
-#     '''
-# def p_PackageStatement(p):
-#     '''PackageStatement : PACKAGE QualifiedName Semicolons
-#     '''
-# def p_TypeDeclarations(p):
-#     '''TypeDeclarations : TypeDeclarationOptSemi
-#                     | TypeDeclarations TypeDeclarationOptSemi
-#     '''
-# def p_TypeDeclarationOptSemi(p):
-#     '''TypeDeclarationOptSemi : TypeDeclaration
-#                     | TypeDeclaration SemiColons
-#     '''
-# def p_TypeDeclaration(p):
-#     '''TypeDeclaration : ClassHeader SEPLEFTPARAN FieldDeclarations SEPRIGHTPARAN
-#                     | ClassHeader SEPLEFTPARAN SEPRIGHTPARAN
-#     '''
-# def p_ClassHeader(p):
-#     '''ClassHeader : Modifiers ClassWord Identifier Extends Interfaces
-#                 | Modifiers ClassWord Identifier Extends
-#                 | Modifiers ClassWord Identifier Interfaces
-#                 | ClassWord Identifier Extends Interfaces
-#                 | Modifiers ClassWord Identifier
-#                 | ClassWord Identifier Extends
-#                 | ClassWord Identifier Interfaces
-#                 | ClassWord Identifier
-#     '''
+def p_TypeDeclaration(p):
+    '''TypeDeclaration : ClassHeader SEPLEFTPARAN FieldDeclarations SEPRIGHTPARAN
+                    | ClassHeader SEPLEFTPARAN SEPRIGHTPARAN
+    '''
+def p_ClassHeader(p):
+    '''ClassHeader : Modifiers ClassWord Identifier
+                | ClassWord Identifier
+    '''
+def p_ClassWord(p):
+    '''ClassWord : KEYCLASS'''
+
+# FieldDeclarations
+#     : FieldDeclarationOptSemi
+#         | FieldDeclarations FieldDeclarationOptSemi
+#     ;
+def p_FieldDeclarations(p):
+    '''FieldDeclarations : FieldDeclarationOptSemi
+                    | FieldDeclarations FieldDeclarationOptSemi
+    '''
+# FieldDeclarationOptSemi
+#         : FieldDeclaration
+#         | FieldDeclaration SemiColons
+#         ;
+def p_FieldDeclarationOptSemi(p):
+    '''FieldDeclarationOptSemi : FieldDeclaration
+                               | FieldDeclaration Semicolons
+    '''
+# FieldDeclaration
+#     : FieldVariableDeclaration ';'
+#     | MethodDeclaration
+#     | ConstructorDeclaration
+#     | StaticInitializer
+#         | NonStaticInitializer
+#         | TypeDeclaration
+#     ;
+
+def p_FieldDeclaration(p):
+    '''FieldDeclaration : FieldVariableDeclaration Semicolons
+                        | MethodDeclaration
+                        | ConstructorDeclaration
+                        | StaticInitializer
+                        | NonStaticInitializer
+                        | TypeDeclaration 
+    '''
+
+# FieldVariableDeclaration
+#     : Modifiers TypeSpecifier VariableDeclarators
+#     |           TypeSpecifier VariableDeclarators
+#     ;
+
+def p_FieldVariableDeclaration(p):
+    '''FieldVariableDeclaration : Modifiers TypeSpecifier VariableDeclarators
+                                | TypeSpecifier VariableDeclarators
+    '''
+
+# VariableDeclarators
+#     : VariableDeclarator
+#     | VariableDeclarators SEPCOMMA VariableDeclarator
+#     ;
+
+def p_VariableDeclarators(p):
+    '''VariableDeclarators : VariableDeclarator
+                            | VariableDeclarators SEPCOMMA VariableDeclarator
+    '''
+
+# VariableDeclarator
+#     : DeclaratorName
+#     | DeclaratorName '=' VariableInitializer
+#     ;
+def p_VariableDeclarator(p):
+    ''' VariableDeclarator : DeclaratorName
+                            | DeclaratorName OPEQUAL VariableInitializer
+    '''
+
+# VariableInitializer
+#     : Expression
+#     | SEPLEFTPARAN SEPRIGHTPARAN
+#         | SEPLEFTPARAN ArrayInitializers SEPRIGHTPARAN
+#         ;
+
+def p_VariableInitializer(p):
+    '''VariableInitializer : Expression
+                            | SEPLEFTPARAN SEPRIGHTPARAN
+                            | SEPLEFTPARAN ArrayInitializers SEPRIGHTPARAN
+    '''
+# ArrayInitializers
+#     : VariableInitializer
+#     | ArrayInitializers SEPCOMMA VariableInitializer
+#     | ArrayInitializers SEPCOMMA
+#     ;
+
+def p_ArrayInitializers(p):
+    '''ArrayInitializers : VariableInitializer
+                            | ArrayInitializers SEPCOMMA VariableInitializer
+                            | ArrayInitializers SEPCOMMA
+    '''
+
+# MethodDeclaration
+#     : Modifiers TypeSpecifier MethodDeclarator Throws MethodBody
+#     | Modifiers TypeSpecifier MethodDeclarator        MethodBody
+#     |           TypeSpecifier MethodDeclarator Throws MethodBody
+#     |           TypeSpecifier MethodDeclarator        MethodBody
+#     ;
+
+def p_MethodDeclaration(p):
+    '''MethodDeclaration : Modifiers TypeSpecifier MethodDeclarator        MethodBody
+                        |           TypeSpecifier MethodDeclarator        MethodBody
+    '''
+
+def p_MethodDeclarator(p):
+    '''MethodDeclarator : DeclaratorName SEPLEFTBRACE ParameterList SEPRIGHTBRACE
+                    | DeclaratorName SEPLEFTBRACE SEPRIGHTBRACE
+                    | MethodDeclarator SEPLEFTSQBR SEPRIGHTSQBR
+    '''
+
+def p_ParameterList(p):
+    '''ParameterList : Parameter
+                    | ParameterList SEPCOMMA Parameter
+    '''
+    
+def p_Parameter(p):
+    '''Parameter : TypeSpecifier DeclaratorName
+       '''
+def p_DeclaratorName(p):
+    '''DeclaratorName : Identifier
+                    | DeclaratorName SEPLEFTSQBR SEPRIGHTSQBR
+    '''
+# def p_Throws(p):
+#     '''Throws : THROWS ClassNameList'''
+
+def p_MethodBody(p):
+    '''MethodBody : Block
+                | SEPSEMICOLON
+    '''
+
+def p_ConstructorDeclaration(p):
+    '''ConstructorDeclaration : Modifiers ConstructorDeclarator Block
+                        | ConstructorDeclarator Block
+    '''
+
+def p_ConstructorDeclarator(p):
+    '''ConstructorDeclarator : Identifier SEPLEFTBRACE ParameterList SEPRIGHTBRACE
+                            | Identifier SEPLEFTBRACE SEPRIGHTBRACE
+    '''
+
+def p_StaticInitializer(p):
+    '''StaticInitializer : KEYSTATIC Block
+    '''
+
+def p_NonStaticInitializer(p):
+    '''NonStaticInitializer : Block
+    '''
+
+
+
+##############################################################################################3
 def p_Modifiers(p):
     '''Modifiers : Modifier
                 | Modifiers Modifier
@@ -135,8 +270,8 @@ def p_SelectionStatement(p):
     '''
 def p_IterationStatement(p):
     '''IterationStatement : KEYWHILE SEPLEFTBRACE Expression SEPRIGHTBRACE Statement
-                        | FOR SEPLEFTBRACE Forint Forexpr ForIncr SEPRIGHTBRACE Statement
-                        | FOR SEPLEFTBRACE Forint Forexpr SEPRIGHTBRACE Statement
+                        | KEYFOR SEPLEFTBRACE ForInt ForExpr ForIncr SEPRIGHTBRACE Statement
+                        | KEYFOR SEPLEFTBRACE ForInt ForExpr SEPRIGHTBRACE Statement
     '''
 def p_ForInt(p):
     '''ForInt : ExpressionStatements SEPSEMICOLON
@@ -157,7 +292,7 @@ def p_ExpressionStatements(p):
 def p_JumpStatement(p):
     '''JumpStatement : KEYBREAK Identifier SEPSEMICOLON
                 | KEYBREAK SEPSEMICOLON
-                | KEYCONTINUE IDENTIFIER SEPSEMICOLON
+                | KEYCONTINUE Identifier SEPSEMICOLON
                 | KEYCONTINUE SEPSEMICOLON
                 | KEYRETURN Expression SEPSEMICOLON
                 | KEYRETURN  SEPSEMICOLON
@@ -177,8 +312,7 @@ def p_ComplexPrimary(p):
             | ComplexPrimaryNoParenthesis
     '''
 def p_ComplexPrimaryNoParenthesis(p):
-    '''ComplexPrimaryNoParenthesis : LITERAL
-                            | BooleanLiteral
+    '''ComplexPrimaryNoParenthesis : BooleanLiteral
                             | IntegerLiteral
                             | FloatingLiteral
                             | CharacterLiteral
@@ -360,21 +494,116 @@ def p_AssignmentOperator(p):
 def p_Expression(p):
     '''Expression : AssignmentExpression
     '''
-def p_ConstantExpression(p):
-    '''ConstantExpression : ConditionalExpression
-    '''
 def p_error(p):
     if p == None:
         print "You missed something at the end"
     else:
         print "Syntax error in input line!"
 
+# parser = yacc.yacc()
+
+# while 1:
+#     try:
+#         s = raw_input('calc > ')
+#     except EOFError:
+#         break
+#     if not s: continue
+#     yacc.parse(s)
+logging.basicConfig(
+    level = logging.DEBUG,
+    filename = "parselog.txt",
+    filemode = "w"
+)
+
+log = logging.getLogger()
 parser = yacc.yacc()
 
-while 1:
-    try:
-        s = raw_input('calc > ')
-    except EOFError:
-        break
-    if not s: continue
-    yacc.parse(s)
+
+if __name__ == "__main__" : 
+
+    s = open(sys.argv[1],'r')
+    data = s.read()
+    data+= "\n"
+    s.close()
+    result = parser.parse(data,debug=log)
+
+
+    import re
+    from collections import defaultdict
+
+    #obtain the lines with the productions used
+    outfile = open("actions.txt",'w')
+    with open("parselog.txt") as f:
+        for line in f:
+            if re.match("INFO:root:Action(.*)", line):
+                outfile.write(line)
+
+
+    #clean the productions to give the required information
+    infile = "actions.txt"
+    outfile = "treefile.txt"
+
+    delete_list2 = ["rule [","] with"]
+
+    fin = open(infile)
+    fout = open(outfile, "w+")
+    for line in fin:
+       matches = re.findall('rule \[(.*)\] with', line)
+       #for word in delete_list2:
+       #    matches[0] = matches[0].replace(word, "")
+       fout.write(matches[0])
+       #line = line[1:len(line)-2]
+       #fout.write(line)    
+       fout.write("\n")
+    fin.close()
+    fout.close()
+
+
+
+    #use the clean productions and build the dot file
+    nodes = defaultdict(list)
+    #nodes = dict()
+    nodeNum = 1
+
+    infile = sys.argv[1]
+    outfile = infile[0:len(infile)-3]
+    outfile+=".dot"
+    outfile = outfile.split("/")[-1]
+
+    fout = open(outfile,"w")
+
+    fout.write("""digraph G {
+    graph [ordering="out"];
+    """)
+    fout.write("\n")
+
+    for line in open("treefile.txt"):
+        columns = line.split(" ")
+        fout.write("node%d [ label = \"%s\" ]; " % (nodeNum,columns[0]))
+        fout.write("\n")
+        lhsNum = nodeNum
+        nodeNum += 1
+        edges = []
+        for i in range(1,len(columns)-1):
+            i = len(columns)  - i
+        columns[i] = columns[i].rstrip()
+        edge = ""
+        if columns[i] in nodes:
+            edge += "node" + str(lhsNum) + " -> node" + str(nodes[columns[i]].pop(len(nodes[columns[i]])-1)) + ";"
+            if len(nodes[columns[i]]) == 0:
+               del nodes[columns[i]]
+        else:
+            fout.write("node%d [ label = \"Token \n %s\" ]; " % (nodeNum,columns[i]))
+            fout.write("\n")
+            edge += "node" + str(lhsNum) + " -> node" + str(nodeNum) + ";"
+            #print "node%d -> node%d;" %(lhsNum,nodeNum)
+            nodeNum += 1
+        edges.append(edge)
+        nodes[columns[0]].append(lhsNum)
+        while edges:
+           fout.write(edges.pop(len(edges)-1))
+           fout.write("\n")
+
+    fout.write( "}" )
+    fout.write("\n")
+    fout.close()
