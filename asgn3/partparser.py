@@ -27,13 +27,15 @@ def p_Importstatement(p):
     '''Importstatement : KEYIMPORT QualifiedName Semicolons
                     | KEYIMPORT QualifiedName SEPDOT OPMULTIPLY Semicolons
     '''
+
 def p_QualifiedName(p):
     '''QualifiedName : Identifier
                 | QualifiedName SEPDOT Identifier
     '''
+
 def p_Semicolons(p):
     '''Semicolons : SEPSEMICOLON
-                | Semicolons SEPSEMICOLON
+                | Semicolons SEPSEMICOLON 
     '''
 def p_TypeSpecifier(p):
     '''TypeSpecifier : TypeName 
@@ -85,9 +87,8 @@ def p_FieldDeclarationOptSemi(p):
     '''FieldDeclarationOptSemi : FieldDeclaration
                                | FieldDeclaration Semicolons
     '''
-
 def p_FieldDeclaration(p):
-    '''FieldDeclaration : FieldVariableDeclaration Semicolons
+    '''FieldDeclaration : FieldVariableDeclaration SEPSEMICOLON
                         | MethodDeclaration
                         | ConstructorDeclaration
                         | StaticInitializer
@@ -127,7 +128,7 @@ def p_MethodDeclaration(p):
 def p_MethodDeclarator(p):
     '''MethodDeclarator : DeclaratorName SEPLEFTBRACE ParameterList SEPRIGHTBRACE
                     | DeclaratorName SEPLEFTBRACE SEPRIGHTBRACE
-                    | MethodDeclarator SEPLEFTSQBR SEPRIGHTSQBR
+                    | MethodDeclarator OP_DIM
     '''
 
 def p_ParameterList(p):
@@ -140,7 +141,7 @@ def p_Parameter(p):
        '''
 def p_DeclaratorName(p):
     '''DeclaratorName : Identifier
-                    | DeclaratorName SEPLEFTSQBR SEPRIGHTSQBR
+                    | DeclaratorName OP_DIM
     '''
 # def p_Throws(p):
 #     '''Throws : THROWS ClassNameList'''
@@ -210,8 +211,9 @@ def p_EmptyStatement(p):
 def p_ExpressionStatement(p):
     '''ExpressionStatement : Expression
     '''
+    
 def p_SelectionStatement(p):
-    '''SelectionStatement : KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE Statement
+    '''SelectionStatement : KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE Statement 
                         | KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE Statement KEYELSE Statement
     '''
 def p_IterationStatement(p):
@@ -323,8 +325,8 @@ def p_DimExpr(p):
     '''DimExpr : SEPLEFTSQBR Expression SEPRIGHTSQBR
     '''
 def p_Dims(p):
-    '''Dims : SEPLEFTSQBR SEPRIGHTSQBR
-            | Dims SEPLEFTSQBR SEPRIGHTSQBR
+    '''Dims : OP_DIM
+            | Dims OP_DIM
     '''
 def p_PostfixExpression(p):
     '''PostfixExpression : PrimaryExpression
@@ -409,7 +411,7 @@ def p_InclusiveOrExpression(p):
     '''
 def p_ConditionalAndExpression(p):
     '''ConditionalAndExpression : InclusiveOrExpression
-                            | ConditionalAndExpression OPBINANDEQ InclusiveOrExpression
+                            | ConditionalAndExpression OPAND InclusiveOrExpression
     '''
 def p_ConditionalOrExpression(p):
     '''ConditionalOrExpression : ConditionalAndExpression
