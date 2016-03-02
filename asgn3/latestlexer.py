@@ -116,12 +116,12 @@ def t_error(t):
     t.lexer.skip(1)
 
 
-keyw = ['continue','for','new','switch','assert','default','goto','boolean','do','if','private','this','break','double','protected','byte','else','import','public','case','enum','return','catch','extends','int','short','try','char','static','void','class','long','volatile','const','float','while']
+keyw = ['continue','for','new','switch','assert','default','goto','boolean','do','if','private','this','break','double','protected','byte','else','import','public','case','enum','return','catch','extends','int','short','try','char','static','void','class','long','volatile','const','float','while','interfaces','throw','throws']
 keywords ={}
 for i in keyw:
     keywords[i]="KEY"+ str(i).upper()
 tokens = tokens + tuple(keywords.values())
-# op = ['=','<','>' ,'<=','>=','+','-','*', '/' ,'==' ,'++' , '--', '~', '!' ,'%' , '<<' , '>>', '>>>' , 'instanceof', '!=','&' , '^', '|' , '&&' , '||' , '+=' , '\=', '-=', '*=' , '%=', '&=', '^=', '|=' , '<<=' , '>>=' ,'>>>=' ]
+# op = ['=','<','>' ,'<=','>=','+','-','*' , '?' ,'/' ,'==' ,'++' , '--', '~', '!' ,'%' , '<<' , '>>', '>>>' , 'instanceof', '!=','&' , '^', '|' , '&&' , '||' , '+=' , '/=', '-=', '*=' , '%=', '&=', '^=', '|=' , '<<=' , '>>=' ,'>>>=' ]
 
 operators = {
     '+':    'PLUS',
@@ -147,10 +147,11 @@ operators = {
     '&' :   'BINAND',
     '^' :   'XOR',
     '|' :   'BINOR',
+    '?' :   'TERNARY',
     '&&' :  'AND',
     '||' :  'OR',
     '+=' :  'PLUSEQ',
-    '\=' :  'DIVIDEEQ',
+    '/=' :  'DIVIDEEQ',
     '-=' :  'MINUSEQ',
     '*=' :  'MULTIPLYEQ',
     '%=' :  'MODEQ',
@@ -176,33 +177,16 @@ separators = {
     '[' : 'LEFTSQBR',
     ']' : 'RIGHTSQBR',
     '"' : 'DOUBLEINCO',
-    '\'' : 'SINGLEINCO'
+    '\'' : 'SINGLEINCO',
+    ':' : 'COLON'
 }
 for i in separators:
     separators[i] = "SEP" + separators[i]
 tokens = tokens + tuple(separators.values())
 lexer = lex.lex()
-filename = sys.argv[1]
-f = open(filename, 'r')
-data = f.read()
-lexer.input(data)
-for tok in lexer:
-    print tok
-# Build the lexer
-# def build(self, **kwargs):
-#     t.lexer = lex.lex(module=self, **kwargs)
-#
-# # Test it output
-# def test(data):
-#     t.lexer.input(data)
-#     while True:
-#         tok = t.lexer.token()
-#         if not tok:
-#             break
-#         # print(tok)
-#
-# # Build the lexer and try it out
-#
-# m = MyLexer()
-# m.build()
-#
+# filename = sys.argv[1]
+# f = open(filename, 'r')
+# data = f.read()
+# lexer.input(data)
+# for tok in lexer:
+#     print tok
