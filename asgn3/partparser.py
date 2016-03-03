@@ -14,12 +14,6 @@ finalout=[]
 #     '''program : Importstatements '''
 
 
-    
-def valuate(line,x):
-    if output[line][x] in nonterminals:
-        return output[line][x]
-    else:
-        return output[line][x].value
 
 def p_CompilationUnit(p):
     '''CompilationUnit : ProgramFile
@@ -538,38 +532,82 @@ def rightderivation(prefx,sufx):
     global countg
     lcount=countg
     count=0
-    last=-1
+    last=[]
     for i in range(1,len(output[lcount])):
         if not (output[lcount][i] in nonterminals):
             count+=1
         else:
-            last=max(last,i)
+            last.append(i)
     pre=" "
     for i in range(1,len(output[lcount])):
-        if(i==last):
-            pre=pre+"<b> "+str(valuate(lcount,i))  +" </b>"
+        if(last != [] and i==last[-1]):
+            pre=pre+" <b> "+str(valuate(lcount,i))  +" </b> "
         else:
-            pre=pre+str(valuate(lcount,i))
-        if not(i==len(output[lcount])-1):
-            pre += " "
+            pre=pre+str(valuate(lcount,i)) +  " "
     if(count==len(output[lcount])-1):
         countg+=1
         return pre
-    finalout.append(prefx + pre +sufx)
+    del last[-1]
+    finalout.append(computestr(prefx)+" " + pre+" " +sufx)
     suf=" "
     for x in range(len(output[lcount])-1,0,-1):
         if not (output[lcount][x] in nonterminals):
             suf = valuate(lcount,x)+suf
             continue
-        pre = prefx
+        if(numnonterminals(countg+1)==0 and last==[]):
+            for i in range(len(prefx)-1,-1,-1):
+                if prefx[i] in nonterminals:
+                    las=i
+                    break
+            pre=" "
+            for i in range(len(prefx)):
+                if(i==las):
+                    pre=pre+" <b> "+str(prefx[i])  +" </b> "
+                elif prefx[i] in nonterminals:
+                    pre=pre+str(prefx[i]) +  " "
+                else:
+                    pre=pre+str(prefx[i].value)+  " "
+            flag=0
+        else:
+            pre=computestr(prefx)
+            flag=1
         for i in range(1,x):
-            pre=pre+str(valuate(lcount,i))+" "
+            if(flag ==1 and last != [] and i==last[-1] ): 
+                pre=pre+" <b> "+str(valuate(lcount,i))  +" </b> "
+            else:
+                pre=pre+str(valuate(lcount,i))+" "
         countg+=1
-        suf = str(rightderivation(pre,suf+sufx)) + suf
+        suf = str(rightderivation(prefx+output[lcount][1:x],suf+sufx)) +" " + suf
         countg-=1
-        finalout.append(pre +suf +sufx)
+        finalout.append(pre+" " +suf+" " +sufx)
+        if (last != []):
+            del last[-1]
     countg+=1
     return suf
+
+def computestr(lis):
+    stri=" "
+    for i in range(len(lis)):
+        if lis[i] in nonterminals:
+            stri=stri+str(lis[i]) +  " "
+        else:
+            stri=stri+str(lis[i].value)+  " "
+    return stri
+
+def valuate(line,x):
+    if output[line][x] in nonterminals:
+        return output[line][x]
+    else:
+        return output[line][x].value
+
+def numnonterminals(line):
+    # print output[line]
+    count=0
+    for i in range(1,len(output[line])):
+        if output[line][i] in nonterminals:
+            count+=1
+    # print count
+    return count
 
 def truncfinal():
     global finalout
@@ -578,13 +616,16 @@ def truncfinal():
         if(removeempty(finalout[i].split(' '))==removeempty(finalout[i+1].split(' '))):
             del finalout[i+1]
         else:
+            # print "truncfinal"
+            # print finalout[i]
+            # print finalout[i+1]
             i+=1
 
 
 def removeempty(lis):
     i=0
     while i < len(lis):
-        if(lis[i]=='' or lis[i]=='<br>' or lis[i]=='</br>'):
+        if(lis[i]=='' or lis[i]=='<b>' or lis[i]=='</b>'):
             del lis[i]
         else:
             i+=1
@@ -613,8 +654,10 @@ for i in range(len(revoutput)):
     nonterminals.append(revoutput[i][0])
 for i in range(len(revoutput)-1,-1,-1):
     output.append(revoutput[i])
-print  "<b> "+ str(output[0][0])+"</b> "
-rightderivation("","")
+# for i in output:
+#     print i
+print  "<b> "+ str(output[0][0])+"</b> "+ "</br>"
+rightderivation([],"")
 truncfinal()
 for i in finalout:
     sp=i.split(' ')
@@ -625,6 +668,3 @@ for i in finalout:
         else:
             st+=sp[j]+ " "
     print st + "</br>"
-
-
-        
