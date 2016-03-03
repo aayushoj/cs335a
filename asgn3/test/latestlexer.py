@@ -27,10 +27,10 @@ IdentifierStart = r'([0-9a-zA-Z$_])'
 Identifier = r'[a-zA-Z$_][a-zA-Z0-9$_]*'
 
 # print(Identifier)
-Keyword = r'(continue|for|new|switch|assert|default|goto|boolean|do|if|private|this|class|break|double|protected|byte|else|import|public|case|enum|return|catch|extends|int|short|try|char|static|void|long|volatile|const|float|while)'+r'[^0-9a-zA-Z$_]'
+Keyword = r'(continue|for|new|switch|assert|default|goto|boolean|do|if|finally|private|this|class|break|double|protected|byte|else|import|public|case|enum|return|catch|extends|int|short|try|char|static|void|long|volatile|const|float|while|interfaces|throw|throws)'+r'[^0-9a-zA-Z$_]'
 Separator = r'[;,.(){}[\] \"\']'
 Comments = r'(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|(//.*)'
-Operator = r'(>>>=|<<=|>>=|<<|>>|>>>|<=|>=|<|>|[+\-*/%&\^|]=|\+|-|\*|/|==|\+\+|=|--|~|!|%|instanceof|!=|&|\^|\||&&|\|\|)'
+Operator = r'(>>>=|<<=|>>=|<<|>>|>>>|<=|>=|<|>|\+\+[^+=]|--[^\-=]|[+\-*/%&\^|]=|\+[^+=]|-[^\-=]|\*|/|==|=|~|!=|%|instanceof|!|&&|\^|\|\||&|\|)'
 
 FloatingLiteral=r'(([0-9]+)?\.([0-9]+)((e|E)((\+|-)?[0-9]+))?([fFdD])?|[0-9]+(e|E)(\+|-)?[0-9]+)'
 IntegerLiteral=r'[0-9]+'
@@ -42,6 +42,7 @@ Illegals = r'('+IntegerLiteral + r'[a-zA-Z]+)'
 OP_DIM=r'\[[\t ]*\]'
 # A regular expression rule with some action code
 # Note addition of self parameter since we're in a class
+# print("hsbdfbdfh")
 @TOKEN(Comments)
 def t_Comments(t):
     t.lexer.lineno+=t.value.count('\n')
@@ -66,6 +67,7 @@ def t_Keyword(t):
 
 @TOKEN(Identifier)
 def t_Identifier(t):
+    # print t.value
     if(t.value in ReservedWords):
         t.type="BooleanLiteral"
     return t
@@ -104,6 +106,12 @@ def t_Separator(t):
 def t_Operator(t):
     # t.type=OP[t.value]
     # t.type=t.value.upper()
+    # print t.value
+    cond1=t.value[:-1]=='+' or t.value[:-1]=='-' or t.value[:-1]=='++' or t.value[:-1]=='--'
+    if(cond1 and t.value[-1] != '=' ):
+        t.value=t.value[:-1]
+        # print t.value
+        t.lexer.lexpos=t.lexer.lexpos-1
     t.type = operators[t.value]
     return t
 
@@ -122,7 +130,7 @@ def t_error(t):
     t.lexer.skip(1)
 
 
-keyw = ['continue','for','new','switch','assert','default','goto','boolean','do','if','private','this','break','double','protected','byte','else','import','public','case','enum','return','catch','extends','int','short','try','char','static','void','class','long','volatile','const','float','while','interfaces','throw','throws']
+keyw = ['continue','for','new','switch','assert','default','goto','boolean','do','if','private','this','break','double','protected','byte','else','import','public','case','enum','return','catch','extends','int','short','try','char','static','void','class','long','volatile','const','finally','float','while','interfaces','throw','throws']
 keywords ={}
 for i in keyw:
     keywords[i]="KEY"+ str(i).upper()
@@ -191,6 +199,7 @@ for i in separators:
 tokens = tokens + tuple(separators.values())
 lexer = lex.lex()
 # filename = sys.argv[1]
+# print("great")
 # f = open(filename, 'r')
 # data = f.read()
 # lexer.input(data)
