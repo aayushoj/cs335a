@@ -9,41 +9,12 @@ nonterminals=[]
 output=[]
 countg = 0
 revoutput=[]
+finalout=[]
 # def p_program(p):
 #     '''program : Importstatements '''
 
 
-def rightderivation(prefx,sufx):
-    global countg
-    lcount=countg
-    count=0
-    for i in range(1,len(output[lcount])):
-        if not (output[lcount][i] in nonterminals):
-            count+=1
-    pre=""
-    for i in range(1,len(output[lcount])):
-        pre=pre+str(valuate(lcount,i))
-        if not(i==len(output[lcount])-1):
-            pre += " "
-    if(count==len(output[lcount])-1):
-        countg+=1
-        return pre
-    print prefx + pre +sufx
-    suf=""
-    for x in range(len(output[lcount])-1,0,-1):
-        if not (output[lcount][x] in nonterminals):
-            suf = valuate(lcount,x)+suf
-            continue
-        pre = prefx
-        for i in range(1,x):
-            pre=pre+str(valuate(lcount,i))+" "
-        countg+=1
-        suf = str(rightderivation(pre,suf+sufx)) + suf
-        countg-=1
-        print pre +suf +sufx
-    countg+=1
-    return suf
-
+    
 def valuate(line,x):
     if output[line][x] in nonterminals:
         return output[line][x]
@@ -219,7 +190,7 @@ def p_ConstructorDeclarator(p):
     '''ConstructorDeclarator : Identifier SEPLEFTBRACE ParameterList SEPRIGHTBRACE
                             | Identifier SEPLEFTBRACE SEPRIGHTBRACE
     '''
-    
+
 def p_StaticInitializer(p):
     '''StaticInitializer : KEYSTATIC Block
     '''
@@ -562,6 +533,63 @@ def p_error(p):
     else:
         print "Syntax error in input line!"
 
+def rightderivation(prefx,sufx):
+    global finalout
+    global countg
+    lcount=countg
+    count=0
+    last=-1
+    for i in range(1,len(output[lcount])):
+        if not (output[lcount][i] in nonterminals):
+            count+=1
+        else:
+            last=max(last,i)
+    pre=" "
+    for i in range(1,len(output[lcount])):
+        if(i==last):
+            pre=pre+"<b> "+str(valuate(lcount,i))  +" </b>"
+        else:
+            pre=pre+str(valuate(lcount,i))
+        if not(i==len(output[lcount])-1):
+            pre += " "
+    if(count==len(output[lcount])-1):
+        countg+=1
+        return pre
+    finalout.append(prefx + pre +sufx)
+    suf=" "
+    for x in range(len(output[lcount])-1,0,-1):
+        if not (output[lcount][x] in nonterminals):
+            suf = valuate(lcount,x)+suf
+            continue
+        pre = prefx
+        for i in range(1,x):
+            pre=pre+str(valuate(lcount,i))+" "
+        countg+=1
+        suf = str(rightderivation(pre,suf+sufx)) + suf
+        countg-=1
+        finalout.append(pre +suf +sufx)
+    countg+=1
+    return suf
+
+def truncfinal():
+    global finalout
+    i=0
+    while i < len(finalout)-1:
+        if(removeempty(finalout[i].split(' '))==removeempty(finalout[i+1].split(' '))):
+            del finalout[i+1]
+        else:
+            i+=1
+
+
+def removeempty(lis):
+    i=0
+    while i < len(lis):
+        if(lis[i]=='' or lis[i]=='<br>' or lis[i]=='</br>'):
+            del lis[i]
+        else:
+            i+=1
+    return lis
+
 yacc.yacc()
 
 # while 1:
@@ -585,8 +613,18 @@ for i in range(len(revoutput)):
     nonterminals.append(revoutput[i][0])
 for i in range(len(revoutput)-1,-1,-1):
     output.append(revoutput[i])
-# for x in output:
-#     print x
-print output[0][0]
+print  "<b> "+ str(output[0][0])+"</b> "
 rightderivation("","")
+truncfinal()
+for i in finalout:
+    sp=i.split(' ')
+    st=""
+    for j in range(len(sp)):
+        if sp[j]=='':
+            continue
+        else:
+            st+=sp[j]+ " "
+    print st + "</br>"
+
+
         
