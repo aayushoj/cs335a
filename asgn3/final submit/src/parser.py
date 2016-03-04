@@ -691,6 +691,17 @@ a=a.read()
 data = ""
 a+="\n"
 yacc.parse(a)
+filename=sys.argv[1]
+fnstart=0
+fnend=0
+for j in range(len(filename)):
+    if filename[j]=='/':
+        fnstart=j
+    if filename[j]=='.':
+        fnend=j
+filename=filename[fnstart+1:fnend]
+import sys
+sys.stdout = open(str(filename)+".html", 'w')
 
 # a=a.split('\n')
 # for s in a:
