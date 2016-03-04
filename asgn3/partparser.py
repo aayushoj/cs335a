@@ -72,10 +72,11 @@ def p_PrimitiveType(p):
                 | KEYFLOAT
     '''
     revoutput.append(p.slice)
-# def p_ClassNameList(p):
-#     '''ClassNameList : QualifiedName
-#                  | ClassNameList SEPCOMMA QualifiedName
-#     '''
+def p_ClassNameList(p):
+    '''ClassNameList : QualifiedName
+                 | ClassNameList SEPCOMMA QualifiedName
+    '''
+    revoutput.append(p.slice)
 
 def p_TypeDeclarationOptSemi(p):
     '''TypeDeclarationOptSemi : TypeDeclaration
@@ -143,8 +144,14 @@ def p_ArrayInitializers(p):
     '''
     revoutput.append(p.slice)
 def p_MethodDeclaration(p):
-    '''MethodDeclaration : Modifiers TypeSpecifier MethodDeclarator        MethodBody
-                        | TypeSpecifier MethodDeclarator        MethodBody
+    '''MethodDeclaration : Modifiers TypeSpecifier MethodDeclarator MethodBody
+                        | Modifiers TypeSpecifier MethodDeclarator Throws MethodBody
+                        | TypeSpecifier MethodDeclarator Throws MethodBody
+                        | TypeSpecifier MethodDeclarator MethodBody
+    '''
+    revoutput.append(p.slice)
+def p_Throws(p):
+    '''Throws : KEYTHROWS ClassNameList
     '''
     revoutput.append(p.slice)
 def p_MethodDeclarator(p):
@@ -184,14 +191,17 @@ def p_ConstructorDeclarator(p):
     '''ConstructorDeclarator : Identifier SEPLEFTBRACE ParameterList SEPRIGHTBRACE
                             | Identifier SEPLEFTBRACE SEPRIGHTBRACE
     '''
+    revoutput.append(p.slice)
 
 def p_StaticInitializer(p):
     '''StaticInitializer : KEYSTATIC Block
     '''
+    revoutput.append(p.slice)
 
 def p_NonStaticInitializer(p):
     '''NonStaticInitializer : Block
     '''
+    revoutput.append(p.slice)
 
 
 
@@ -206,6 +216,7 @@ def p_Modifier(p):
                 | KEYPROTECTED
                 | KEYPRIVATE
                 | KEYSTATIC
+                | KEYFINAL
     '''
     revoutput.append(p.slice)
 def p_Block(p):
@@ -230,9 +241,11 @@ def p_LocalVariableDeclarationStatement(p):
 def p_Statement(p):
     '''Statement : EmptyStatement
                 | ExpressionStatement SEPSEMICOLON
+                | LabelStatement
                 | SelectionStatement
                 | IterationStatement
                 | JumpStatement
+                | GuardingStatement
                 | Block
     '''
     revoutput.append(p.slice)
@@ -240,12 +253,23 @@ def p_EmptyStatement(p):
     ''' EmptyStatement : SEPSEMICOLON
     '''
     revoutput.append(p.slice)
+def p_LabelStatement(p):
+    ''' LabelStatement : Identifier SEPCOLON
+                | KEYCASE ConstantExpression SEPCOLON
+                | KEYDEFAULT SEPCOLON
+    '''
+    revoutput.append(p.slice)
 def p_ExpressionStatement(p):
     '''ExpressionStatement : Expression
     '''
-    
+    revoutput.append(p.slice)
+
+precedence = (
+    ('right', 'THAN', 'KEYELSE'),
+)
+
 def p_SelectionStatement(p):
-    '''SelectionStatement : KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE Statement 
+    '''SelectionStatement : KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE Statement %prec THAN
                         | KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE Statement KEYELSE Statement
     '''
     revoutput.append(p.slice)
@@ -283,6 +307,30 @@ def p_JumpStatement(p):
                 | KEYRETURN Expression SEPSEMICOLON
                 | KEYRETURN  SEPSEMICOLON
                 | KEYTHROW Expression SEPSEMICOLON
+    '''
+    revoutput.append(p.slice)
+def p_GuardingStatement(p):
+    '''GuardingStatement : KEYTRY Block Finally
+                        | KEYTRY Block Catches
+                        | KEYTRY Block Catches Finally
+    '''
+    revoutput.append(p.slice)
+def p_Catches(p):
+    '''Catches : Catch
+            | Catches Catch
+    '''
+    revoutput.append(p.slice)
+def p_Catch(p):
+    '''Catch : CatchHeader Block
+    '''
+    revoutput.append(p.slice)
+def p_CatchHeader(p):
+    '''CatchHeader : KEYCATCH SEPLEFTBRACE TypeSpecifier Identifier SEPRIGHTBRACE
+                | KEYCATCH SEPLEFTBRACE TypeSpecifier SEPRIGHTBRACE
+    '''
+    revoutput.append(p.slice)
+def p_Finally(p):
+    '''Finally : KEYFINALLY Block
     '''
     revoutput.append(p.slice)
 def p_PrimaryExpression(p):
@@ -521,6 +569,10 @@ def p_Expression(p):
     '''Expression : AssignmentExpression
     '''
     revoutput.append(p.slice)
+def p_ConstantExpression(p):
+    '''ConstantExpression : ConditionalExpression
+    '''
+    revoutput.append(p.slice)
 def p_error(p):
     if p == None:
         print "You missed something at the end"
@@ -554,6 +606,7 @@ def rightderivation(prefx,sufx):
         if not (output[lcount][x] in nonterminals):
             suf = valuate(lcount,x)+suf
             continue
+        las =-1
         if(numnonterminals(countg+1)==0 and last==[]):
             for i in range(len(prefx)-1,-1,-1):
                 if prefx[i] in nonterminals:
@@ -633,30 +686,27 @@ def removeempty(lis):
 
 yacc.yacc()
 
-# while 1:
-#     try:
-#         s = raw_input('calc > ')
-#     except EOFError:
-#         break
-#     if not s: continue
-#     yacc.parse(s)
-
-a=open(sys.argv[1])
+a=open(sys.argv[1],'r')
 a=a.read()
-a=a.split('\n')
-for s in a:
-    #     s = raw_input('calc > ')
-    # except EOFError:
-    #     break
-    if not (s == ''): 
-        yacc.parse(s)
+data = ""
+a+="\n"
+yacc.parse(a)
+
+# a=a.split('\n')
+# for s in a:
+#     if not (s == ''): 
+#         # data += " " +s
+#         yacc.parse(s)
+
 for i in range(len(revoutput)):
     nonterminals.append(revoutput[i][0])
 for i in range(len(revoutput)-1,-1,-1):
     output.append(revoutput[i])
 # for i in output:
 #     print i
-print  "<b> "+ str(output[0][0])+"</b> "+ "</br>"
+print "<html> <head> <title> Rightmost derivation </title> </head> <body bgcolor='#E6E6FA'>"
+print "<h2> Rightmost Derivation of the code</h2>"
+print  "<b style = color:red> "+ str(output[0][0])+"</b> "+ "</br>"
 rightderivation([],"")
 truncfinal()
 for i in finalout:
@@ -665,6 +715,9 @@ for i in finalout:
     for j in range(len(sp)):
         if sp[j]=='':
             continue
+        if sp[j]=='<b>':
+            st+="<b style = color:red> "
         else:
             st+=sp[j]+ " "
     print st + "</br>"
+print "</body></html>"
