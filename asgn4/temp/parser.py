@@ -62,7 +62,6 @@ def p_TypeSpecifier(p):
     '''
     if(len(p)==2):
         p[0]=p[1].upper()
-        print p[0]
         return
 
     
@@ -378,17 +377,12 @@ def p_PrimaryExpression(p):
         'place' : 'undefined',
         'type' : 'TYPE_ERROR'
     }
-    # print(p[-1])
-
-    # print(s)
-    # sc=ST.lookupIdentifier(p[1]['idenName'])
-    if ST.lookupIdentifier(p[1]['idenName']) :
-        p[0]['place'] = ST.getAttribute(p[1]['idenName'],'place')
-        p[0]['type'] = ST.getAttribute(p[1]['idenName'],'type')
-        # print(p[0]['type'])
-        assert(p[0]['place'] != None)
-        assert(p[0]['type'] != None)
-    #     fg=1
+    if(len(p[1])==1):
+        if ST.lookupIdentifier(p[1]['idenName']) :
+            p[0]['place'] = ST.getAttribute(p[1]['idenName'],'place')
+            p[0]['type'] = ST.getAttribute(p[1]['idenName'],'type')
+    else:
+        p[0]=p[1]
 
     
 def p_NotJustName(p):
@@ -396,11 +390,16 @@ def p_NotJustName(p):
                 | NewAllocationExpression
                 | ComplexPrimary
     '''
+    p[0]=p[1]
     
 def p_ComplexPrimary(p):
     '''ComplexPrimary : SEPLEFTBRACE Expression SEPRIGHTBRACE
             | ComplexPrimaryNoParenthesis
     '''
+    if(len(p)>2):
+        p[0]=p[2]
+        return
+    p[0]=p[1]
     
 def p_ComplexPrimaryNoParenthesis(p):
     '''ComplexPrimaryNoParenthesis : BooleanLiteral
@@ -412,6 +411,8 @@ def p_ComplexPrimaryNoParenthesis(p):
                             | FieldAccess
                             | MethodCall
     '''
+    p[0]=p[1]
+
 def p_IntLiteral(p):
     '''IntLiteral : IntegerLiteral
     '''
@@ -468,7 +469,6 @@ def p_MethodAccess(p):
 def p_SpecialName(p):
     '''SpecialName : KEYTHIS
     '''
-    p[0] = p[1]
     
 def p_ArgumentList(p):
     '''ArgumentList : Expression
@@ -522,7 +522,6 @@ def p_PostfixExpression(p):
                     | RealPostfixExpression
     '''
     p[0] = p[1]
-    print(p[0])
     
 def p_RealPostfixExpression(p):
     '''RealPostfixExpression : PostfixExpression OPINCREMENT
@@ -789,10 +788,13 @@ def p_AssignmentExpression(p):
         'type' : 'TYPE_ERROR'
     }
     if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
-        # print("hj")
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
-        TAC.emit(newPlace,p[1]['place'],p[3]['place'],p[2])
+        if(p[2][0]=='='):
+            TAC.emit(p[1]['place'],p[3]['place'],'',p[2])
+        else:
+            TAC.emit(newPlace,p[1]['place'],p[3]['place'],p[2][0])
+            TAC.emit(p[1]['place'],newPlace,'',p[2][1])
         p[0]['type'] = 'INT'
     else:
         print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
