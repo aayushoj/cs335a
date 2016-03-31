@@ -3,8 +3,9 @@ class amit{
 public class HelloWorld
 {
 	public static void main(String[] args) {
-		int a;
-		a=5;
+		int a,b,c,d,e,f;
+		a=b+c+f;
+		e=a+d;
 	}
 }
 }

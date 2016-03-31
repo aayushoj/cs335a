@@ -6,6 +6,7 @@ from lexer import tokens
 import aksymboltable
 import threeAddressCode
 import logging
+from copy import deepcopy
 # print tokens
 nonterminals=[]
 output=[]
@@ -140,8 +141,7 @@ def p_VariableDeclarators(p):
     if(len(p)==2):
         p[0]=p[1]
         return
-    p[0]=[]
-    p[0].append(p[3])
+    p[0]=p[1]+p[3]
 
     
 def p_VariableDeclarator(p):
@@ -269,6 +269,7 @@ def p_LocalVariableDeclarationStatement(p):
     '''
     #Since VariableDecalrators is a list of variable
     # paramlen = len(VariableDeclarators)
+    # print(p[2])
     for i in p[2]:
         ST.addIdentifier(i, i, p[1])
 
@@ -368,7 +369,7 @@ def p_CatchHeader(p):
 def p_Finally(p):
     '''Finally : KEYFINALLY Block
     '''
-    
+
 def p_PrimaryExpression(p):
     '''PrimaryExpression : QualifiedName
                     | NotJustName
@@ -377,11 +378,18 @@ def p_PrimaryExpression(p):
         'place' : 'undefined',
         'type' : 'TYPE_ERROR'
     }
+    # print(p[-1])
+
+    # print(s)
+    # sc=ST.lookupIdentifier(p[1]['idenName'])
     if ST.lookupIdentifier(p[1]['idenName']) :
         p[0]['place'] = ST.getAttribute(p[1]['idenName'],'place')
         p[0]['type'] = ST.getAttribute(p[1]['idenName'],'type')
+        # print(p[0]['type'])
         assert(p[0]['place'] != None)
         assert(p[0]['type'] != None)
+    #     fg=1
+
     
 def p_NotJustName(p):
     '''NotJustName : SpecialName
@@ -514,6 +522,7 @@ def p_PostfixExpression(p):
                     | RealPostfixExpression
     '''
     p[0] = p[1]
+    print(p[0])
     
 def p_RealPostfixExpression(p):
     '''RealPostfixExpression : PostfixExpression OPINCREMENT
@@ -780,6 +789,7 @@ def p_AssignmentExpression(p):
         'type' : 'TYPE_ERROR'
     }
     if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
+        # print("hj")
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
         TAC.emit(newPlace,p[1]['place'],p[3]['place'],p[2])

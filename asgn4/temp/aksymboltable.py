@@ -142,10 +142,17 @@ class SymbolTable:
                     'type' : idenType,
                     'size' : idenSize
                     }
+        print(self.symbolTable[self.currentScope]['identifiers'])
+
 
     #Returns a boolean indicating presence of identifier 
     def lookupIdentifier(self, idenName):
-                return self.lookUpScope(idenName) != None
+        scope = self.lookUpScope(idenName)
+        # print(scope)
+        if(scope == None):
+            return False
+        else:
+            return scope
 
     #Returns all the attributes of idenName ( None if they don't exist )
     def getIdentifierAttributes(self, idenName):
