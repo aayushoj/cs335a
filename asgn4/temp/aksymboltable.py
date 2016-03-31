@@ -135,15 +135,13 @@ class SymbolTable:
         #Assign size if not given
         if idenSize == 0:
             idenSize = self.getSize(idenType)
-
         scope = self.lookUpScope(idenName)
         if scope == None:
-            self.symbolTable['main']['identifiers'][idenName] = {
+            self.symbolTable[self.currentScope]['identifiers'][idenName] = {
                     'place' : place,
                     'type' : idenType,
                     'size' : idenSize
                     }
-            self.symbolTable['main']['places'][place] = idenName
 
     #Returns a boolean indicating presence of identifier 
     def lookupIdentifier(self, idenName):
@@ -229,25 +227,14 @@ class SymbolTable:
     #Tells the scope according to variable type
     #If it doesn't exist, returns None
     def lookUpScope(self, idenName):
-        #Only called from within the class
-        if idenName[0] == '$' :
-            #Search for global variable in main
-            if idenName in self.symbolTable['main']['identifiers'] :
-                return 'main'
-            else:
-                return None
-        
-        elif idenName[0] != '@' and not idenName[0].isupper():
-            #Local variable
-            #Called only for a local variable not a method
-            #Search till you find method/main/class
-            scope = self.currentScope
-            while self.symbolTable[scope]['type'] not in ['main', 'method', 'class']:
-                if idenName in self.symbolTable[scope]['identifiers']:
-                    return scope
-                scope = self.symbolTable[scope]['parent']
-
+        scope = self.currentScope
+        while self.symbolTable[scope]['type'] not in ['main', 'method', 'class']:
             if idenName in self.symbolTable[scope]['identifiers']:
                 return scope
+            scope = self.symbolTable[scope]['parent']
 
-            return None
+        if idenName in self.symbolTable[scope]['identifiers']:
+            return scope
+
+        return None
+

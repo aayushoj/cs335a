@@ -59,12 +59,18 @@ def p_TypeSpecifier(p):
     '''TypeSpecifier : TypeName 
             | TypeName Dims              
     '''
+    if(len(p)==2):
+        p[0]=p[1].upper()
+        print p[0]
+        return
+
     
 #don't know what is Dims
 def p_TypeName(p):
     '''TypeName : PrimitiveType
             | QualifiedName
     '''
+    p[0]=p[1]
     
 def p_PrimitiveType(p):
     '''PrimitiveType : KEYBOOLEAN
@@ -77,6 +83,7 @@ def p_PrimitiveType(p):
                 | KEYVOID
                 | KEYFLOAT
     '''
+    p[0]=p[1]
     
 def p_ClassNameList(p):
     '''ClassNameList : QualifiedName
@@ -130,11 +137,21 @@ def p_VariableDeclarators(p):
     '''VariableDeclarators : VariableDeclarator
                             | VariableDeclarators SEPCOMMA VariableDeclarator
     '''
+    if(len(p)==2):
+        p[0]=p[1]
+        return
+    p[0]=[]
+    p[0].append(p[3])
+
     
 def p_VariableDeclarator(p):
     ''' VariableDeclarator : DeclaratorName
                             | DeclaratorName OPEQUAL VariableInitializer
     '''
+    if(len(p)==2):
+        p[0]=p[1]
+        return
+
     
 
 def p_VariableInitializer(p):
@@ -179,7 +196,9 @@ def p_DeclaratorName(p):
     '''DeclaratorName : Identifier
                     | DeclaratorName OP_DIM
     '''
-    
+    if(len(p)==2):
+        p[0]=p[1]
+        return
 # def p_Throws(p):
 #     '''Throws : THROWS ClassNameList'''
 
@@ -234,15 +253,25 @@ def p_LocalVariableDeclarationsAndStatements(p):
     '''LocalVariableDeclarationsAndStatements : LocalVariableDeclarationOrStatement
                         | LocalVariableDeclarationsAndStatements LocalVariableDeclarationOrStatement
     '''
-    
+    if(len(p)==2):
+        p[0] = p[1]
+        return
 def p_LocalVariableDeclarationOrStatement(p):
     '''LocalVariableDeclarationOrStatement : LocalVariableDeclarationStatement
                                 | Statement
     '''
+    if(len(p)==2):
+        p[0] = p[1]
+        return
     
 def p_LocalVariableDeclarationStatement(p):
     '''LocalVariableDeclarationStatement : TypeSpecifier VariableDeclarators  SEPSEMICOLON
     '''
+    #Since VariableDecalrators is a list of variable
+    # paramlen = len(VariableDeclarators)
+    for i in p[2]:
+        ST.addIdentifier(i, i, p[1])
+
     
 def p_Statement(p):
     '''Statement : EmptyStatement
@@ -268,6 +297,7 @@ def p_LabelStatement(p):
 def p_ExpressionStatement(p):
     '''ExpressionStatement : Expression
     '''
+    p[0] = p[1]
     
 
 precedence = (
@@ -343,6 +373,15 @@ def p_PrimaryExpression(p):
     '''PrimaryExpression : QualifiedName
                     | NotJustName
     '''
+    p[0] = {
+        'place' : 'undefined',
+        'type' : 'TYPE_ERROR'
+    }
+    if ST.lookupIdentifier(p[1]['idenName']) :
+        p[0]['place'] = ST.getAttribute(p[1]['idenName'],'place')
+        p[0]['type'] = ST.getAttribute(p[1]['idenName'],'type')
+        assert(p[0]['place'] != None)
+        assert(p[0]['type'] != None)
     
 def p_NotJustName(p):
     '''NotJustName : SpecialName
@@ -487,6 +526,10 @@ def p_UnaryExpression(p):
                 | ArithmeticUnaryOperator CastExpression
                 | LogicalUnaryExpression
     '''
+    if(len(p)==2):
+        p[0] = p[1]
+        return
+
     
 def p_LogicalUnaryExpression(p):
     '''LogicalUnaryExpression : PostfixExpression
@@ -517,6 +560,7 @@ def p_CastExpression(p) :
     if(len(p)==2):
         p[0] = p[1]
         return
+
     
 def p_PrimitiveTypeExpression(p):
     '''PrimitiveTypeExpression : PrimitiveType
@@ -622,6 +666,18 @@ def p_AndExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
+    newPlace = ST.createTemp()
+    p[0] = {
+        'place' : newPlace,
+        'type' : 'TYPE_ERROR'
+    }
+    if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
+        return
+    if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+        TAC.emit(newPlace,p[1]['place'],p[3]['place'],'&')
+        p[0]['type'] = 'INT'
+    else:
+        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
     
 def p_ExclusiveOrExpression(p):
     '''ExclusiveOrExpression : AndExpression
@@ -630,6 +686,18 @@ def p_ExclusiveOrExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
+    newPlace = ST.createTemp()
+    p[0] = {
+        'place' : newPlace,
+        'type' : 'TYPE_ERROR'
+    }
+    if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
+        return
+    if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+        TAC.emit(newPlace,p[1]['place'],p[3]['place'],'xor')
+        p[0]['type'] = 'INT'
+    else:
+        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
     
 def p_InclusiveOrExpression(p):
     '''InclusiveOrExpression : ExclusiveOrExpression
@@ -638,6 +706,18 @@ def p_InclusiveOrExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
+    newPlace = ST.createTemp()
+    p[0] = {
+        'place' : newPlace,
+        'type' : 'TYPE_ERROR'
+    }
+    if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
+        return
+    if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+        TAC.emit(newPlace,p[1]['place'],p[3]['place'],'|')
+        p[0]['type'] = 'INT'
+    else:
+        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
     
 def p_ConditionalAndExpression(p):
     '''ConditionalAndExpression : InclusiveOrExpression
@@ -646,6 +726,18 @@ def p_ConditionalAndExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
+    newPlace = ST.createTemp()
+    p[0] = {
+        'place' : newPlace,
+        'type' : 'TYPE_ERROR'
+    }
+    if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
+        return
+    if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+        TAC.emit(newPlace,p[1]['place'],p[3]['place'],'and')
+        p[0]['type'] = 'INT'
+    else:
+        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
     
 def p_ConditionalOrExpression(p):
     '''ConditionalOrExpression : ConditionalAndExpression
@@ -654,6 +746,18 @@ def p_ConditionalOrExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
+    newPlace = ST.createTemp()
+    p[0] = {
+        'place' : newPlace,
+        'type' : 'TYPE_ERROR'
+    }
+    if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
+        return
+    if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+        TAC.emit(newPlace,p[1]['place'],p[3]['place'],'or')
+        p[0]['type'] = 'INT'
+    else:
+        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
     
 def p_ConditionalExpression(p):
     ''' ConditionalExpression : ConditionalOrExpression
@@ -670,8 +774,18 @@ def p_AssignmentExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-
-
+    newPlace = ST.createTemp()
+    p[0] = {
+        'place' : newPlace,
+        'type' : 'TYPE_ERROR'
+    }
+    if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
+        return
+    if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+        TAC.emit(newPlace,p[1]['place'],p[3]['place'],p[2])
+        p[0]['type'] = 'INT'
+    else:
+        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
     
 def p_AssignmentOperator(p):
     ''' AssignmentOperator : OPEQUAL
