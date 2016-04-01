@@ -142,7 +142,7 @@ class SymbolTable:
                     'type' : idenType,
                     'size' : idenSize
                     }
-        # print(self.symbolTable[self.currentScope]['identifiers'])
+        print(self.symbolTable[self.currentScope]['identifiers'])
 
 
     #Returns a boolean indicating presence of identifier 
