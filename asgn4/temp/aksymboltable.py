@@ -181,7 +181,7 @@ class SymbolTable:
 
     #Get the size of a type
     def getSize(self, typeExpr):
-        if typeExpr in ['INT', 'BOOL', 'FLOAT', 'CHAR', 'VOID' ]:
+        if typeExpr in ['INT', 'BOOL', 'FLOAT', 'CHAR', 'VOID','unknown' ]:
             return self.wordSize
         elif typeExpr in self.classes:
             return self.addressSize
@@ -191,6 +191,8 @@ class SymbolTable:
             return self.addressSize
         elif typeExpr[0] == 'ARRAY':
             return self.addressSize
+        elif typeExpr[0] == 'unknown':
+            return -1
         else:
             assert(False)
 
