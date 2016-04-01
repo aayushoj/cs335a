@@ -47,8 +47,12 @@ def p_QualifiedName(p):
     '''
     if(len(p)==2):
         p[0] = {
-            'idenName' : p[1]
+            'idenName' : p[1],
+            'tmark' : False,
+            'type' : ST.getAttribute(p[1],'type'),
+            'place' : ST.getAttribute(p[1],'place')
         }
+        # print "lala"
         
 
 def p_Semicolons(p):
@@ -60,13 +64,21 @@ def p_TypeSpecifier(p):
     '''TypeSpecifier : TypeName 
             | TypeName Dims              
     '''
+    # print (len(p))
     if(len(p)==2):
         p[0]={}
-        p[0]['type']=p[1].upper()
+        # print "gere"
+        # print p[1]
+        # temp= p[1]
+        p[0]['type']=str(p[1]['type']).upper()
         return
     else:
         p[0] = {}
-        p[0]['type'] = p[1].upper()
+        # print "test"
+        # print p[1]
+        # temp=str(p[1]['type'])
+        # print p[1]['type']
+        p[0]['type'] =str(p[1]['type']).upper()
         p[0]['dimension'] = p[2]['dimension']
         return
 
@@ -76,7 +88,13 @@ def p_TypeName(p):
     '''TypeName : PrimitiveType
             | QualifiedName
     '''
-    p[0]=p[1]
+    p[0]={}
+    if(p[1]['tmark'] is False):
+        p[0]['idenName']=p[1]['idenName']
+        p[0]['type']=p[1]['type']
+        p[0]['place']=p[1]['place']
+    else:
+        p[0]['type']=p[1]['type']
     
 def p_PrimitiveType(p):
     '''PrimitiveType : KEYBOOLEAN
@@ -89,7 +107,13 @@ def p_PrimitiveType(p):
                 | KEYVOID
                 | KEYFLOAT
     '''
-    p[0]=p[1]
+    # print p[1]
+    p[0]={}
+
+    p[0]={
+        'type' : p[1],
+        'tmark' : True
+        }
     
 def p_ClassNameList(p):
     '''ClassNameList : QualifiedName
@@ -161,7 +185,7 @@ def p_VariableDeclarator(p):
         p[0]=p[1]
         # p[0]['place'] = ST.getAttribute(p[1]['idenName'],'place')
         place=ST.getAttribute(p[0][0],'place')
-        print("place = " + str(place))
+        # print("place = " + str(place))
         TAC.emit(place,p[3]['place'],'',p[2])
 
     
@@ -297,6 +321,7 @@ def p_LocalVariableDeclarationStatement(p):
         ST.addAttribute(i, 'type', p[1]['type'])
         # print(p[1])
         ST.addAttribute(i, 'size', ST.getSize(p[1]['type']))
+
 
     
 def p_Statement(p):
@@ -821,6 +846,7 @@ def p_AssignmentExpression(p):
         'place' : newPlace,
         'type' : 'TYPE_ERROR'
     }
+    # print p[1]
     if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
