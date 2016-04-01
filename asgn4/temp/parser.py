@@ -299,15 +299,48 @@ def p_ExpressionStatement(p):
     '''
     p[0] = p[1]
     
-
+# IF else ........................
 precedence = (
     ('right', 'THAN', 'KEYELSE'),
 )
 
 def p_SelectionStatement(p):
-    '''SelectionStatement : KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE Statement %prec THAN
-                        | KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE Statement KEYELSE Statement
+    '''SelectionStatement : KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark1 Statement IfMark2 %prec THAN
+                        | KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5
     '''
+def p_IfMark1(p):
+    '''IfMark1 : '''
+    l1 = TAC.makeLabel()
+    l2 = TAC.makeLabel()
+    TAC.emit('ifgoto','p[-2].place','eq 0 goto', l2)
+    TAC.emit('goto',l1, '', '')
+    TAC.emit('label',l1, '', '')
+    p[0]=[l1,l2]
+
+def p_IfMark2(p):
+    '''IfMark2 : '''
+    TAC.emit('label',p[-2][1], '', '')
+
+def p_IfMark3(p):
+    '''IfMark3 : '''
+    # l1 = TAC.makeLabel()
+    # l2 = TAC.makeLabel()
+    # l3 = TAC.
+    # TAC.emit('ifgoto',p[-2].place,'eq 0 goto', l2)
+    # TAC.emit('goto',l1, '', '')
+    # TAC.emit('label',l1, '', '')
+    # p[0]=[l1,l2]
+
+
+def p_IfMark4(p):
+    '''IfMark4 : '''
+
+
+def p_IfMark5(p):
+    '''IfMark5 : '''
+
+
+# IF else end here .................
     
 def p_IterationStatement(p):
     '''IterationStatement : KEYWHILE SEPLEFTBRACE Expression SEPRIGHTBRACE Statement

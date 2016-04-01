@@ -9,6 +9,10 @@ public class HelloWorld
 		c=6+8+90;
 		f+=g+e;
 		c=a*b+c*d+e*f;
+		if(a+b == 5)
+		{
+			b=7;
+		}
 	}
 }
 }
