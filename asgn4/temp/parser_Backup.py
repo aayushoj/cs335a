@@ -61,13 +61,7 @@ def p_TypeSpecifier(p):
             | TypeName Dims              
     '''
     if(len(p)==2):
-        p[0]={}
-        p[0]['type']=p[1].upper()
-        return
-    else:
-        p[0] = {}
-        p[0]['type'] = p[1].upper()
-        p[0]['dimension'] = p[2]['dimension']
+        p[0]=p[1].upper()
         return
 
     
@@ -143,7 +137,7 @@ def p_VariableDeclarators(p):
     '''VariableDeclarators : VariableDeclarator
                             | VariableDeclarators SEPCOMMA VariableDeclarator
     '''
-
+    
     if(len(p)==2):
         p[0]=p[1]
         return
@@ -157,12 +151,6 @@ def p_VariableDeclarator(p):
     if(len(p)==2):
         p[0]=p[1]
         return
-    else:
-        p[0]=p[1]
-        # p[0]['place'] = ST.getAttribute(p[1]['idenName'],'place')
-        place=ST.getAttribute(p[0][0],'place')
-        print("place = " + str(place))
-        TAC.emit(place,p[3]['place'],'',p[2])
 
     
 
@@ -171,22 +159,12 @@ def p_VariableInitializer(p):
                             | SEPLEFTPARAN SEPRIGHTPARAN
                             | SEPLEFTPARAN ArrayInitializers SEPRIGHTPARAN
     '''
-    if(len(p)==2):
-        p[0]=p[1]
-    elif(len(p)==4):
-        p[0]=p[2]
-
+    
 def p_ArrayInitializers(p):
     '''ArrayInitializers : VariableInitializer
                             | ArrayInitializers SEPCOMMA VariableInitializer
                             | ArrayInitializers SEPCOMMA
     '''
-    if(len(p)==2):
-        p[0]=p[1]
-    elif(len(p)==4):
-        p[0]=p[3]
-    else:
-        p[0]=p[1]
     
 def p_MethodDeclaration(p):
     '''MethodDeclaration : Modifiers TypeSpecifier MethodDeclarator MethodBody
@@ -220,7 +198,6 @@ def p_DeclaratorName(p):
     '''
     if(len(p)==2):
         p[0]=[p[1]]
-        ST.addIdentifier(p[1],p[1])
         return
 # def p_Throws(p):
 #     '''Throws : THROWS ClassNameList'''
@@ -294,9 +271,7 @@ def p_LocalVariableDeclarationStatement(p):
     # paramlen = len(VariableDeclarators)
     # print(p[2])
     for i in p[2]:
-        ST.addAttribute(i, 'type', p[1]['type'])
-        # print(p[1])
-        ST.addAttribute(i, 'size', ST.getSize(p[1]['type']))
+        # ST.addIdentifier(i, i, p[1])
 
     
 def p_Statement(p):
@@ -542,15 +517,7 @@ def p_Dims(p):
     '''Dims : OP_DIM
             | Dims OP_DIM
     '''
-    if(len(p)==2):
-        p[0]={
-            'dimension' : 1
-        }
-    else:
-        p[0] ={
-            'dimension' : 1+ p[1]['dimension']
-        }
-
+    
 def p_PostfixExpression(p):
     '''PostfixExpression : PrimaryExpression
                     | RealPostfixExpression
