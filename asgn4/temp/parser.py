@@ -13,10 +13,9 @@ output=[]
 countg = 0
 revoutput=[]
 finalout=[]
-# def p_program(p):
-#     '''program : Importstatements '''
 
-
+stackend = []
+stackbegin =[]
 
 def p_CompilationUnit(p):
     '''CompilationUnit : ProgramFile
@@ -319,7 +318,7 @@ def p_IfMark1(p):
     l1 = TAC.makeLabel()
     l2 = TAC.makeLabel()
     # need to handle p[-2].place big work..
-    TAC.emit('ifgoto','p[-2].place','eq 0 goto', l2)
+    TAC.emit('ifgoto',p[-2]['place'],'eq 0', l2)
     TAC.emit('goto',l1, '', '')
     TAC.emit('label',l1, '', '')
     p[0]=[l1,l2]
@@ -355,36 +354,44 @@ def p_WhMark1(p):
     l1 = TAC.makeLabel()
     l2 = TAC.makeLabel()
     l3 = TAC.makeLabel()
+    stackbegin.append(l1)
+    stackend.append(l3)
     TAC.emit('label',l1,'','')
     p[0]=[l1,l2,l3]
 
 def p_WhMark2(p):
     '''WhMark2 : '''
-    TAC.emit('ifgoto','p[-2].place','eq 0 goto', p[-4][2])
+    TAC.emit('ifgoto','p[-2].place','eq 0', p[-4][2])
     TAC.emit('goto',p[-4][1],'','')
     TAC.emit('label',p[-4][1],'','')
 
 def p_WhMark3(p):
     '''WhMark3 : '''
     TAC.emit('label',p[-6][2],'','')
+    stackbegin.pop()
+    stackend.pop()
 
 def p_FoMark1(p):
     '''FoMark1 : '''
     l1 = TAC.makeLabel()
     l2 = TAC.makeLabel()
     l3 = TAC.makeLabel()
+    stackbegin.append(l1)
+    stackend.append(l3)
     TAC.emit('label',l1,'','')
     p[0]=[l1,l2,l3]
 
 def p_FoMark2(p):
     '''FoMark2 : '''
-    TAC.emit('ifgoto','p[-3].place','eq 0 goto', p[-4][2])
+    TAC.emit('ifgoto','p[-3].place','eq 0', p[-4][2])
     TAC.emit('goto',p[-4][1],'','')
     TAC.emit('label',p[-4][1],'','')
 
 def p_FoMark3(p):
     '''FoMark3 : '''
     TAC.emit('label',p[-6][2],'','')
+    stackbegin.pop()
+    stackend.pop()
 
 def p_ForInt(p):
     '''ForInt : ExpressionStatements SEPSEMICOLON
@@ -419,6 +426,8 @@ def p_JumpStatement(p):
                 | KEYRETURN  SEPSEMICOLON
                 | KEYTHROW Expression SEPSEMICOLON
     '''
+
+    
     
 def p_GuardingStatement(p):
     '''GuardingStatement : KEYTRY Block Finally
@@ -732,6 +741,59 @@ def p_RelationalExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
+    l1 = TAC.makeLabel()
+    l2 = TAC.makeLabel()
+    l3 = TAC.makeLabel()
+    newPlace = ST.createTemp()
+    p[0]={
+        'place' : newPlace,
+        'type' : 'TYPE_ERROR'
+    }
+    if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
+        return
+    if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+        if(p[2]=='>'):
+            TAC.emit('ifgoto',p[1]['place'],'g '+p[3]['place'],l2)
+            TAC.emit('goto',l1,'','')
+            TAC.emit('label',l1,'','')
+            TAC.emit(newPlace,'0','','=')
+            TAC.emit('goto',l3,'','')
+            TAC.emit('label',l2,'','')
+            TAC.emit(newPlace,'1','','=')
+            TAC.emit('label',l3,'','')
+            p[0]['type'] = 'INT'
+        elif(p[2]=='>='):
+            TAC.emit('ifgoto',p[1]['place'],'ge '+p[3]['place'],l2)
+            TAC.emit('goto',l1,'','')
+            TAC.emit('label',l1,'','')
+            TAC.emit(newPlace,'0','','=')
+            TAC.emit('goto',l3,'','')
+            TAC.emit('label',l2,'','')
+            TAC.emit(newPlace,'1','','=')
+            TAC.emit('label',l3,'','')
+            p[0]['type'] = 'INT'
+        elif(p[2]=='<'):
+            TAC.emit('ifgoto',p[1]['place'],'l '+p[3]['place'],l2)
+            TAC.emit('goto',l1,'','')
+            TAC.emit('label',l1,'','')
+            TAC.emit(newPlace,'0','','=')
+            TAC.emit('goto',l3,'','')
+            TAC.emit('label',l2,'','')
+            TAC.emit(newPlace,'1','','=')
+            TAC.emit('label',l3,'','')
+            p[0]['type'] = 'INT'
+        elif(p[2]=='<='):
+            TAC.emit('ifgoto',p[1]['place'],'le '+p[3]['place'],l2)
+            TAC.emit('goto',l1,'','')
+            TAC.emit('label',l1,'','')
+            TAC.emit(newPlace,'0','','=')
+            TAC.emit('goto',l3,'','')
+            TAC.emit('label',l2,'','')
+            TAC.emit(newPlace,'1','','=')
+            TAC.emit('label',l3,'','')
+            p[0]['type'] = 'INT'
+    else:
+        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
     
 def p_EqualityExpression(p):
     '''EqualityExpression : RelationalExpression
@@ -741,7 +803,39 @@ def p_EqualityExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-    
+    l1 = TAC.makeLabel()
+    l2 = TAC.makeLabel()
+    l3 = TAC.makeLabel()
+    newPlace = ST.createTemp()
+    p[0]={
+        'place' : newPlace,
+        'type' : 'TYPE_ERROR'
+    }
+    if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
+        return
+    if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+        if(p[2][0]=='='):
+            TAC.emit('ifgoto',p[1]['place'],'eq '+p[3]['place'],l2)
+            TAC.emit('goto',l1,'','')
+            TAC.emit('label',l1,'','')
+            TAC.emit(newPlace,'0','','=')
+            TAC.emit('goto',l3,'','')
+            TAC.emit('label',l2,'','')
+            TAC.emit(newPlace,'1','','=')
+            TAC.emit('label',l3,'','')
+            p[0]['type'] = 'INT'
+        else:
+            TAC.emit('ifgoto',p[1]['place'],'eq '+p[3]['place'],l2)
+            TAC.emit('goto',l1,'','')
+            TAC.emit('label',l1,'','')
+            TAC.emit(newPlace,'1','','=')
+            TAC.emit('goto',l3,'','')
+            TAC.emit('label',l2,'','')
+            TAC.emit(newPlace,'0','','=')
+            TAC.emit('label',l3,'','')
+            p[0]['type'] = 'INT'
+    else:
+        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
 def p_AndExpression(p):
     '''AndExpression : EqualityExpression
                     | AndExpression OPBINAND EqualityExpression
