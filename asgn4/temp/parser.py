@@ -61,13 +61,7 @@ def p_TypeSpecifier(p):
             | TypeName Dims              
     '''
     if(len(p)==2):
-        p[0]={}
-        p[0]['type']=p[1].upper()
-        return
-    else:
-        p[0] = {}
-        p[0]['type'] = p[1].upper()
-        p[0]['dimension'] = p[2]['dimension']
+        p[0]=p[1].upper()
         return
 
     
@@ -143,7 +137,6 @@ def p_VariableDeclarators(p):
     '''VariableDeclarators : VariableDeclarator
                             | VariableDeclarators SEPCOMMA VariableDeclarator
     '''
-
     if(len(p)==2):
         p[0]=p[1]
         return
@@ -157,12 +150,6 @@ def p_VariableDeclarator(p):
     if(len(p)==2):
         p[0]=p[1]
         return
-    else:
-        p[0]=p[1]
-        # p[0]['place'] = ST.getAttribute(p[1]['idenName'],'place')
-        place=ST.getAttribute(p[0][0],'place')
-        print("place = " + str(place))
-        TAC.emit(place,p[3]['place'],'',p[2])
 
     
 
@@ -171,22 +158,12 @@ def p_VariableInitializer(p):
                             | SEPLEFTPARAN SEPRIGHTPARAN
                             | SEPLEFTPARAN ArrayInitializers SEPRIGHTPARAN
     '''
-    if(len(p)==2):
-        p[0]=p[1]
-    elif(len(p)==4):
-        p[0]=p[2]
-
+    
 def p_ArrayInitializers(p):
     '''ArrayInitializers : VariableInitializer
                             | ArrayInitializers SEPCOMMA VariableInitializer
                             | ArrayInitializers SEPCOMMA
     '''
-    if(len(p)==2):
-        p[0]=p[1]
-    elif(len(p)==4):
-        p[0]=p[3]
-    else:
-        p[0]=p[1]
     
 def p_MethodDeclaration(p):
     '''MethodDeclaration : Modifiers TypeSpecifier MethodDeclarator MethodBody
@@ -220,7 +197,6 @@ def p_DeclaratorName(p):
     '''
     if(len(p)==2):
         p[0]=[p[1]]
-        ST.addIdentifier(p[1],p[1])
         return
 # def p_Throws(p):
 #     '''Throws : THROWS ClassNameList'''
@@ -294,9 +270,7 @@ def p_LocalVariableDeclarationStatement(p):
     # paramlen = len(VariableDeclarators)
     # print(p[2])
     for i in p[2]:
-        ST.addAttribute(i, 'type', p[1]['type'])
-        # print(p[1])
-        ST.addAttribute(i, 'size', ST.getSize(p[1]['type']))
+        ST.addIdentifier(i, i, p[1])
 
     
 def p_Statement(p):
@@ -332,12 +306,13 @@ precedence = (
 
 def p_SelectionStatement(p):
     '''SelectionStatement : KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark1 Statement IfMark2 %prec THAN
-                        | KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5
+                        | KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark1 Statement KEYELSE IfMark4 Statement IfMark5
     '''
 def p_IfMark1(p):
     '''IfMark1 : '''
     l1 = TAC.makeLabel()
     l2 = TAC.makeLabel()
+    # need to handle p[-2].place big work..
     TAC.emit('ifgoto','p[-2].place','eq 0 goto', l2)
     TAC.emit('goto',l1, '', '')
     TAC.emit('label',l1, '', '')
@@ -347,33 +322,64 @@ def p_IfMark2(p):
     '''IfMark2 : '''
     TAC.emit('label',p[-2][1], '', '')
 
-def p_IfMark3(p):
-    '''IfMark3 : '''
-    # l1 = TAC.makeLabel()
-    # l2 = TAC.makeLabel()
-    # l3 = TAC.
-    # TAC.emit('ifgoto',p[-2].place,'eq 0 goto', l2)
-    # TAC.emit('goto',l1, '', '')
-    # TAC.emit('label',l1, '', '')
-    # p[0]=[l1,l2]
-
 
 def p_IfMark4(p):
     '''IfMark4 : '''
-
+    l3 = TAC.makeLabel()
+    TAC.emit('goto',l3,'','')
+    TAC.emit('label',p[-3][1],'','')
+    p[0]=[l3]
 
 def p_IfMark5(p):
     '''IfMark5 : '''
+    TAC.emit('label',p[-2][0],'','')
 
 
 # IF else end here .................
-    
+
+
+# Iteration statements start here ..................
 def p_IterationStatement(p):
-    '''IterationStatement : KEYWHILE SEPLEFTBRACE Expression SEPRIGHTBRACE Statement
-                        | KEYFOR SEPLEFTBRACE ForInt ForExpr ForIncr SEPRIGHTBRACE Statement
-                        | KEYFOR SEPLEFTBRACE ForInt ForExpr SEPRIGHTBRACE Statement
+    '''IterationStatement : KEYWHILE WhMark1 SEPLEFTBRACE Expression SEPRIGHTBRACE WhMark2 Statement WhMark3
+                        | KEYFOR SEPLEFTBRACE ForInt FoMark1 ForExpr ForIncr SEPRIGHTBRACE FoMark2 Statement FoMark3
+                        | KEYFOR SEPLEFTBRACE ForInt FoMark1 ForExpr SEPRIGHTBRACE FoMark2 Statement FoMark3
     '''
-    
+def p_WhMark1(p):
+    '''WhMark1 : '''
+    l1 = TAC.makeLabel()
+    l2 = TAC.makeLabel()
+    l3 = TAC.makeLabel()
+    TAC.emit('label',l1,'','')
+    p[0]=[l1,l2,l3]
+
+def p_WhMark2(p):
+    '''WhMark2 : '''
+    TAC.emit('ifgoto','p[-2].place','eq 0 goto', p[-4][2])
+    TAC.emit('goto',p[-4][1],'','')
+    TAC.emit('label',p[-4][1],'','')
+
+def p_WhMark3(p):
+    '''WhMark3 : '''
+    TAC.emit('label',p[-6][2],'','')
+
+def p_FoMark1(p):
+    '''FoMark1 : '''
+    l1 = TAC.makeLabel()
+    l2 = TAC.makeLabel()
+    l3 = TAC.makeLabel()
+    TAC.emit('label',l1,'','')
+    p[0]=[l1,l2,l3]
+
+def p_FoMark2(p):
+    '''FoMark2 : '''
+    TAC.emit('ifgoto','p[-3].place','eq 0 goto', p[-4][2])
+    TAC.emit('goto',p[-4][1],'','')
+    TAC.emit('label',p[-4][1],'','')
+
+def p_FoMark3(p):
+    '''FoMark3 : '''
+    TAC.emit('label',p[-6][2],'','')
+
 def p_ForInt(p):
     '''ForInt : ExpressionStatements SEPSEMICOLON
             | LocalVariableDeclarationStatement
@@ -388,7 +394,11 @@ def p_ForExpr(p):
 def p_ForIncr(p):
     '''ForIncr : ExpressionStatements
     '''
-    
+
+
+# Iteration Statements end here......
+
+
 def p_ExpressionStatements(p):
     '''ExpressionStatements : ExpressionStatement
                     | ExpressionStatements SEPCOMMA ExpressionStatement
@@ -575,15 +585,7 @@ def p_Dims(p):
     '''Dims : OP_DIM
             | Dims OP_DIM
     '''
-    if(len(p)==2):
-        p[0]={
-            'dimension' : 1
-        }
-    else:
-        p[0] ={
-            'dimension' : 1+ p[1]['dimension']
-        }
-
+    
 def p_PostfixExpression(p):
     '''PostfixExpression : PrimaryExpression
                     | RealPostfixExpression

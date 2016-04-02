@@ -126,7 +126,7 @@ Rule 102   LabelStatement -> KEYCASE ConstantExpression SEPCOLON
 Rule 103   LabelStatement -> KEYDEFAULT SEPCOLON
 Rule 104   ExpressionStatement -> Expression
 Rule 105   SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark1 Statement IfMark2
-Rule 106   SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5
+Rule 106   SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5
 Rule 107   IfMark1 -> <empty>
 Rule 108   IfMark2 -> <empty>
 Rule 109   IfMark3 -> <empty>
@@ -1259,7 +1259,7 @@ state 35
     (102) LabelStatement -> . KEYCASE ConstantExpression SEPCOLON
     (103) LabelStatement -> . KEYDEFAULT SEPCOLON
     (105) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark1 Statement IfMark2
-    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5
+    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5
     (112) IterationStatement -> . KEYWHILE SEPLEFTBRACE Expression SEPRIGHTBRACE Statement
     (113) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr ForIncr SEPRIGHTBRACE Statement
     (114) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr SEPRIGHTBRACE Statement
@@ -4222,7 +4222,7 @@ state 106
 state 107
 
     (105) SelectionStatement -> KEYIF . SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark1 Statement IfMark2
-    (106) SelectionStatement -> KEYIF . SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5
+    (106) SelectionStatement -> KEYIF . SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5
 
     SEPLEFTBRACE    shift and go to state 202
 
@@ -5426,7 +5426,7 @@ state 131
     (102) LabelStatement -> . KEYCASE ConstantExpression SEPCOLON
     (103) LabelStatement -> . KEYDEFAULT SEPCOLON
     (105) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark1 Statement IfMark2
-    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5
+    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5
     (112) IterationStatement -> . KEYWHILE SEPLEFTBRACE Expression SEPRIGHTBRACE Statement
     (113) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr ForIncr SEPRIGHTBRACE Statement
     (114) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr SEPRIGHTBRACE Statement
@@ -10473,7 +10473,7 @@ state 201
 state 202
 
     (105) SelectionStatement -> KEYIF SEPLEFTBRACE . Expression SEPRIGHTBRACE IfMark1 Statement IfMark2
-    (106) SelectionStatement -> KEYIF SEPLEFTBRACE . Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5
+    (106) SelectionStatement -> KEYIF SEPLEFTBRACE . Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5
     (258) Expression -> . AssignmentExpression
     (244) AssignmentExpression -> . ConditionalExpression
     (245) AssignmentExpression -> . UnaryExpression AssignmentOperator AssignmentExpression
@@ -15199,7 +15199,7 @@ state 303
 state 304
 
     (105) SelectionStatement -> KEYIF SEPLEFTBRACE Expression . SEPRIGHTBRACE IfMark1 Statement IfMark2
-    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression . SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5
+    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression . SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5
 
     SEPRIGHTBRACE   shift and go to state 363
 
@@ -16681,7 +16681,7 @@ state 343
     (102) LabelStatement -> . KEYCASE ConstantExpression SEPCOLON
     (103) LabelStatement -> . KEYDEFAULT SEPCOLON
     (105) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark1 Statement IfMark2
-    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5
+    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5
     (112) IterationStatement -> . KEYWHILE SEPLEFTBRACE Expression SEPRIGHTBRACE Statement
     (113) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr ForIncr SEPRIGHTBRACE Statement
     (114) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr SEPRIGHTBRACE Statement
@@ -18140,7 +18140,7 @@ state 362
 state 363
 
     (105) SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE . IfMark1 Statement IfMark2
-    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE . IfMark3 Statement KEYELSE IfMark4 Statement IfMark5
+    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE . IfMark3 Statement IfMark4 KEYELSE Statement IfMark5
     (107) IfMark1 -> .
     (109) IfMark3 -> .
 
@@ -19123,7 +19123,7 @@ state 384
 
 state 385
 
-    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 . Statement KEYELSE IfMark4 Statement IfMark5
+    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 . Statement IfMark4 KEYELSE Statement IfMark5
     (92) Statement -> . EmptyStatement
     (93) Statement -> . ExpressionStatement SEPSEMICOLON
     (94) Statement -> . LabelStatement
@@ -19138,7 +19138,7 @@ state 385
     (102) LabelStatement -> . KEYCASE ConstantExpression SEPCOLON
     (103) LabelStatement -> . KEYDEFAULT SEPCOLON
     (105) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark1 Statement IfMark2
-    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5
+    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5
     (112) IterationStatement -> . KEYWHILE SEPLEFTBRACE Expression SEPRIGHTBRACE Statement
     (113) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr ForIncr SEPRIGHTBRACE Statement
     (114) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr SEPRIGHTBRACE Statement
@@ -19367,7 +19367,7 @@ state 386
     (102) LabelStatement -> . KEYCASE ConstantExpression SEPCOLON
     (103) LabelStatement -> . KEYDEFAULT SEPCOLON
     (105) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark1 Statement IfMark2
-    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5
+    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5
     (112) IterationStatement -> . KEYWHILE SEPLEFTBRACE Expression SEPRIGHTBRACE Statement
     (113) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr ForIncr SEPRIGHTBRACE Statement
     (114) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr SEPRIGHTBRACE Statement
@@ -19596,7 +19596,7 @@ state 387
     (102) LabelStatement -> . KEYCASE ConstantExpression SEPCOLON
     (103) LabelStatement -> . KEYDEFAULT SEPCOLON
     (105) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark1 Statement IfMark2
-    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5
+    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5
     (112) IterationStatement -> . KEYWHILE SEPLEFTBRACE Expression SEPRIGHTBRACE Statement
     (113) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr ForIncr SEPRIGHTBRACE Statement
     (114) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr SEPRIGHTBRACE Statement
@@ -19891,10 +19891,12 @@ state 394
 
 state 395
 
-    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement . KEYELSE IfMark4 Statement IfMark5
+    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement . IfMark4 KEYELSE Statement IfMark5
+    (110) IfMark4 -> .
 
-    KEYELSE         shift and go to state 400
+    KEYELSE         reduce using rule 110 (IfMark4 -> .)
 
+    IfMark4                        shift and go to state 400
 
 state 396
 
@@ -20003,7 +20005,7 @@ state 398
     (102) LabelStatement -> . KEYCASE ConstantExpression SEPCOLON
     (103) LabelStatement -> . KEYDEFAULT SEPCOLON
     (105) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark1 Statement IfMark2
-    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5
+    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5
     (112) IterationStatement -> . KEYWHILE SEPLEFTBRACE Expression SEPRIGHTBRACE Statement
     (113) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr ForIncr SEPRIGHTBRACE Statement
     (114) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr SEPRIGHTBRACE Statement
@@ -20224,47 +20226,10 @@ state 399
 
 state 400
 
-    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE . IfMark4 Statement IfMark5
-    (110) IfMark4 -> .
+    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 . KEYELSE Statement IfMark5
 
-    SEPSEMICOLON    reduce using rule 110 (IfMark4 -> .)
-    Identifier      reduce using rule 110 (IfMark4 -> .)
-    KEYCASE         reduce using rule 110 (IfMark4 -> .)
-    KEYDEFAULT      reduce using rule 110 (IfMark4 -> .)
-    KEYIF           reduce using rule 110 (IfMark4 -> .)
-    KEYWHILE        reduce using rule 110 (IfMark4 -> .)
-    KEYFOR          reduce using rule 110 (IfMark4 -> .)
-    KEYBREAK        reduce using rule 110 (IfMark4 -> .)
-    KEYCONTINUE     reduce using rule 110 (IfMark4 -> .)
-    KEYRETURN       reduce using rule 110 (IfMark4 -> .)
-    KEYTHROW        reduce using rule 110 (IfMark4 -> .)
-    KEYTRY          reduce using rule 110 (IfMark4 -> .)
-    SEPLEFTPARAN    reduce using rule 110 (IfMark4 -> .)
-    OPINCREMENT     reduce using rule 110 (IfMark4 -> .)
-    OPDECREMENT     reduce using rule 110 (IfMark4 -> .)
-    OPPLUS          reduce using rule 110 (IfMark4 -> .)
-    OPMINUS         reduce using rule 110 (IfMark4 -> .)
-    OPTILDE         reduce using rule 110 (IfMark4 -> .)
-    OPNOT           reduce using rule 110 (IfMark4 -> .)
-    KEYTHIS         reduce using rule 110 (IfMark4 -> .)
-    SEPLEFTBRACE    reduce using rule 110 (IfMark4 -> .)
-    BooleanLiteral  reduce using rule 110 (IfMark4 -> .)
-    KEYNEW          reduce using rule 110 (IfMark4 -> .)
-    IntegerLiteral  reduce using rule 110 (IfMark4 -> .)
-    FloatingLiteral reduce using rule 110 (IfMark4 -> .)
-    CharacterLiteral reduce using rule 110 (IfMark4 -> .)
-    StringLiteral   reduce using rule 110 (IfMark4 -> .)
-    KEYBOOLEAN      reduce using rule 110 (IfMark4 -> .)
-    KEYCHAR         reduce using rule 110 (IfMark4 -> .)
-    KEYDOUBLE       reduce using rule 110 (IfMark4 -> .)
-    KEYBYTE         reduce using rule 110 (IfMark4 -> .)
-    KEYSHORT        reduce using rule 110 (IfMark4 -> .)
-    KEYINT          reduce using rule 110 (IfMark4 -> .)
-    KEYLONG         reduce using rule 110 (IfMark4 -> .)
-    KEYVOID         reduce using rule 110 (IfMark4 -> .)
-    KEYFLOAT        reduce using rule 110 (IfMark4 -> .)
+    KEYELSE         shift and go to state 403
 
-    IfMark4                        shift and go to state 403
 
 state 401
 
@@ -20356,7 +20321,7 @@ state 402
 
 state 403
 
-    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 . Statement IfMark5
+    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE . Statement IfMark5
     (92) Statement -> . EmptyStatement
     (93) Statement -> . ExpressionStatement SEPSEMICOLON
     (94) Statement -> . LabelStatement
@@ -20371,7 +20336,7 @@ state 403
     (102) LabelStatement -> . KEYCASE ConstantExpression SEPCOLON
     (103) LabelStatement -> . KEYDEFAULT SEPCOLON
     (105) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark1 Statement IfMark2
-    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5
+    (106) SelectionStatement -> . KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5
     (112) IterationStatement -> . KEYWHILE SEPLEFTBRACE Expression SEPRIGHTBRACE Statement
     (113) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr ForIncr SEPRIGHTBRACE Statement
     (114) IterationStatement -> . KEYFOR SEPLEFTBRACE ForInt ForExpr SEPRIGHTBRACE Statement
@@ -20585,7 +20550,7 @@ state 403
 
 state 404
 
-    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement . IfMark5
+    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement . IfMark5
     (111) IfMark5 -> .
 
     SEPRIGHTPARAN   reduce using rule 111 (IfMark5 -> .)
@@ -20631,46 +20596,46 @@ state 404
 
 state 405
 
-    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .
+    (106) SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .
 
-    SEPRIGHTPARAN   reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    SEPSEMICOLON    reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    Identifier      reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYCASE         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYDEFAULT      reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYIF           reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYWHILE        reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYFOR          reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYBREAK        reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYCONTINUE     reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYRETURN       reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYTHROW        reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYTRY          reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    SEPLEFTPARAN    reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYBOOLEAN      reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYCHAR         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYDOUBLE       reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYBYTE         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYSHORT        reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYINT          reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYLONG         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYVOID         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYFLOAT        reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    OPINCREMENT     reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    OPDECREMENT     reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    OPPLUS          reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    OPMINUS         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    OPTILDE         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    OPNOT           reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYTHIS         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    SEPLEFTBRACE    reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    BooleanLiteral  reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYNEW          reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    IntegerLiteral  reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    FloatingLiteral reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    CharacterLiteral reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    StringLiteral   reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
-    KEYELSE         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement KEYELSE IfMark4 Statement IfMark5 .)
+    SEPRIGHTPARAN   reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    SEPSEMICOLON    reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    Identifier      reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYCASE         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYDEFAULT      reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYIF           reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYWHILE        reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYFOR          reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYBREAK        reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYCONTINUE     reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYRETURN       reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYTHROW        reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYTRY          reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    SEPLEFTPARAN    reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYBOOLEAN      reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYCHAR         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYDOUBLE       reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYBYTE         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYSHORT        reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYINT          reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYLONG         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYVOID         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYFLOAT        reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    OPINCREMENT     reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    OPDECREMENT     reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    OPPLUS          reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    OPMINUS         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    OPTILDE         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    OPNOT           reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYTHIS         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    SEPLEFTBRACE    reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    BooleanLiteral  reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYNEW          reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    IntegerLiteral  reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    FloatingLiteral reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    CharacterLiteral reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    StringLiteral   reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
+    KEYELSE         reduce using rule 106 (SelectionStatement -> KEYIF SEPLEFTBRACE Expression SEPRIGHTBRACE IfMark3 Statement IfMark4 KEYELSE Statement IfMark5 .)
 
 WARNING: 
 WARNING: Conflicts:
