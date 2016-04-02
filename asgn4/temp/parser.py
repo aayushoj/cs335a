@@ -1045,6 +1045,14 @@ def p_AssignmentExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
+
+    if('isarray' in p[3].keys() and p[2]=='='):
+        # print "test"
+        # print p[1]
+        # print p[2]
+        # print p[3]
+        TAC.emit('declare',p[1]['place'],p[3]['place'],p[3]['type'])
+        return
     newPlace = ST.createTemp()
     p[0] = {
         'place' : newPlace,
