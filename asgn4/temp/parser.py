@@ -361,12 +361,13 @@ def p_WhMark1(p):
 
 def p_WhMark2(p):
     '''WhMark2 : '''
-    TAC.emit('ifgoto','p[-2].place','eq 0', p[-4][2])
+    TAC.emit('ifgoto',p[-2]['place'],'eq 0', p[-4][2])
     TAC.emit('goto',p[-4][1],'','')
     TAC.emit('label',p[-4][1],'','')
 
 def p_WhMark3(p):
     '''WhMark3 : '''
+    TAC.emit('goto',p[-6][0],'','')
     TAC.emit('label',p[-6][2],'','')
     stackbegin.pop()
     stackend.pop()
@@ -383,12 +384,13 @@ def p_FoMark1(p):
 
 def p_FoMark2(p):
     '''FoMark2 : '''
-    TAC.emit('ifgoto','p[-3].place','eq 0', p[-4][2])
+    TAC.emit('ifgoto',p[-3]['place'],'eq 0', p[-4][2])
     TAC.emit('goto',p[-4][1],'','')
     TAC.emit('label',p[-4][1],'','')
 
 def p_FoMark3(p):
     '''FoMark3 : '''
+    TAC.emit('goto',p[-6][0],'','')
     TAC.emit('label',p[-6][2],'','')
     stackbegin.pop()
     stackend.pop()
@@ -403,6 +405,9 @@ def p_ForExpr(p):
     '''ForExpr : Expression SEPSEMICOLON
             | SEPSEMICOLON
     '''
+    if(len(p)>2):
+        p[0]=p[1]
+        return
     
 def p_ForIncr(p):
     '''ForIncr : ExpressionStatements
@@ -426,8 +431,13 @@ def p_JumpStatement(p):
                 | KEYRETURN  SEPSEMICOLON
                 | KEYTHROW Expression SEPSEMICOLON
     '''
+    if(len(p)==3 and p[1]=='break'):
+        TAC.emit('goto',stackend[-1],'','')
+        return
+    if(len(p)==3 and p[1]=='continue'):
+        TAC.emit('goto',stackbegin[-1],'','')
+        return
 
-    
     
 def p_GuardingStatement(p):
     '''GuardingStatement : KEYTRY Block Finally

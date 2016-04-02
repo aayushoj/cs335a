@@ -3,17 +3,14 @@ class amit{
 public class HelloWorld
 {
 	public static void main(String[] args) {
-		int a,b,c,d,e,f,g,hji;
+		int a,b,c,d,e,f,g,hji,i;
 		c=6+8+90;
 		f+=g+e;
 		c=a*b+c*d+e*f;
-		if(a+b < 5)
+		for(i=0;i<3;i=i+1)
 		{
-			b=7;
-		}
-		else
-		{
-			c=9*78+a;
+			a=a+1;
+			continue;
 		}
 	}
 }
