@@ -80,7 +80,7 @@ def p_TypeSpecifier(p):
         # print p[1]['type']
         p[0]['type'] =str(p[1]['type']).upper()
         p[0]['dimension'] = p[2]['dimension']
-        return
+        return  
 
     
 #don't know what is Dims
