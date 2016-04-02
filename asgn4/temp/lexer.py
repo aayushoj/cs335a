@@ -27,7 +27,7 @@ IdentifierStart = r'([0-9a-zA-Z$_])'
 Identifier = r'[a-zA-Z$_][a-zA-Z0-9$_]*'
 
 # print(Identifier)
-Keyword = r'(continue|for|new|switch|assert|default|goto|boolean|do|if|finally|final|private|this|class|break|double|protected|byte|else|import|public|case|enum|return|catch|extends|int|short|try|char|static|void|long|volatile|const|float|while|interfaces|throw|throws)'+r'[^0-9a-zA-Z$_]'
+Keyword = r'(continue|for|new|switch|assert|default|goto|boolean|do|if|finally|final|private|this|class|break|double|protected|byte|else|import|public|case|enum|return|catch|extends|int|short|try|char|static|void|long|volatile|const|float|String|while|interfaces|throw|throws)'+r'[^0-9a-zA-Z$_]'
 Separator = r'[;,.(){}[\] \"\']'
 Comments = r'(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|(//.*)'
 Operator = r'(>>>=|<<=|>>=|<<|>>|>>>|<=|>=|<|>|\+\+[^+=]|--[^\-=]|[+\-*/%&\^|]=|\+[^+=]|-[^\-=]|\*|/|==|=|~|!=|%|instanceof|!|&&|\^|\|\||&|\|)'
@@ -130,7 +130,7 @@ def t_error(t):
     t.lexer.skip(1)
 
 
-keyw = ['continue','for','new','switch','assert','default','goto','boolean','final' ,'do','if','private','this','break','double','protected','byte','else','import','public','case','enum','return','catch','extends','int','short','try','char','static','void','class','long','volatile','const','finally','float','while','interfaces','throw','throws']
+keyw = ['continue','for','new','switch','assert','default','goto','boolean','final' ,'do','if','private','this','break','double','protected','byte','else','import','public','case','enum','return','catch','extends','int','short','try','char','static','void','class','long','volatile','const','finally','float','String','while','interfaces','throw','throws']
 keywords ={}
 for i in keyw:
     keywords[i]="KEY"+ str(i).upper()
