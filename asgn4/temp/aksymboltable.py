@@ -131,7 +131,7 @@ class SymbolTable:
 
 
     #Adds identifier to the current scope
-    def addIdentifier(self, idenName, place, idenType = 'UNKNOWN', idenSize = 0):
+    def addIdentifier(self, idenName, place, idenType = 'unknown', idenSize = 0):
         #Assign size if not given
         if idenSize == 0:
             idenSize = self.getSize(idenType)
@@ -142,7 +142,7 @@ class SymbolTable:
                     'type' : idenType,
                     'size' : idenSize
                     }
-        # print(self.symbolTable[self.currentScope]['identifiers'])
+        print(self.symbolTable[self.currentScope]['identifiers'])
 
 
     #Returns a boolean indicating presence of identifier 
@@ -181,8 +181,7 @@ class SymbolTable:
 
     #Get the size of a type
     def getSize(self, typeExpr):
-        # print typeExpr
-        if typeExpr in ['INT', 'BOOL', 'FLOAT', 'CHAR', 'VOID','UNKNOWN' ]:
+        if typeExpr in ['INT', 'BOOL', 'FLOAT', 'CHAR', 'VOID' ]:
             return self.wordSize
         elif typeExpr in self.classes:
             return self.addressSize
@@ -192,8 +191,6 @@ class SymbolTable:
             return self.addressSize
         elif typeExpr[0] == 'ARRAY':
             return self.addressSize
-        elif typeExpr[0] == 'UNKNOWN':
-            return -1
         else:
             assert(False)
 

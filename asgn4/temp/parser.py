@@ -47,12 +47,8 @@ def p_QualifiedName(p):
     '''
     if(len(p)==2):
         p[0] = {
-            'idenName' : p[1],
-            'tmark' : False,
-            'type' : ST.getAttribute(p[1],'type'),
-            'place' : ST.getAttribute(p[1],'place')
+            'idenName' : p[1]
         }
-        # print "lala"
         
 
 def p_Semicolons(p):
@@ -64,23 +60,9 @@ def p_TypeSpecifier(p):
     '''TypeSpecifier : TypeName 
             | TypeName Dims              
     '''
-    # print (len(p))
     if(len(p)==2):
-        p[0]={}
-        # print "gere"
-        # print p[1]
-        # temp= p[1]
-        p[0]['type']=str(p[1]['type']).upper()
+        p[0]=p[1].upper()
         return
-    else:
-        p[0] = {}
-        # print "test"
-        # print p[1]
-        # temp=str(p[1]['type'])
-        # print p[1]['type']
-        p[0]['type'] =str(p[1]['type']).upper()
-        p[0]['dimension'] = p[2]['dimension']
-        return  
 
     
 #don't know what is Dims
@@ -88,13 +70,7 @@ def p_TypeName(p):
     '''TypeName : PrimitiveType
             | QualifiedName
     '''
-    p[0]={}
-    if(p[1]['tmark'] is False):
-        p[0]['idenName']=p[1]['idenName']
-        p[0]['type']=p[1]['type']
-        p[0]['place']=p[1]['place']
-    else:
-        p[0]['type']=p[1]['type']
+    p[0]=p[1]
     
 def p_PrimitiveType(p):
     '''PrimitiveType : KEYBOOLEAN
@@ -107,13 +83,7 @@ def p_PrimitiveType(p):
                 | KEYVOID
                 | KEYFLOAT
     '''
-    # print p[1]
-    p[0]={}
-
-    p[0]={
-        'type' : p[1],
-        'tmark' : True
-        }
+    p[0]=p[1]
     
 def p_ClassNameList(p):
     '''ClassNameList : QualifiedName
@@ -180,13 +150,8 @@ def p_VariableDeclarator(p):
     if(len(p)==2):
         p[0]=p[1]
         return
-    else:
-        p[0]=p[1]
-        # p[0]['place'] = ST.getAttribute(p[1]['idenName'],'place')
-        place=ST.getAttribute(p[0][0],'place')
-        # print("place = " + str(place))
-        TAC.emit(place,p[3]['place'],'',p[2])
-
+    TAC.emit(p[1][0],p[3]['place'],'',p[2])
+    p[0] = p[1]
 
     
 
@@ -195,6 +160,10 @@ def p_VariableInitializer(p):
                             | SEPLEFTPARAN SEPRIGHTPARAN
                             | SEPLEFTPARAN ArrayInitializers SEPRIGHTPARAN
     '''
+    if(len(p)==2):
+        p[0]=p[1]
+        return
+
     
 def p_ArrayInitializers(p):
     '''ArrayInitializers : VariableInitializer
@@ -308,7 +277,6 @@ def p_LocalVariableDeclarationStatement(p):
     # print(p[2])
     for i in p[2]:
         ST.addIdentifier(i, i, p[1])
-
 
     
 def p_Statement(p):
@@ -894,7 +862,6 @@ def p_AssignmentExpression(p):
         'place' : newPlace,
         'type' : 'TYPE_ERROR'
     }
-    # print p[1]
     if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
