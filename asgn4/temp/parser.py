@@ -170,12 +170,24 @@ def p_ArrayInitializers(p):
                             | ArrayInitializers SEPCOMMA
     '''
     
+
 def p_MethodDeclaration(p):
-    '''MethodDeclaration : Modifiers TypeSpecifier MethodDeclarator MethodBody
-                        | Modifiers TypeSpecifier MethodDeclarator Throws MethodBody
-                        | TypeSpecifier MethodDeclarator Throws MethodBody
-                        | TypeSpecifier MethodDeclarator MethodBody
+    '''MethodDeclaration : Modifiers TypeSpecifier MethodDeclarator MethodBody FMark2
+                        | Modifiers TypeSpecifier MethodDeclarator Throws MethodBody FMark3
+                        | TypeSpecifier MethodDeclarator Throws MethodBody FMark3
+                        | TypeSpecifier MethodDeclarator MethodBody FMark2
     '''
+
+
+def p_FMark2(p):
+    '''FMark2 : '''
+    TAC.emit('ret','','','')
+    TAC.emit('label',p[-2][0],'','')
+
+def p_FMark3(p):
+    '''FMark3 : '''
+    TAC.emit('ret','','','')
+    TAC.emit('label',p[-3][0],'','')
     
 def p_Throws(p):
     '''Throws : KEYTHROWS ClassNameList
@@ -186,6 +198,14 @@ def p_MethodDeclarator(p):
                     | DeclaratorName SEPLEFTBRACE SEPRIGHTBRACE
                     | MethodDeclarator OP_DIM
     '''
+    if(len(p)>3):
+        l1 = TAC.makeLabel()
+        TAC.emit('func','','','')
+        p[0]=[l1]
+        stackbegin.append(p[1])
+        stackend.append(l1)
+        TAC.emit('label',p[1][0],'','')
+
     
 def p_ParameterList(p):
     '''ParameterList : Parameter
@@ -437,6 +457,9 @@ def p_JumpStatement(p):
     if(len(p)==3 and p[1]=='continue'):
         TAC.emit('goto',stackbegin[-1],'','')
         return
+    if(len(p)==3 and p[1]=='return'):
+        TAC.emit('ret','','','')
+        return
 
     
 def p_GuardingStatement(p):
@@ -553,12 +576,15 @@ def p_MethodCall(p):
     ''' MethodCall : MethodAccess SEPLEFTBRACE ArgumentList SEPRIGHTBRACE
             | MethodAccess SEPLEFTBRACE SEPRIGHTBRACE
     '''
+    TAC.emit('goto',p[1]['idenName'],'','')
+    p[0]=p[1]
     
 def p_MethodAccess(p):
     ''' MethodAccess : ComplexPrimaryNoParenthesis
                 | SpecialName
                 | QualifiedName
     '''
+    p[0]=p[1]
     
 def p_SpecialName(p):
     '''SpecialName : KEYTHIS

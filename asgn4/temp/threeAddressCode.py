@@ -6,6 +6,8 @@ class ThreeAddressCode:
 		self.quad = -1
 		self.nextQuad = 0
 		self.labelBase = "l"
+		self.labelFunc = "f"
+		self.labelFuncNo = -1
 		self.labelNo = -1
 
 	#Add instruction to code list
@@ -33,3 +35,8 @@ class ThreeAddressCode:
 	def makeLabel(self):
 		self.labelNo += 1
 		return self.labelBase + str(self.labelNo)
+
+	#Make a new function label
+	def makeFuncLabel(self):
+		self.labelFuncNo += 1
+		return self.labelFunc + str(self.labelFuncNo)
