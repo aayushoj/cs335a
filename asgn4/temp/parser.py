@@ -46,7 +46,8 @@ def p_QualifiedName(p):
     '''
     if(len(p)==2):
         p[0] = {
-            'idenName' : p[1]
+            'idenName' : p[1],
+            'isnotjustname' : False
         }
         
 
@@ -59,9 +60,18 @@ def p_TypeSpecifier(p):
     '''TypeSpecifier : TypeName 
             | TypeName Dims              
     '''
+    # print("jkdjkfjdk")
+    # print(p[1])
     if(len(p)==2):
-        p[0]=p[1].upper()
+        p[0]={
+            'type': p[1].upper()
+            }
         return
+    else:
+        p[0]={
+            'type' : p[1].upper(),
+            'dim'  : p[2]
+            }
 
     
 #don't know what is Dims
@@ -69,7 +79,7 @@ def p_TypeName(p):
     '''TypeName : PrimitiveType
             | QualifiedName
     '''
-    p[0]=p[1]
+    p[0]=p[1]['idenName']
     
 def p_PrimitiveType(p):
     '''PrimitiveType : KEYBOOLEAN
@@ -81,8 +91,12 @@ def p_PrimitiveType(p):
                 | KEYLONG
                 | KEYVOID
                 | KEYFLOAT
+                | KEYSTRING
     '''
-    p[0]=p[1]
+    #it is idenname because in the case of struct, we are passing the type as iden name through qualified type
+    p[0]={
+            'idenName' :p[1]
+        }
     
 def p_ClassNameList(p):
     '''ClassNameList : QualifiedName
@@ -146,12 +160,18 @@ def p_VariableDeclarator(p):
     ''' VariableDeclarator : DeclaratorName
                             | DeclaratorName OPEQUAL VariableInitializer
     '''
+    # print "yey"
     if(len(p)==2):
         p[0]=p[1]
         return
-    TAC.emit(p[1][0],p[3]['place'],'',p[2])
-    p[0] = p[1]
-
+    # print p[3]
+    if('isarray' in p[3].keys()):
+        TAC.emit('declare',p[1][0],p[3]['place'],p[3]['type'])
+        p[0]=p[1]
+    else:    
+        TAC.emit(p[1][0],p[3]['place'],'',p[2])
+        p[0] = p[1]
+    # print p[0]
     
 
 def p_VariableInitializer(p):
@@ -161,6 +181,7 @@ def p_VariableInitializer(p):
     '''
     if(len(p)==2):
         p[0]=p[1]
+        # print p[0]
         return
 
     
@@ -302,7 +323,10 @@ def p_LocalVariableDeclarationStatement(p):
     # paramlen = len(VariableDeclarators)
     # print(p[2])
     for i in p[2]:
-        ST.addIdentifier(i, i, p[1])
+        # print "lala"
+        # print(p[1])
+        # print(i)
+        ST.addIdentifier(i, i, p[1]['type'])
 
     
 def p_Statement(p):
@@ -508,7 +532,7 @@ def p_PrimaryExpression(p):
         'place' : 'undefined',
         'type' : 'TYPE_ERROR'
     }
-    if(len(p[1])==1):
+    if(p[1]['isnotjustname']==False):
         if ST.lookupIdentifier(p[1]['idenName']) :
             p[0]['place'] = ST.getAttribute(p[1]['idenName'],'place')
             p[0]['type'] = ST.getAttribute(p[1]['idenName'],'type')
@@ -516,7 +540,7 @@ def p_PrimaryExpression(p):
             print('Error undefined variable is used.')
 
     else:
-        p[0]=p[1]
+        p[0]=p[1]['val']
 
     
 def p_NotJustName(p):
@@ -524,8 +548,13 @@ def p_NotJustName(p):
                 | NewAllocationExpression
                 | ComplexPrimary
     '''
-    p[0]=p[1]
-    
+    p[0]={
+        'isnotjustname' : True,
+        'val' : p[1]
+
+    }
+    # p[1]
+    # 
 def p_ComplexPrimary(p):
     '''ComplexPrimary : SEPLEFTBRACE Expression SEPRIGHTBRACE
             | ComplexPrimaryNoParenthesis
@@ -619,6 +648,8 @@ def p_NewAllocationExpression(p):
     '''NewAllocationExpression : PlainNewAllocationExpression
                     | QualifiedName SEPDOT PlainNewAllocationExpression
     '''
+    if(len(p)==2):
+        p[0]=p[1]
     
 def p_PlainNewAllocationExpression(p):
     '''PlainNewAllocationExpression :  ArrayAllocationExpression
@@ -628,6 +659,8 @@ def p_PlainNewAllocationExpression(p):
                         | ArrayAllocationExpression SEPLEFTPARAN ArrayInitializers SEPRIGHTPARAN
                         | ClassAllocationExpression SEPLEFTPARAN FieldDeclarations SEPRIGHTPARAN
     '''
+    if(len(p)==2):
+        p[0]=p[1]
     
 def p_ClassAllocationExpression(p):
     '''ClassAllocationExpression : KEYNEW TypeName SEPLEFTBRACE ArgumentList SEPRIGHTBRACE
@@ -639,20 +672,45 @@ def p_ArrayAllocationExpression(p):
                             | KEYNEW TypeName DimExprs
                             | KEYNEW TypeName Dims
     '''
+    #Doing just 2nd rule i.e 1D array
+    if(len(p)==4):
+        # TAC.emit('declare',p[2],p[3][1:-1])
+        # print p[3]
+        p[0]={
+            'type' : p[2].upper(),
+            'place'  : p[3]['place'],
+            'isarray' : True
+        }
+        # print p[0]['len']
+
     
 def p_DimExprs(p):
     '''DimExprs : DimExpr
                 | DimExprs DimExpr
     '''
+    if(len(p)==2):
+        p[0]=p[1]
+        # print p[0]
     
 def p_DimExpr(p):
     '''DimExpr : SEPLEFTSQBR Expression SEPRIGHTSQBR
     '''
+    # print p[2]
+    if(p[2]['type']=='INT'):
+        p[0]=p[2]
+    else:
+        print("Error in line no "+str(p.lineno)+" :: Array declaration needs an integer size")
     
 def p_Dims(p):
     '''Dims : OP_DIM
             | Dims OP_DIM
     '''
+    if(len(p)==2):
+        p[0]=1
+        return
+    else:
+        p[0]=1+p[1]
+        return
     
 def p_PostfixExpression(p):
     '''PostfixExpression : PrimaryExpression
@@ -1003,6 +1061,14 @@ def p_AssignmentExpression(p):
     '''
     if(len(p)==2):
         p[0] = p[1]
+        return
+
+    if('isarray' in p[3].keys() and p[2]=='='):
+        # print "test"
+        # print p[1]
+        # print p[2]
+        # print p[3]
+        TAC.emit('declare',p[1]['place'],p[3]['place'],p[3]['type'])
         return
     newPlace = ST.createTemp()
     p[0] = {
