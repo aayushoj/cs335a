@@ -2,20 +2,20 @@ import java.io.*;
 class amit{
 public class HelloWorld
 {
-	public static int shubh()
+	public static void shubh()
 	{
-		int d;
-		d=5;
-		if(d==5)
-		{
-			return;
-		}
-		
+		int y=0;
 	}
 	public static void main(String[] args) {
-		int t,g;
+		int t,i;
 		t=7;
+		while(i<3)
+		{
+			t=8;
+			
+		}
 		shubh();
+		
 	}
 }
 }

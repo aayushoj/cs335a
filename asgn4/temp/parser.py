@@ -269,9 +269,16 @@ def p_Modifier(p):
     '''
     
 def p_Block(p):
-    '''Block : SEPLEFTPARAN LocalVariableDeclarationsAndStatements SEPRIGHTPARAN
+    '''Block : SEPLEFTPARAN BMark1 LocalVariableDeclarationsAndStatements BMark2 SEPRIGHTPARAN
             | SEPLEFTPARAN SEPRIGHTPARAN 
     '''
+def p_BMark1(p):
+    '''BMark1 : '''
+    ST.addBlock()
+
+def p_BMark2(p):
+    '''BMark2 : '''
+    ST.endBlock()
     
 def p_LocalVariableDeclarationsAndStatements(p):
     '''LocalVariableDeclarationsAndStatements : LocalVariableDeclarationOrStatement
@@ -341,10 +348,12 @@ def p_IfMark1(p):
     TAC.emit('ifgoto',p[-2]['place'],'eq 0', l2)
     TAC.emit('goto',l1, '', '')
     TAC.emit('label',l1, '', '')
+    ST.addBlock()
     p[0]=[l1,l2]
 
 def p_IfMark2(p):
     '''IfMark2 : '''
+    ST.endBlock()
     TAC.emit('label',p[-2][1], '', '')
 
 
@@ -357,6 +366,7 @@ def p_IfMark4(p):
 
 def p_IfMark5(p):
     '''IfMark5 : '''
+    ST.endBlock()
     TAC.emit('label',p[-2][0],'','')
 
 
@@ -376,6 +386,7 @@ def p_WhMark1(p):
     l3 = TAC.makeLabel()
     stackbegin.append(l1)
     stackend.append(l3)
+    ST.addBlock()
     TAC.emit('label',l1,'','')
     p[0]=[l1,l2,l3]
 
@@ -389,6 +400,7 @@ def p_WhMark3(p):
     '''WhMark3 : '''
     TAC.emit('goto',p[-6][0],'','')
     TAC.emit('label',p[-6][2],'','')
+    ST.addBlock()
     stackbegin.pop()
     stackend.pop()
 
@@ -399,6 +411,7 @@ def p_FoMark1(p):
     l3 = TAC.makeLabel()
     stackbegin.append(l1)
     stackend.append(l3)
+    ST.addBlock()
     TAC.emit('label',l1,'','')
     p[0]=[l1,l2,l3]
 
@@ -412,6 +425,7 @@ def p_FoMark3(p):
     '''FoMark3 : '''
     TAC.emit('goto',p[-6][0],'','')
     TAC.emit('label',p[-6][2],'','')
+    ST.endBlock()
     stackbegin.pop()
     stackend.pop()
 
@@ -498,6 +512,9 @@ def p_PrimaryExpression(p):
         if ST.lookupIdentifier(p[1]['idenName']) :
             p[0]['place'] = ST.getAttribute(p[1]['idenName'],'place')
             p[0]['type'] = ST.getAttribute(p[1]['idenName'],'type')
+        else:
+            print('Error undefined variable is used.')
+
     else:
         p[0]=p[1]
 
@@ -1051,7 +1068,7 @@ s.close()
 
 #Parse it!
 yacc.parse(data)
-print(TAC.printCode())
+TAC.printCode()
 
 
 # a=a.split('\n')
