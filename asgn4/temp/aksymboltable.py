@@ -137,8 +137,9 @@ class SymbolTable:
             idenSize = self.getSize(idenType)
         scope = self.lookUpScope(idenName)
         if scope == None:
+            sc = str(self.currentScope)+'_'+place
             self.symbolTable[self.currentScope]['identifiers'][idenName] = {
-                    'place' : place,
+                    'place' : sc,
                     'type' : idenType,
                     'size' : idenSize
                     }

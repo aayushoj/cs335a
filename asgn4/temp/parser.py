@@ -417,7 +417,7 @@ def p_IfMark5(p):
 def p_IterationStatement(p):
     '''IterationStatement : KEYWHILE WhMark1 SEPLEFTBRACE Expression SEPRIGHTBRACE WhMark2 Statement WhMark3
                         | KEYFOR SEPLEFTBRACE ForInt FoMark1 ForExpr ForIncr SEPRIGHTBRACE FoMark2 Statement FoMark3
-                        | KEYFOR SEPLEFTBRACE ForInt FoMark1 ForExpr SEPRIGHTBRACE FoMark2 Statement FoMark3
+                        | KEYFOR SEPLEFTBRACE ForInt FoMark1 ForExpr SEPRIGHTBRACE FoMark4 Statement FoMark5
     '''
 def p_WhMark1(p):
     '''WhMark1 : '''
@@ -461,10 +461,24 @@ def p_FoMark2(p):
     TAC.emit('goto',p[-4][1],'','')
     TAC.emit('label',p[-4][1],'','')
 
+def p_FoMark4(p):
+    '''FoMark4 : '''
+    TAC.emit('ifgoto',p[-2]['place'],'eq 0', p[-3][2])
+    TAC.emit('goto',p[-3][1],'','')
+    TAC.emit('label',p[-3][1],'','')
+
 def p_FoMark3(p):
     '''FoMark3 : '''
     TAC.emit('goto',p[-6][0],'','')
     TAC.emit('label',p[-6][2],'','')
+    ST.endBlock()
+    stackbegin.pop()
+    stackend.pop()
+
+def p_FoMark5(p):
+    '''FoMark5 : '''
+    TAC.emit('goto',p[-5][0],'','')
+    TAC.emit('label',p[-5][2],'','')
     ST.endBlock()
     stackbegin.pop()
     stackend.pop()
@@ -482,6 +496,13 @@ def p_ForExpr(p):
     if(len(p)>2):
         p[0]=p[1]
         return
+    else:
+        newPlace =ST.createTemp()
+        TAC.emit(newPlace,'1','','=')
+        p[0] = {
+            'place' : newPlace,
+            'type' : 'INT'
+        }
     
 def p_ForIncr(p):
     '''ForIncr : ExpressionStatements
@@ -1218,6 +1239,7 @@ s.close()
 #Parse it!
 yacc.parse(data)
 TAC.printCode()
+# TAC.output3AC()
 
 
 # a=a.split('\n')
