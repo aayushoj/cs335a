@@ -17,6 +17,22 @@ finalout=[]
 stackend = []
 stackbegin =[]
 
+#############Testing ###############
+
+##
+## Call this whenever array is on right hand side of =
+##  
+def ResolveRHSArray(d):
+    if( 'isArrayAccess' in d.keys() and d['isArrayAccess']):
+        dst1 = ST.createTemp()
+        TAC.emit(dst1,d['place']+"["+d['index_place']+"]", '','=')
+        d['place'] =dst1
+        d['isArrayAccess'] =False
+        del d['index_place']
+    return d
+
+
+
 def p_CompilationUnit(p):
     '''CompilationUnit : ProgramFile
     '''
@@ -165,7 +181,7 @@ def p_VariableDeclarator(p):
         p[0]=p[1]
         return
     # print p[3]
-    if('isarray' in p[3].keys()):
+    if('isarray' in p[3].keys() and p[3]['isarray']):
         TAC.emit('declare',p[1][0],p[3]['place'],p[3]['type'])
         p[0]=p[1]
     else:    
@@ -609,6 +625,14 @@ def p_ArrayAccess(p):
     '''ArrayAccess : QualifiedName SEPLEFTSQBR Expression SEPRIGHTSQBR
                 | ComplexPrimary SEPLEFTSQBR Expression SEPRIGHTSQBR
     '''
+    p[0]= p[1]
+    p[0]['isArrayAccess'] = True;
+    p[0]['type'] = ST.getAttribute(p[0]['idenName'],'type')
+    p[0]['place'] = p[0]['idenName']
+    # print(p[3])
+    p[0]['index_place'] = p[3]['place']
+    del p[0]['idenName']
+    # print(p[0])
     
 def p_FieldAcess(p):
     '''FieldAccess : NotJustName SEPDOT Identifier
@@ -792,18 +816,24 @@ def p_MultiplicativeExpression(p):
         return
     if p[2] == '*':
         if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+            p[3] =ResolveRHSArray(p[3])
+            p[1] =ResolveRHSArray(p[1])
             TAC.emit(newPlace,p[1]['place'],p[3]['place'],p[2])
             p[0]['type'] = 'INT'
         else:
             print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
     elif p[2] == '/' :
         if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+            p[3] =ResolveRHSArray(p[3])
+            p[1] =ResolveRHSArray(p[1])
             TAC.emit(newPlace,p[1]['place'],p[3]['place'],p[2])
             p[0]['type'] = 'INT'
         else:
             print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
     elif p[2] == '%':
         if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+            p[3] =ResolveRHSArray(p[3])
+            p[1] =ResolveRHSArray(p[1])
             TAC.emit(newPlace,p[1]['place'],p[3]['place'],p[2])
             p[0]['type'] = 'INT'
         else:
@@ -825,6 +855,8 @@ def p_AdditiveExpression(p):
     if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+        p[3] =ResolveRHSArray(p[3])
+        p[1] =ResolveRHSArray(p[1])
         TAC.emit(newPlace,p[1]['place'],p[3]['place'],p[2])
         p[0]['type'] = 'INT'
     else:
@@ -864,6 +896,8 @@ def p_RelationalExpression(p):
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
         if(p[2]=='>'):
+            p[3] =ResolveRHSArray(p[3])
+            p[1] =ResolveRHSArray(p[1])
             TAC.emit('ifgoto',p[1]['place'],'g '+p[3]['place'],l2)
             TAC.emit('goto',l1,'','')
             TAC.emit('label',l1,'','')
@@ -874,6 +908,8 @@ def p_RelationalExpression(p):
             TAC.emit('label',l3,'','')
             p[0]['type'] = 'INT'
         elif(p[2]=='>='):
+            p[3] =ResolveRHSArray(p[3])
+            p[1] =ResolveRHSArray(p[1])
             TAC.emit('ifgoto',p[1]['place'],'ge '+p[3]['place'],l2)
             TAC.emit('goto',l1,'','')
             TAC.emit('label',l1,'','')
@@ -884,6 +920,8 @@ def p_RelationalExpression(p):
             TAC.emit('label',l3,'','')
             p[0]['type'] = 'INT'
         elif(p[2]=='<'):
+            p[3] =ResolveRHSArray(p[3])
+            p[1] =ResolveRHSArray(p[1])
             TAC.emit('ifgoto',p[1]['place'],'l '+p[3]['place'],l2)
             TAC.emit('goto',l1,'','')
             TAC.emit('label',l1,'','')
@@ -894,6 +932,8 @@ def p_RelationalExpression(p):
             TAC.emit('label',l3,'','')
             p[0]['type'] = 'INT'
         elif(p[2]=='<='):
+            p[3] =ResolveRHSArray(p[3])
+            p[1] =ResolveRHSArray(p[1])
             TAC.emit('ifgoto',p[1]['place'],'le '+p[3]['place'],l2)
             TAC.emit('goto',l1,'','')
             TAC.emit('label',l1,'','')
@@ -926,6 +966,8 @@ def p_EqualityExpression(p):
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
         if(p[2][0]=='='):
+            p[3] =ResolveRHSArray(p[3])
+            p[1] =ResolveRHSArray(p[1])
             TAC.emit('ifgoto',p[1]['place'],'eq '+p[3]['place'],l2)
             TAC.emit('goto',l1,'','')
             TAC.emit('label',l1,'','')
@@ -936,6 +978,8 @@ def p_EqualityExpression(p):
             TAC.emit('label',l3,'','')
             p[0]['type'] = 'INT'
         else:
+            p[3] =ResolveRHSArray(p[3])
+            p[1] =ResolveRHSArray(p[1])
             TAC.emit('ifgoto',p[1]['place'],'eq '+p[3]['place'],l2)
             TAC.emit('goto',l1,'','')
             TAC.emit('label',l1,'','')
@@ -962,6 +1006,8 @@ def p_AndExpression(p):
     if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+        p[3] =ResolveRHSArray(p[3])
+        p[1] =ResolveRHSArray(p[1])
         TAC.emit(newPlace,p[1]['place'],p[3]['place'],'&')
         p[0]['type'] = 'INT'
     else:
@@ -982,6 +1028,8 @@ def p_ExclusiveOrExpression(p):
     if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+        p[3] =ResolveRHSArray(p[3])
+        p[1] =ResolveRHSArray(p[1])
         TAC.emit(newPlace,p[1]['place'],p[3]['place'],'xor')
         p[0]['type'] = 'INT'
     else:
@@ -1002,6 +1050,8 @@ def p_InclusiveOrExpression(p):
     if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+        p[3] =ResolveRHSArray(p[3])
+        p[1] =ResolveRHSArray(p[1])
         TAC.emit(newPlace,p[1]['place'],p[3]['place'],'|')
         p[0]['type'] = 'INT'
     else:
@@ -1022,6 +1072,8 @@ def p_ConditionalAndExpression(p):
     if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+        p[3] =ResolveRHSArray(p[3])
+        p[1] =ResolveRHSArray(p[1])
         TAC.emit(newPlace,p[1]['place'],p[3]['place'],'and')
         p[0]['type'] = 'INT'
     else:
@@ -1042,6 +1094,8 @@ def p_ConditionalOrExpression(p):
     if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
+        p[3] =ResolveRHSArray(p[3])
+        p[1] =ResolveRHSArray(p[1])
         TAC.emit(newPlace,p[1]['place'],p[3]['place'],'or')
         p[0]['type'] = 'INT'
     else:
@@ -1063,26 +1117,55 @@ def p_AssignmentExpression(p):
         p[0] = p[1]
         return
 
-    if('isarray' in p[3].keys() and p[2]=='='):
+    if('isarray' in p[3].keys() and p[3]['isarray'] and p[2]=='='):
         # print "test"
         # print p[1]
         # print p[2]
         # print p[3]
         TAC.emit('declare',p[1]['place'],p[3]['place'],p[3]['type'])
         return
+
+
+
+    ## 
     newPlace = ST.createTemp()
     p[0] = {
         'place' : newPlace,
-        'type' : 'TYPE_ERROR'
+        'type' : 'TYPE_ERROR',
+        'isarray': False
     }
     if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
         if(p[2][0]=='='):
-            TAC.emit(p[1]['place'],p[3]['place'],'',p[2])
+            # if( 'isArrayAccess' in p[1].keys() and p[1]['isArrayAccess']):
+            #     dst1 = ST.createTemp()
+            #     TAC.emit(dst1,p[1]['place']+"["+p[1]['index_place']+"]", '','=')
+            #     p[1]['place'] =dst1
+            #     p[1]['isArrayAccess'] =False
+            #     del p[1]['index_place']
+
+            p[3] = ResolveRHSArray(p[3])
+
+            dst = p[1]['place']
+            if( 'isArrayAccess' in p[1].keys() and p[1]['isArrayAccess']):
+                dst=p[1]['place'] + "["+p[1]['index_place'] + "]"
+            TAC.emit(dst,p[3]['place'],'',p[2])
+            p[0] = p[1]
+            # print(p[0])
         else:
-            TAC.emit(newPlace,p[1]['place'],p[3]['place'],p[2][0])
-            TAC.emit(p[1]['place'],newPlace,'',p[2][1])
+            p[3]=ResolveRHSArray(p[3])
+            # print(p[1])
+            new1=p[1].copy()
+            new = ResolveRHSArray(p[1])
+            p[1]=new1.copy()
+            # print(p[1])
+            dst = p[1]['place']
+            if( 'isArrayAccess' in p[1].keys() and p[1]['isArrayAccess']):
+                dst=p[1]['place'] + "["+p[1]['index_place'] + "]"
+            TAC.emit(newPlace,new['place'],p[3]['place'],p[2][0])
+            # print("lok here=====> " +dst)
+            TAC.emit(dst,newPlace,'',p[2][1])
         p[0]['type'] = 'INT'
     else:
         print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
@@ -1142,4 +1225,7 @@ TAC.printCode()
 #     if not (s == ''): 
 #         # data += " " +s
 #         yacc.parse(s)
+
+
+
 
