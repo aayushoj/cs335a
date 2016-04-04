@@ -1,3 +1,4 @@
+import sys
 class SymbolTable:
 
     def __init__(self):
@@ -27,16 +28,18 @@ class SymbolTable:
         self.currScope = self.SymbolTable[self.currScope]['parent']
 
     def variableAdd(self, idVal, place, idType, idSize = 4):
-        if idSize == 0:
+        if idSize == 4:
             idSize = self.getSize(idType)
         scope = self.getScope(idVal)
-        if scope == None:
+        if scope != self.currScope:
             sc = str(self.currScope)+'_'+place
             self.SymbolTable[self.currScope]['identifiers'][idVal] = {
                     'place' : sc,
                     'type' : idType,
                     'size' : idSize
                     }
+        else:
+            sys.exit('Variable '+idVal+" is already initialised in this scope")
         print(self.SymbolTable[self.currScope]['identifiers'])
 
     def variableSearch(self, idVal):

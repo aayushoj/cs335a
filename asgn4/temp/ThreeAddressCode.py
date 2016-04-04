@@ -1,3 +1,4 @@
+import sys
 class ThreeAddressCode:
 
     def __init__(self):
