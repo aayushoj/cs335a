@@ -80,8 +80,6 @@ def p_TypeSpecifier(p):
     '''TypeSpecifier : TypeName 
             | TypeName Dims              
     '''
-    # print("jkdjkfjdk")
-    # print(p[1])
     if(len(p)==2):
         p[0]={
             'type': p[1].upper()
@@ -180,18 +178,15 @@ def p_VariableDeclarator(p):
     ''' VariableDeclarator : DeclaratorName
                             | DeclaratorName OPEQUAL VariableInitializer
     '''
-    # print "yey"
     if(len(p)==2):
         p[0]=p[1]
         return
-    # print p[3]
     if('isarray' in p[3].keys() and p[3]['isarray']):
         TAC.emit('declare',p[1][0],p[3]['place'],p[3]['type'])
         p[0]=p[1]
     else:    
         TAC.emit(p[1][0],p[3]['place'],'',p[2])
         p[0] = p[1]
-    # print p[0]
     
 
 def p_VariableInitializer(p):
@@ -201,7 +196,6 @@ def p_VariableInitializer(p):
     '''
     if(len(p)==2):
         p[0]=p[1]
-        # print p[0]
         return
 
     
@@ -343,9 +337,6 @@ def p_LocalVariableDeclarationStatement(p):
     # paramlen = len(VariableDeclarators)
     # print(p[2])
     for i in p[2]:
-        # print "lala"
-        # print(p[1])
-        # print(i)
         ST.addIdentifier(i, i, p[1]['type'])
 
     
@@ -578,7 +569,7 @@ def p_PrimaryExpression(p):
             p[0]['place'] = ST.getAttribute(p[1]['idenName'],'place')
             p[0]['type'] = ST.getAttribute(p[1]['idenName'],'type')
         else:
-            print('Error undefined variable is used.')
+            TAC.error('Error : undefined variable '+p[1]['idenName']+' is used.')
 
     else:
         p[0]=p[1]['val']
@@ -654,10 +645,8 @@ def p_ArrayAccess(p):
     p[0]['isArrayAccess'] = True;
     p[0]['type'] = ST.getAttribute(p[0]['idenName'],'type')
     p[0]['place'] = p[0]['idenName']
-    # print(p[3])
     p[0]['index_place'] = p[3]['place']
     del p[0]['idenName']
-    # print(p[0])
     
 def p_FieldAcess(p):
     '''FieldAccess : NotJustName SEPDOT Identifier
@@ -727,7 +716,6 @@ def p_ArrayAllocationExpression(p):
     #Doing just 2nd rule i.e 1D array
     if(len(p)==4):
         # TAC.emit('declare',p[2],p[3][1:-1])
-        # print p[3]
         p[0]={
             'type' : p[2].upper(),
             'place'  : p[3]['place'],
@@ -742,16 +730,15 @@ def p_DimExprs(p):
     '''
     if(len(p)==2):
         p[0]=p[1]
-        # print p[0]
+        return
     
 def p_DimExpr(p):
     '''DimExpr : SEPLEFTSQBR Expression SEPRIGHTSQBR
     '''
-    # print p[2]
     if(p[2]['type']=='INT'):
         p[0]=p[2]
     else:
-        print("Error in line no "+str(p.lineno)+" :: Array declaration needs an integer size")
+        TAC.error("Error : Array declaration needs an integer size = "+p[2]['place'])
     
 def p_Dims(p):
     '''Dims : OP_DIM
@@ -784,7 +771,7 @@ def p_RealPostfixExpression(p):
             'type' : 'INT'
         }
     else:
-        print("increment operator can be used only with integer")
+        TAC.error("Error: increment operator can be used only with integer")
     
 def p_UnaryExpression(p):
     '''UnaryExpression : OPINCREMENT UnaryExpression
@@ -860,7 +847,7 @@ def p_MultiplicativeExpression(p):
             TAC.emit(newPlace,p[1]['place'],p[3]['place'],p[2])
             p[0]['type'] = 'INT'
         else:
-            print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
+            TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
     elif p[2] == '/' :
         if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
             p[3] =ResolveRHSArray(p[3])
@@ -868,7 +855,7 @@ def p_MultiplicativeExpression(p):
             TAC.emit(newPlace,p[1]['place'],p[3]['place'],p[2])
             p[0]['type'] = 'INT'
         else:
-            print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
+            TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
     elif p[2] == '%':
         if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
             p[3] =ResolveRHSArray(p[3])
@@ -876,7 +863,7 @@ def p_MultiplicativeExpression(p):
             TAC.emit(newPlace,p[1]['place'],p[3]['place'],p[2])
             p[0]['type'] = 'INT'
         else:
-            print('Type Error (Expected integers) '+p[1]['place']+','+p[3]['place']+'!')
+            TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
     
 def p_AdditiveExpression(p):
     '''AdditiveExpression : MultiplicativeExpression
@@ -899,7 +886,7 @@ def p_AdditiveExpression(p):
         TAC.emit(newPlace,p[1]['place'],p[3]['place'],p[2])
         p[0]['type'] = 'INT'
     else:
-        print("integer value is needed")
+        TAC.error("Error: integer value is needed")
 
     
 def p_ShiftExpression(p):
@@ -983,7 +970,7 @@ def p_RelationalExpression(p):
             TAC.emit('label',l3,'','')
             p[0]['type'] = 'INT'
     else:
-        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
+        TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
     
 def p_EqualityExpression(p):
     '''EqualityExpression : RelationalExpression
@@ -1029,7 +1016,7 @@ def p_EqualityExpression(p):
             TAC.emit('label',l3,'','')
             p[0]['type'] = 'INT'
     else:
-        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
+        TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
 def p_AndExpression(p):
     '''AndExpression : EqualityExpression
                     | AndExpression OPBINAND EqualityExpression
@@ -1050,8 +1037,8 @@ def p_AndExpression(p):
         TAC.emit(newPlace,p[1]['place'],p[3]['place'],'and')
         p[0]['type'] = 'INT'
     else:
-        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
-    
+        TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
+
 def p_ExclusiveOrExpression(p):
     '''ExclusiveOrExpression : AndExpression
                     | ExclusiveOrExpression OPXOR AndExpression
@@ -1072,7 +1059,7 @@ def p_ExclusiveOrExpression(p):
         TAC.emit(newPlace,p[1]['place'],p[3]['place'],'xor')
         p[0]['type'] = 'INT'
     else:
-        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
+        TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
     
 def p_InclusiveOrExpression(p):
     '''InclusiveOrExpression : ExclusiveOrExpression
@@ -1094,7 +1081,7 @@ def p_InclusiveOrExpression(p):
         TAC.emit(newPlace,p[1]['place'],p[3]['place'],'or')
         p[0]['type'] = 'INT'
     else:
-        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
+        TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
     
 def p_ConditionalAndExpression(p):
     '''ConditionalAndExpression : InclusiveOrExpression
@@ -1116,7 +1103,7 @@ def p_ConditionalAndExpression(p):
         TAC.emit(newPlace,p[1]['place'],p[3]['place'],'and')
         p[0]['type'] = 'INT'
     else:
-        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
+        TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
     
 def p_ConditionalOrExpression(p):
     '''ConditionalOrExpression : ConditionalAndExpression
@@ -1138,7 +1125,7 @@ def p_ConditionalOrExpression(p):
         TAC.emit(newPlace,p[1]['place'],p[3]['place'],'or')
         p[0]['type'] = 'INT'
     else:
-        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
+        TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
     
 def p_ConditionalExpression(p):
     ''' ConditionalExpression : ConditionalOrExpression
@@ -1207,7 +1194,7 @@ def p_AssignmentExpression(p):
             TAC.emit(dst,newPlace,'',p[2][1])
         p[0]['type'] = 'INT'
     else:
-        print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
+        TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
     
 def p_AssignmentOperator(p):
     ''' AssignmentOperator : OPEQUAL
@@ -1245,7 +1232,6 @@ def p_error(p):
 
 
 yacc.yacc()
-
 ST = aksymboltable.SymbolTable()
 TAC = threeAddressCode.ThreeAddressCode()
 
@@ -1256,15 +1242,9 @@ s.close()
 
 #Parse it!
 yacc.parse(data)
-TAC.printCode()
-# TAC.output3AC()
+# TAC.printCode()
+TAC.output3AC()
 
-
-# a=a.split('\n')
-# for s in a:
-#     if not (s == ''): 
-#         # data += " " +s
-#         yacc.parse(s)
 
 
 

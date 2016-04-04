@@ -1,106 +1,92 @@
-class SymbolTable:
+class SystemTable:
 
     def __init__(self):
-        self.symbolTable = {
+        self.SystemTable = {
                 'main' : {
                     'name' : 'main',
+                    'identifiers' : {},
                     'type' : 'main',
                     'parent' : None,
-                    'identifiers' : {},
                     }
                 }
-        self.currentScope = 'main'
-        self.tstart = "t"
+        self.currScope = 'main'
         self.tNo = -1
-        self.blockBase = "b"
-        self.blockNo = -1
-        self.wordSize = 4
-        self.addressSize = 4
+        self.scopeNo = -1
 
-    def addBlock(self):
-        bName = self.createBlockName()
-        self.symbolTable[bName] = {
-                'name' : bName,
-                'type' : 'block',
-                'parent' : self.currentScope,
+    def newScope(self):
+        scope = self.newScopeName()
+        self.SystemTable[scope] = {
+                'name' : scope,
                 'identifiers' : {},
+                'type' : 'scope',
+                'parent' : self.currScope,
                 }
-        self.currentScope = bName
+        self.currScope = scope
 
-    def endBlock(self):
-        self.currentScope = self.symbolTable[self.currentScope]['parent']
+    def endScope(self):
+        self.currScope = self.SystemTable[self.currScope]['parent']
 
-    def addIdentifier(self, idenName, place, idenType = 'unknown', idenSize = 0):
-        if idenSize == 0:
-            idenSize = self.getSize(idenType)
-        scope = self.lookUpScope(idenName)
+    def variableAdd(self, idVal, place, idType, idSize = 4):
+        if idSize == 0:
+            idSize = self.getSize(idType)
+        scope = self.getScope(idVal)
         if scope == None:
-            sc = str(self.currentScope)+'_'+place
-            self.symbolTable[self.currentScope]['identifiers'][idenName] = {
+            sc = str(self.currScope)+'_'+place
+            self.SystemTable[self.currScope]['identifiers'][idVal] = {
                     'place' : sc,
-                    'type' : idenType,
-                    'size' : idenSize
+                    'type' : idType,
+                    'size' : idSize
                     }
-        # print(self.symbolTable[self.currentScope]['identifiers'])
+        # print(self.SystemTable[self.currScope]['identifiers'])
 
-    def lookupIdentifier(self, idenName):
-        scope = self.lookUpScope(idenName)
+    def variableSearch(self, idVal):
+        scope = self.getScope(idVal)
         # print(scope)
         if(scope == None):
             return False
         else:
             return scope
 
-    def getIdentifierAttributes(self, idenName):
-        idenScope = self.lookUpScope(idenName)
-        if idenScope == None:
-            return None
-        else:
-            return self.symbolTable[idenScope]['identifiers'].get(idenName)
-
-    def getAttribute(self, idenName, attrName):
-        idenScope = self.lookUpScope(idenName)
-        if idenScope != None:
-            return  self.symbolTable[idenScope]['identifiers'][idenName].get(attrName)
+    def getAttr(self, idVal, attrName):
+        scope = self.getScope(idVal)
+        if scope != None:
+            return  self.SystemTable[scope]['identifiers'][idVal].get(attrName)
         else:
             return None
 
-    def addAttribute(self, idenName, attrName, attrVal):
-        idenScope = self.lookUpScope(idenName)
-        if idenScope != None:
-            self.symbolTable[self.lookUpScope(idenName)]['identifiers'][idenName][attrName] = attrVal
-            return 1
+    def addAttr(self, idVal, attrName, attrVal):
+        scope = self.getScope(idVal)
+        if scope != None:
+            self.SystemTable[self.getScope(idVal)]['identifiers'][idVal][attrName] = attrVal
+            return True
+            # print("Success")
         else:
-            return 0
+            #print("Fail")
+            return False
 
     def getSize(self, typeExpr):
         if typeExpr in ['INT', 'BOOL', 'FLOAT', 'CHAR', 'VOID' ]:
-            return self.wordSize
-        elif typeExpr[0] == 'STRING':
-            return self.addressSize
-        elif typeExpr[0] == 'ARRAY':
-            return self.addressSize
-        else:
-            assert(False)
+            return 4
 
-
-    def createTemp(self):
-        self.tNo += 1
-        return self.tstart + str(self.tNo)
-
-    def createBlockName(self):
-        self.blockNo += 1
-        return self.blockBase + str(self.blockNo)
-
-    def lookUpScope(self, idenName):
-        scope = self.currentScope
-        while self.symbolTable[scope]['type'] not in ['main']:
-            if idenName in self.symbolTable[scope]['identifiers']:
+    def getScope(self, idVal):
+        scope = self.currScope
+        while self.SystemTable[scope]['type'] not in ['main']:
+            if idVal in self.SystemTable[scope]['identifiers']:
                 return scope
-            scope = self.symbolTable[scope]['parent']
+            scope = self.SystemTable[scope]['parent']
 
-        if idenName in self.symbolTable[scope]['identifiers']:
+        if idVal in self.SystemTable[scope]['identifiers']:
             return scope
-
         return None
+
+    def getTemp(self):
+        self.tNo += 1
+        newTemp = "t"+str(self.tNo) 
+        return newTemp
+
+    def newScopeName(self):
+        self.scopeNo += 1
+        newScope = "s"+str(self.scopeNo) 
+        return newScope
+
 
