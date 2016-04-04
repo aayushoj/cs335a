@@ -3,11 +3,10 @@ import ply.lex as lex
 import sys
 import ply.yacc as yacc
 from lexer import tokens
-import aksymboltable
-import threeAddressCode
+import SymbolTable
+import ThreeAddressCode
 import logging
 from copy import deepcopy
-# print tokens
 nonterminals=[]
 output=[]
 countg = 0
@@ -17,14 +16,12 @@ finalout=[]
 stackend = []
 stackbegin =[]
 
-#############Testing ###############
-
 ##
 ## Call this whenever array is on right hand side of =
 ##
 def ResolveRHSArray(d):
     if( 'isArrayAccess' in d.keys() and d['isArrayAccess']):
-        dst1 = ST.createTemp()
+        dst1 = ST.getTemp()
         TAC.emit(dst1,d['place']+"["+d['index_place']+"]", '','=')
         d['place'] =dst1
         d['isArrayAccess'] =False
@@ -62,12 +59,12 @@ def p_QualifiedName(p):
     '''
     if(len(p)==2):
         p[0] = {
-            'idenName' : p[1],
+            'idVal' : p[1],
             'isnotjustname' : False
         }
     else:
         p[0]={
-            'idenName' : p[1]['idenName']+"."+p[3]
+            'idVal' : p[1]['idVal']+"."+p[3]
         }
 
 
@@ -97,7 +94,7 @@ def p_TypeName(p):
     '''TypeName : PrimitiveType
             | QualifiedName
     '''
-    p[0]=p[1]['idenName']
+    p[0]=p[1]['idVal']
 
 def p_PrimitiveType(p):
     '''PrimitiveType : KEYBOOLEAN
@@ -113,7 +110,7 @@ def p_PrimitiveType(p):
     '''
     #it is idenname because in the case of struct, we are passing the type as iden name through qualified type
     p[0]={
-            'idenName' :p[1]
+            'idVal' :p[1]
         }
 
 def p_ClassNameList(p):
@@ -237,7 +234,7 @@ def p_MethodDeclarator(p):
                     | MethodDeclarator OP_DIM
     '''
     if(len(p)>3):
-        l1 = TAC.makeLabel()
+        l1 = TAC.newLabel()
         TAC.emit('func','','','')
         p[0]=[l1]
         stackbegin.append(p[1])
@@ -312,11 +309,11 @@ def p_Block(p):
     '''
 def p_BMark1(p):
     '''BMark1 : '''
-    ST.addBlock()
+    ST.newScope()
 
 def p_BMark2(p):
     '''BMark2 : '''
-    ST.endBlock()
+    ST.endScope()
 
 def p_LocalVariableDeclarationsAndStatements(p):
     '''LocalVariableDeclarationsAndStatements : LocalVariableDeclarationOrStatement
@@ -341,9 +338,8 @@ def p_LocalVariableDeclarationStatement(p):
     # print(p[2])
     for i in p[2]:
         if(p[1]['type']=='SCANNER'):
-            print(p[1])
             p[1]['type']='INT'
-        ST.addIdentifier(i, i, p[1]['type'])
+        ST.variableAdd(i, i, p[1]['type'])
 
 
 def p_Statement(p):
@@ -383,31 +379,31 @@ def p_SelectionStatement(p):
     '''
 def p_IfMark1(p):
     '''IfMark1 : '''
-    l1 = TAC.makeLabel()
-    l2 = TAC.makeLabel()
+    l1 = TAC.newLabel()
+    l2 = TAC.newLabel()
     # need to handle p[-2].place big work..
     TAC.emit('ifgoto',p[-2]['place'],'eq 0', l2)
     TAC.emit('goto',l1, '', '')
     TAC.emit('label',l1, '', '')
-    ST.addBlock()
+    ST.newScope()
     p[0]=[l1,l2]
 
 def p_IfMark2(p):
     '''IfMark2 : '''
-    ST.endBlock()
+    ST.endScope()
     TAC.emit('label',p[-2][1], '', '')
 
 
 def p_IfMark4(p):
     '''IfMark4 : '''
-    l3 = TAC.makeLabel()
+    l3 = TAC.newLabel()
     TAC.emit('goto',l3,'','')
     TAC.emit('label',p[-3][1],'','')
     p[0]=[l3]
 
 def p_IfMark5(p):
     '''IfMark5 : '''
-    ST.endBlock()
+    ST.endScope()
     TAC.emit('label',p[-2][0],'','')
 
 
@@ -422,12 +418,12 @@ def p_IterationStatement(p):
     '''
 def p_WhMark1(p):
     '''WhMark1 : '''
-    l1 = TAC.makeLabel()
-    l2 = TAC.makeLabel()
-    l3 = TAC.makeLabel()
+    l1 = TAC.newLabel()
+    l2 = TAC.newLabel()
+    l3 = TAC.newLabel()
     stackbegin.append(l1)
     stackend.append(l3)
-    ST.addBlock()
+    ST.newScope()
     TAC.emit('label',l1,'','')
     p[0]=[l1,l2,l3]
 
@@ -441,18 +437,18 @@ def p_WhMark3(p):
     '''WhMark3 : '''
     TAC.emit('goto',p[-6][0],'','')
     TAC.emit('label',p[-6][2],'','')
-    ST.addBlock()
+    ST.newScope()
     stackbegin.pop()
     stackend.pop()
 
 def p_FoMark1(p):
     '''FoMark1 : '''
-    l1 = TAC.makeLabel()
-    l2 = TAC.makeLabel()
-    l3 = TAC.makeLabel()
+    l1 = TAC.newLabel()
+    l2 = TAC.newLabel()
+    l3 = TAC.newLabel()
     stackbegin.append(l1)
     stackend.append(l3)
-    ST.addBlock()
+    ST.newScope()
     TAC.emit('label',l1,'','')
     p[0]=[l1,l2,l3]
 
@@ -472,7 +468,7 @@ def p_FoMark3(p):
     '''FoMark3 : '''
     TAC.emit('goto',p[-6][0],'','')
     TAC.emit('label',p[-6][2],'','')
-    ST.endBlock()
+    ST.endScope()
     stackbegin.pop()
     stackend.pop()
 
@@ -480,7 +476,7 @@ def p_FoMark5(p):
     '''FoMark5 : '''
     TAC.emit('goto',p[-5][0],'','')
     TAC.emit('label',p[-5][2],'','')
-    ST.endBlock()
+    ST.endScope()
     stackbegin.pop()
     stackend.pop()
 
@@ -498,7 +494,7 @@ def p_ForExpr(p):
         p[0]=p[1]
         return
     else:
-        newPlace =ST.createTemp()
+        newPlace =ST.getTemp()
         TAC.emit(newPlace,'1','','=')
         p[0] = {
             'place' : newPlace,
@@ -571,11 +567,11 @@ def p_PrimaryExpression(p):
         'type' : 'TYPE_ERROR'
     }
     if(p[1]['isnotjustname']==False):
-        if ST.lookupIdentifier(p[1]['idenName']) :
-            p[0]['place'] = ST.getAttribute(p[1]['idenName'],'place')
-            p[0]['type'] = ST.getAttribute(p[1]['idenName'],'type')
+        if ST.variableSearch(p[1]['idVal']) :
+            p[0]['place'] = ST.getAttr(p[1]['idVal'],'place')
+            p[0]['type'] = ST.getAttr(p[1]['idVal'],'type')
         else:
-            TAC.error('Error : undefined variable '+p[1]['idenName']+' is used.')
+            TAC.error('Error : undefined variable '+p[1]['idVal']+' is used.')
     else:
         p[0]=p[1]['val']
 
@@ -590,7 +586,7 @@ def p_NotJustName(p):
         'isnotjustname' : True,
         'val' : p[1],
     }
-    print(p[0])
+    # print(p[0])
     # p[1]
     #
 def p_ComplexPrimary(p):
@@ -649,10 +645,10 @@ def p_ArrayAccess(p):
     '''
     p[0]= p[1]
     p[0]['isArrayAccess'] = True;
-    p[0]['type'] = ST.getAttribute(p[0]['idenName'],'type')
-    p[0]['place'] = p[0]['idenName']
+    p[0]['type'] = ST.getAttr(p[0]['idVal'],'type')
+    p[0]['place'] = p[0]['idVal']
     p[0]['index_place'] = p[3]['place']
-    del p[0]['idenName']
+    del p[0]['idVal']
 
 def p_FieldAcess(p):
     '''FieldAccess : NotJustName SEPDOT Identifier
@@ -666,15 +662,15 @@ def p_MethodCall(p):
     ''' MethodCall : MethodAccess SEPLEFTBRACE ArgumentList SEPRIGHTBRACE
             | MethodAccess SEPLEFTBRACE SEPRIGHTBRACE
     '''
-    x = p[1]['idenName'].split('.')
-    if(p[1]['idenName']=='System.out.println'):
+    x = p[1]['idVal'].split('.')
+    if(p[1]['idVal']=='System.out.println'):
         TAC.emit('print',p[3]['place'],'','')
         p[0]=p[1]
     elif(x[len(x)-1]=='nextInt'):
         p[0]=p[1]
         p[0]['input'] = 'True'
     else:
-        TAC.emit('call',p[1]['idenName'],'','')
+        TAC.emit('call',p[1]['idVal'],'','')
         p[0]=p[1]
 
 
@@ -850,7 +846,7 @@ def p_MultiplicativeExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-    newPlace = ST.createTemp()
+    newPlace = ST.getTemp()
     p[0] = {
         'place' : newPlace,
         'type' : 'TYPE_ERROR'
@@ -890,7 +886,7 @@ def p_AdditiveExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-    newPlace = ST.createTemp()
+    newPlace = ST.getTemp()
     p[0] = {
         'place' : newPlace,
         'type' : 'TYPE_ERROR'
@@ -927,10 +923,10 @@ def p_RelationalExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-    l1 = TAC.makeLabel()
-    l2 = TAC.makeLabel()
-    l3 = TAC.makeLabel()
-    newPlace = ST.createTemp()
+    l1 = TAC.newLabel()
+    l2 = TAC.newLabel()
+    l3 = TAC.newLabel()
+    newPlace = ST.getTemp()
     p[0]={
         'place' : newPlace,
         'type' : 'TYPE_ERROR'
@@ -997,10 +993,10 @@ def p_EqualityExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-    l1 = TAC.makeLabel()
-    l2 = TAC.makeLabel()
-    l3 = TAC.makeLabel()
-    newPlace = ST.createTemp()
+    l1 = TAC.newLabel()
+    l2 = TAC.newLabel()
+    l3 = TAC.newLabel()
+    newPlace = ST.getTemp()
     p[0]={
         'place' : newPlace,
         'type' : 'TYPE_ERROR'
@@ -1041,7 +1037,7 @@ def p_AndExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-    newPlace = ST.createTemp()
+    newPlace = ST.getTemp()
     p[0] = {
         'place' : newPlace,
         'type' : 'TYPE_ERROR'
@@ -1063,7 +1059,7 @@ def p_ExclusiveOrExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-    newPlace = ST.createTemp()
+    newPlace = ST.getTemp()
     p[0] = {
         'place' : newPlace,
         'type' : 'TYPE_ERROR'
@@ -1085,7 +1081,7 @@ def p_InclusiveOrExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-    newPlace = ST.createTemp()
+    newPlace = ST.getTemp()
     p[0] = {
         'place' : newPlace,
         'type' : 'TYPE_ERROR'
@@ -1107,7 +1103,7 @@ def p_ConditionalAndExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-    newPlace = ST.createTemp()
+    newPlace = ST.getTemp()
     p[0] = {
         'place' : newPlace,
         'type' : 'TYPE_ERROR'
@@ -1130,7 +1126,7 @@ def p_ConditionalOrExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-    newPlace = ST.createTemp()
+    newPlace = ST.getTemp()
     p[0] = {
         'place' : newPlace,
         'type' : 'TYPE_ERROR'
@@ -1164,7 +1160,6 @@ def p_AssignmentExpression(p):
     if(p[3]=='Scanner'):
         p[0]=p[3]
         return
-    print(p[3])
 
     if('input' in p[3].keys() and p[3]['input']):
         dst=p[1]['place']
@@ -1175,7 +1170,6 @@ def p_AssignmentExpression(p):
         return
 
     if(type(p[3])!=type({})):
-        print(p[3])
         p[0]=p[3]
         return
 #    print(p[3])
@@ -1183,13 +1177,13 @@ def p_AssignmentExpression(p):
         TAC.emit('declare',p[1]['place'],p[3]['place'],p[3]['type'])
         return
 
-    newPlace = ST.createTemp()
+    newPlace = ST.getTemp()
     p[0] = {
         'place' : newPlace,
         'type' : 'TYPE_ERROR',
         'isarray': False
     }
-    print(p[3])
+    # print(p[3])
     if('input' in p[3].keys() and p[3]['input']):
         p[0] = p[3]
         return
@@ -1198,7 +1192,7 @@ def p_AssignmentExpression(p):
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
         if(p[2][0]=='='):
             # if( 'isArrayAccess' in p[1].keys() and p[1]['isArrayAccess']):
-            #     dst1 = ST.createTemp()
+            #     dst1 = ST.getTemp()
             #     TAC.emit(dst1,p[1]['place']+"["+p[1]['index_place']+"]", '','=')
             #     p[1]['place'] =dst1
             #     p[1]['isArrayAccess'] =False
@@ -1265,8 +1259,8 @@ def p_error(p):
 
 
 yacc.yacc()
-ST = aksymboltable.SymbolTable()
-TAC = threeAddressCode.ThreeAddressCode()
+ST = SymbolTable.SymbolTable()
+TAC = ThreeAddressCode.ThreeAddressCode()
 
 s = open(sys.argv[1],'r')
 data = s.read()
@@ -1275,7 +1269,7 @@ s.close()
 
 #Parse it!
 yacc.parse(data)
-# TAC.printCode()
+# TAC.output()
 TAC.output3AC()
 
 
