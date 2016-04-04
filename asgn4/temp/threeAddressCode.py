@@ -32,8 +32,8 @@ class ThreeAddressCode:
 			count+=1
 			if(i[0]=='ifgoto'):
 				print(str(count)+", ")
-			elif(i[0]=='goto'):
-				print(str(count)+", goto, "+i[1])
+			elif(i[0]=='goto' or i[0]=='call'):
+				print(str(count)+", "+i[0]+", "+i[1])
 			elif(i[0]=='label'):
 				print(str(count)+", label, "+i[1])
 			elif(i[0]=='func'):

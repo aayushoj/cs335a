@@ -3,16 +3,13 @@ class amit{
 public class HelloWorld
 {
 	public static void main(String[] args) {
-		 int t,i;
-		 t=i;
-		 {
-		 	int g;
-		 	g=5;
-		 }
-		 {
-		 	int g;
-		 	g=6;
-		 }
+		 int t,a,i,t0;
+		 t=t0;
+		 for(i=0;i<5;t++)
+		{
+			}
+		a=8+9+546;
+		System.out.println(a+t);
 		 /*for(;;)
 		 {
 		 	t=8;

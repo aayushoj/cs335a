@@ -65,6 +65,10 @@ def p_QualifiedName(p):
             'idenName' : p[1],
             'isnotjustname' : False
         }
+    else:
+        p[0]={
+            'idenName' : p[1]['idenName']+"."+p[3]
+        }
         
 
 def p_Semicolons(p):
@@ -579,6 +583,7 @@ def p_PrimaryExpression(p):
     else:
         p[0]=p[1]['val']
 
+
     
 def p_NotJustName(p):
     '''NotJustName : SpecialName
@@ -587,8 +592,7 @@ def p_NotJustName(p):
     '''
     p[0]={
         'isnotjustname' : True,
-        'val' : p[1]
-
+        'val' : p[1],
     }
     # p[1]
     # 
@@ -667,7 +671,10 @@ def p_MethodCall(p):
     ''' MethodCall : MethodAccess SEPLEFTBRACE ArgumentList SEPRIGHTBRACE
             | MethodAccess SEPLEFTBRACE SEPRIGHTBRACE
     '''
-    TAC.emit('goto',p[1]['idenName'],'','')
+    if(p[1]['idenName']!='System.out.println'):
+        TAC.emit('call',p[1]['idenName'],'','')
+    else:
+        TAC.emit('print',p[3]['place'],'','')
     p[0]=p[1]
     
 def p_MethodAccess(p):
@@ -767,6 +774,17 @@ def p_RealPostfixExpression(p):
     '''RealPostfixExpression : PostfixExpression OPINCREMENT
                     | PostfixExpression OPDECREMENT
     '''
+    if(p[1]['type']=='INT'):
+        if(p[2][0]=='+'):
+            TAC.emit(p[1]['place'],p[1]['place'],'1','+')
+        else:
+            TAC.emit(p[1]['place'],p[1]['place'],'1','-')
+        p[0] = {
+            'place' : p[1]['place'],
+            'type' : 'INT'
+        }
+    else:
+        print("increment operator can be used only with integer")
     
 def p_UnaryExpression(p):
     '''UnaryExpression : OPINCREMENT UnaryExpression
@@ -1029,7 +1047,7 @@ def p_AndExpression(p):
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
         p[3] =ResolveRHSArray(p[3])
         p[1] =ResolveRHSArray(p[1])
-        TAC.emit(newPlace,p[1]['place'],p[3]['place'],'&')
+        TAC.emit(newPlace,p[1]['place'],p[3]['place'],'and')
         p[0]['type'] = 'INT'
     else:
         print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
@@ -1073,7 +1091,7 @@ def p_InclusiveOrExpression(p):
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
         p[3] =ResolveRHSArray(p[3])
         p[1] =ResolveRHSArray(p[1])
-        TAC.emit(newPlace,p[1]['place'],p[3]['place'],'|')
+        TAC.emit(newPlace,p[1]['place'],p[3]['place'],'or')
         p[0]['type'] = 'INT'
     else:
         print('Type Error (Expected floats or integers) '+p[1]['place']+','+p[3]['place']+'!')
