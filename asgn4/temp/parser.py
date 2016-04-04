@@ -21,7 +21,7 @@ stackbegin =[]
 
 ##
 ## Call this whenever array is on right hand side of =
-##  
+##
 def ResolveRHSArray(d):
     if( 'isArrayAccess' in d.keys() and d['isArrayAccess']):
         dst1 = ST.createTemp()
@@ -36,25 +36,25 @@ def ResolveRHSArray(d):
 def p_CompilationUnit(p):
     '''CompilationUnit : ProgramFile
     '''
-    
+
 
 def p_ProgramFile(p):
     ''' ProgramFile : Importstatements TypeDeclarationOptSemi
                 | Importstatements
                 | TypeDeclarationOptSemi
     '''
-    
+
 
 def p_Importstatements(p):
     '''Importstatements : Importstatement
                     | Importstatements Importstatement
     '''
-    
+
 def p_Importstatement(p):
     '''Importstatement : KEYIMPORT QualifiedName Semicolons
                     | KEYIMPORT QualifiedName SEPDOT OPMULTIPLY Semicolons
     '''
-    
+
 
 def p_QualifiedName(p):
     '''QualifiedName : Identifier
@@ -69,16 +69,16 @@ def p_QualifiedName(p):
         p[0]={
             'idenName' : p[1]['idenName']+"."+p[3]
         }
-        
+
 
 def p_Semicolons(p):
     '''Semicolons : SEPSEMICOLON
-                | Semicolons SEPSEMICOLON 
+                | Semicolons SEPSEMICOLON
     '''
-    
+
 def p_TypeSpecifier(p):
-    '''TypeSpecifier : TypeName 
-            | TypeName Dims              
+    '''TypeSpecifier : TypeName
+            | TypeName Dims
     '''
     if(len(p)==2):
         p[0]={
@@ -91,14 +91,14 @@ def p_TypeSpecifier(p):
             'dim'  : p[2]
             }
 
-    
+
 #don't know what is Dims
 def p_TypeName(p):
     '''TypeName : PrimitiveType
             | QualifiedName
     '''
     p[0]=p[1]['idenName']
-    
+
 def p_PrimitiveType(p):
     '''PrimitiveType : KEYBOOLEAN
                 | KEYCHAR
@@ -115,55 +115,55 @@ def p_PrimitiveType(p):
     p[0]={
             'idenName' :p[1]
         }
-    
+
 def p_ClassNameList(p):
     '''ClassNameList : QualifiedName
                  | ClassNameList SEPCOMMA QualifiedName
     '''
-    
+
 
 def p_TypeDeclarationOptSemi(p):
     '''TypeDeclarationOptSemi : TypeDeclaration
                     | TypeDeclaration Semicolons
     '''
-    
+
 def p_TypeDeclaration(p):
     '''TypeDeclaration : ClassHeader SEPLEFTPARAN FieldDeclarations SEPRIGHTPARAN
                     | ClassHeader SEPLEFTPARAN SEPRIGHTPARAN
     '''
-    
+
 def p_ClassHeader(p):
     '''ClassHeader : Modifiers ClassWord Identifier
                 | ClassWord Identifier
     '''
-    
+
 def p_ClassWord(p):
     '''ClassWord : KEYCLASS'''
-    
+
 def p_FieldDeclarations(p):
     '''FieldDeclarations : FieldDeclarationOptSemi
                     | FieldDeclarations FieldDeclarationOptSemi
     '''
-    
+
 def p_FieldDeclarationOptSemi(p):
     '''FieldDeclarationOptSemi : FieldDeclaration
                                | FieldDeclaration Semicolons
     '''
-    
+
 def p_FieldDeclaration(p):
     '''FieldDeclaration : FieldVariableDeclaration SEPSEMICOLON
                         | MethodDeclaration
                         | ConstructorDeclaration
                         | StaticInitializer
                         | NonStaticInitializer
-                        | TypeDeclaration 
+                        | TypeDeclaration
     '''
-    
+
 def p_FieldVariableDeclaration(p):
     '''FieldVariableDeclaration : Modifiers TypeSpecifier VariableDeclarators
                                 | TypeSpecifier VariableDeclarators
     '''
-    
+
 def p_VariableDeclarators(p):
     '''VariableDeclarators : VariableDeclarator
                             | VariableDeclarators SEPCOMMA VariableDeclarator
@@ -173,7 +173,7 @@ def p_VariableDeclarators(p):
         return
     p[0]=p[1]+p[3]
 
-    
+
 def p_VariableDeclarator(p):
     ''' VariableDeclarator : DeclaratorName
                             | DeclaratorName OPEQUAL VariableInitializer
@@ -181,13 +181,16 @@ def p_VariableDeclarator(p):
     if(len(p)==2):
         p[0]=p[1]
         return
-    if('isarray' in p[3].keys() and p[3]['isarray']):
+
+    if(type(p[3])!=type({})):
+        return
+    if( 'isarray' in p[3].keys() and p[3]['isarray']):
         TAC.emit('declare',p[1][0],p[3]['place'],p[3]['type'])
         p[0]=p[1]
-    else:    
+    else:
         TAC.emit(p[1][0],p[3]['place'],'',p[2])
         p[0] = p[1]
-    
+
 
 def p_VariableInitializer(p):
     '''VariableInitializer : Expression
@@ -198,13 +201,13 @@ def p_VariableInitializer(p):
         p[0]=p[1]
         return
 
-    
+
 def p_ArrayInitializers(p):
     '''ArrayInitializers : VariableInitializer
                             | ArrayInitializers SEPCOMMA VariableInitializer
                             | ArrayInitializers SEPCOMMA
     '''
-    
+
 
 def p_MethodDeclaration(p):
     '''MethodDeclaration : Modifiers TypeSpecifier MethodDeclarator MethodBody FMark2
@@ -223,11 +226,11 @@ def p_FMark3(p):
     '''FMark3 : '''
     TAC.emit('ret','','','')
     TAC.emit('label',p[-3][0],'','')
-    
+
 def p_Throws(p):
     '''Throws : KEYTHROWS ClassNameList
     '''
-    
+
 def p_MethodDeclarator(p):
     '''MethodDeclarator : DeclaratorName SEPLEFTBRACE ParameterList SEPRIGHTBRACE
                     | DeclaratorName SEPLEFTBRACE SEPRIGHTBRACE
@@ -241,16 +244,16 @@ def p_MethodDeclarator(p):
         stackend.append(l1)
         TAC.emit('label',p[1][0],'','')
 
-    
+
 def p_ParameterList(p):
     '''ParameterList : Parameter
                     | ParameterList SEPCOMMA Parameter
     '''
-    
+
 def p_Parameter(p):
     '''Parameter : TypeSpecifier DeclaratorName
        '''
-    
+
 def p_DeclaratorName(p):
     '''DeclaratorName : Identifier
                     | DeclaratorName OP_DIM
@@ -265,27 +268,27 @@ def p_MethodBody(p):
     '''MethodBody : Block
                 | SEPSEMICOLON
     '''
-    
+
 def p_ConstructorDeclaration(p):
     '''ConstructorDeclaration : Modifiers ConstructorDeclarator Block
                         | ConstructorDeclarator Block
     '''
-    
+
 def p_ConstructorDeclarator(p):
     '''ConstructorDeclarator : Identifier SEPLEFTBRACE ParameterList SEPRIGHTBRACE
                             | Identifier SEPLEFTBRACE SEPRIGHTBRACE
     '''
-    
+
 
 def p_StaticInitializer(p):
     '''StaticInitializer : KEYSTATIC Block
     '''
-    
+
 
 def p_NonStaticInitializer(p):
     '''NonStaticInitializer : Block
     '''
-    
+
 
 
 
@@ -294,7 +297,7 @@ def p_Modifiers(p):
     '''Modifiers : Modifier
                 | Modifiers Modifier
     '''
-    
+
 def p_Modifier(p):
     '''Modifier : KEYPUBLIC
                 | KEYPROTECTED
@@ -302,10 +305,10 @@ def p_Modifier(p):
                 | KEYSTATIC
                 | KEYFINAL
     '''
-    
+
 def p_Block(p):
     '''Block : SEPLEFTPARAN BMark1 LocalVariableDeclarationsAndStatements BMark2 SEPRIGHTPARAN
-            | SEPLEFTPARAN SEPRIGHTPARAN 
+            | SEPLEFTPARAN SEPRIGHTPARAN
     '''
 def p_BMark1(p):
     '''BMark1 : '''
@@ -314,7 +317,7 @@ def p_BMark1(p):
 def p_BMark2(p):
     '''BMark2 : '''
     ST.endBlock()
-    
+
 def p_LocalVariableDeclarationsAndStatements(p):
     '''LocalVariableDeclarationsAndStatements : LocalVariableDeclarationOrStatement
                         | LocalVariableDeclarationsAndStatements LocalVariableDeclarationOrStatement
@@ -329,7 +332,7 @@ def p_LocalVariableDeclarationOrStatement(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-    
+
 def p_LocalVariableDeclarationStatement(p):
     '''LocalVariableDeclarationStatement : TypeSpecifier VariableDeclarators  SEPSEMICOLON
     '''
@@ -337,9 +340,12 @@ def p_LocalVariableDeclarationStatement(p):
     # paramlen = len(VariableDeclarators)
     # print(p[2])
     for i in p[2]:
+        if(p[1]['type']=='SCANNER'):
+            print(p[1])
+            p[1]['type']='INT'
         ST.addIdentifier(i, i, p[1]['type'])
 
-    
+
 def p_Statement(p):
     '''Statement : EmptyStatement
                 | ExpressionStatement SEPSEMICOLON
@@ -350,22 +356,22 @@ def p_Statement(p):
                 | GuardingStatement
                 | Block
     '''
-    
+
 def p_EmptyStatement(p):
     ''' EmptyStatement : SEPSEMICOLON
     '''
-    
+
 def p_LabelStatement(p):
     ''' LabelStatement : Identifier SEPCOLON
                 | KEYCASE ConstantExpression SEPCOLON
                 | KEYDEFAULT SEPCOLON
     '''
-    
+
 def p_ExpressionStatement(p):
     '''ExpressionStatement : Expression
     '''
     p[0] = p[1]
-    
+
 # IF else ........................
 precedence = (
     ('right', 'THAN', 'KEYELSE'),
@@ -483,7 +489,7 @@ def p_ForInt(p):
             | LocalVariableDeclarationStatement
             | SEPSEMICOLON
     '''
-    
+
 def p_ForExpr(p):
     '''ForExpr : Expression SEPSEMICOLON
             | SEPSEMICOLON
@@ -498,7 +504,7 @@ def p_ForExpr(p):
             'place' : newPlace,
             'type' : 'INT'
         }
-    
+
 def p_ForIncr(p):
     '''ForIncr : ExpressionStatements
     '''
@@ -511,7 +517,7 @@ def p_ExpressionStatements(p):
     '''ExpressionStatements : ExpressionStatement
                     | ExpressionStatements SEPCOMMA ExpressionStatement
     '''
-    
+
 def p_JumpStatement(p):
     '''JumpStatement : KEYBREAK Identifier SEPSEMICOLON
                 | KEYBREAK SEPSEMICOLON
@@ -531,27 +537,27 @@ def p_JumpStatement(p):
         TAC.emit('ret','','','')
         return
 
-    
+
 def p_GuardingStatement(p):
     '''GuardingStatement : KEYTRY Block Finally
                         | KEYTRY Block Catches
                         | KEYTRY Block Catches Finally
     '''
-    
+
 def p_Catches(p):
     '''Catches : Catch
             | Catches Catch
     '''
-    
+
 def p_Catch(p):
     '''Catch : CatchHeader Block
     '''
-    
+
 def p_CatchHeader(p):
     '''CatchHeader : KEYCATCH SEPLEFTBRACE TypeSpecifier Identifier SEPRIGHTBRACE
                 | KEYCATCH SEPLEFTBRACE TypeSpecifier SEPRIGHTBRACE
     '''
-    
+
 def p_Finally(p):
     '''Finally : KEYFINALLY Block
     '''
@@ -570,12 +576,11 @@ def p_PrimaryExpression(p):
             p[0]['type'] = ST.getAttribute(p[1]['idenName'],'type')
         else:
             TAC.error('Error : undefined variable '+p[1]['idenName']+' is used.')
-
     else:
         p[0]=p[1]['val']
 
 
-    
+
 def p_NotJustName(p):
     '''NotJustName : SpecialName
                 | NewAllocationExpression
@@ -585,8 +590,9 @@ def p_NotJustName(p):
         'isnotjustname' : True,
         'val' : p[1],
     }
+    print(p[0])
     # p[1]
-    # 
+    #
 def p_ComplexPrimary(p):
     '''ComplexPrimary : SEPLEFTBRACE Expression SEPRIGHTBRACE
             | ComplexPrimaryNoParenthesis
@@ -595,7 +601,7 @@ def p_ComplexPrimary(p):
         p[0]=p[2]
         return
     p[0]=p[1]
-    
+
 def p_ComplexPrimaryNoParenthesis(p):
     '''ComplexPrimaryNoParenthesis : BooleanLiteral
                             | IntLiteral
@@ -636,7 +642,7 @@ def p_StLiteral(p):
         'type' : 'STRING',
         'place' : p[1]
     }
-    
+
 def p_ArrayAccess(p):
     '''ArrayAccess : QualifiedName SEPLEFTSQBR Expression SEPRIGHTSQBR
                 | ComplexPrimary SEPLEFTSQBR Expression SEPRIGHTSQBR
@@ -647,7 +653,7 @@ def p_ArrayAccess(p):
     p[0]['place'] = p[0]['idenName']
     p[0]['index_place'] = p[3]['place']
     del p[0]['idenName']
-    
+
 def p_FieldAcess(p):
     '''FieldAccess : NotJustName SEPDOT Identifier
             | RealPostfixExpression SEPDOT Identifier
@@ -655,28 +661,35 @@ def p_FieldAcess(p):
             | QualifiedName SEPDOT KEYCLASS
             | PrimitiveType SEPDOT KEYCLASS
     '''
-    
+
 def p_MethodCall(p):
     ''' MethodCall : MethodAccess SEPLEFTBRACE ArgumentList SEPRIGHTBRACE
             | MethodAccess SEPLEFTBRACE SEPRIGHTBRACE
     '''
-    if(p[1]['idenName']!='System.out.println'):
-        TAC.emit('call',p[1]['idenName'],'','')
-    else:
+    x = p[1]['idenName'].split('.')
+    if(p[1]['idenName']=='System.out.println'):
         TAC.emit('print',p[3]['place'],'','')
-    p[0]=p[1]
-    
+        p[0]=p[1]
+    elif(x[len(x)-1]=='nextInt'):
+        p[0]=p[1]
+        p[0]['input'] = 'True'
+    else:
+        TAC.emit('call',p[1]['idenName'],'','')
+        p[0]=p[1]
+
+
+
 def p_MethodAccess(p):
     ''' MethodAccess : ComplexPrimaryNoParenthesis
                 | SpecialName
                 | QualifiedName
     '''
     p[0]=p[1]
-    
+
 def p_SpecialName(p):
     '''SpecialName : KEYTHIS
     '''
-    
+
 def p_ArgumentList(p):
     '''ArgumentList : Expression
             | ArgumentList SEPCOMMA Expression
@@ -684,14 +697,16 @@ def p_ArgumentList(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-    
+
 def p_NewAllocationExpression(p):
     '''NewAllocationExpression : PlainNewAllocationExpression
                     | QualifiedName SEPDOT PlainNewAllocationExpression
     '''
     if(len(p)==2):
         p[0]=p[1]
-    
+        return
+    p[0]=p[3]
+
 def p_PlainNewAllocationExpression(p):
     '''PlainNewAllocationExpression :  ArrayAllocationExpression
                         | ClassAllocationExpression
@@ -702,12 +717,14 @@ def p_PlainNewAllocationExpression(p):
     '''
     if(len(p)==2):
         p[0]=p[1]
-    
+    p[0]=p[1]
+
 def p_ClassAllocationExpression(p):
     '''ClassAllocationExpression : KEYNEW TypeName SEPLEFTBRACE ArgumentList SEPRIGHTBRACE
                         | KEYNEW TypeName SEPLEFTBRACE SEPRIGHTBRACE
     '''
-    
+    p[0]=p[2]
+
 def p_ArrayAllocationExpression(p):
     '''ArrayAllocationExpression : KEYNEW TypeName DimExprs Dims
                             | KEYNEW TypeName DimExprs
@@ -723,7 +740,7 @@ def p_ArrayAllocationExpression(p):
         }
         # print p[0]['len']
 
-    
+
 def p_DimExprs(p):
     '''DimExprs : DimExpr
                 | DimExprs DimExpr
@@ -739,7 +756,7 @@ def p_DimExpr(p):
         p[0]=p[2]
     else:
         TAC.error("Error : Array declaration needs an integer size = "+p[2]['place'])
-    
+
 def p_Dims(p):
     '''Dims : OP_DIM
             | Dims OP_DIM
@@ -750,13 +767,13 @@ def p_Dims(p):
     else:
         p[0]=1+p[1]
         return
-    
+
 def p_PostfixExpression(p):
     '''PostfixExpression : PrimaryExpression
                     | RealPostfixExpression
     '''
     p[0] = p[1]
-    
+
 def p_RealPostfixExpression(p):
     '''RealPostfixExpression : PostfixExpression OPINCREMENT
                     | PostfixExpression OPDECREMENT
@@ -783,7 +800,7 @@ def p_UnaryExpression(p):
         p[0] = p[1]
         return
 
-    
+
 def p_LogicalUnaryExpression(p):
     '''LogicalUnaryExpression : PostfixExpression
                         | LogicalUnaryOperator UnaryExpression
@@ -791,19 +808,19 @@ def p_LogicalUnaryExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-    
+
 def p_LogicalUnaryOperator(p):
     '''LogicalUnaryOperator : OPTILDE
-                         | OPNOT 
+                         | OPNOT
     '''
     p[0] = p[1]
-    
+
 def p_ArithmeticUnaryOperator(p):
     '''ArithmeticUnaryOperator : OPPLUS
                             | OPMINUS
     '''
     p[0] = p[1]
-    
+
 def p_CastExpression(p) :
     ''' CastExpression : UnaryExpression
                 | SEPLEFTBRACE PrimitiveTypeExpression SEPRIGHTBRACE CastExpression
@@ -814,16 +831,16 @@ def p_CastExpression(p) :
         p[0] = p[1]
         return
 
-    
+
 def p_PrimitiveTypeExpression(p):
     '''PrimitiveTypeExpression : PrimitiveType
                     | PrimitiveType Dims
     '''
-    
+
 def p_ClassTypeExpression(p):
     '''ClassTypeExpression : QualifiedName Dims
     '''
-    
+
 def p_MultiplicativeExpression(p):
     '''MultiplicativeExpression : CastExpression
                     | MultiplicativeExpression OPMULTIPLY CastExpression
@@ -888,7 +905,7 @@ def p_AdditiveExpression(p):
     else:
         TAC.error("Error: integer value is needed")
 
-    
+
 def p_ShiftExpression(p):
     '''ShiftExpression : AdditiveExpression
                     | ShiftExpression OPLEFTSHIFT AdditiveExpression
@@ -898,7 +915,7 @@ def p_ShiftExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-    
+
 def p_RelationalExpression(p):
     '''RelationalExpression : ShiftExpression
                         | RelationalExpression OPLESSER ShiftExpression
@@ -971,7 +988,7 @@ def p_RelationalExpression(p):
             p[0]['type'] = 'INT'
     else:
         TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
-    
+  
 def p_EqualityExpression(p):
     '''EqualityExpression : RelationalExpression
                         | EqualityExpression OPCHECKEQ RelationalExpression
@@ -1060,7 +1077,7 @@ def p_ExclusiveOrExpression(p):
         p[0]['type'] = 'INT'
     else:
         TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
-    
+
 def p_InclusiveOrExpression(p):
     '''InclusiveOrExpression : ExclusiveOrExpression
                         | InclusiveOrExpression OPBINOR ExclusiveOrExpression
@@ -1082,7 +1099,7 @@ def p_InclusiveOrExpression(p):
         p[0]['type'] = 'INT'
     else:
         TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
-    
+
 def p_ConditionalAndExpression(p):
     '''ConditionalAndExpression : InclusiveOrExpression
                             | ConditionalAndExpression OPAND InclusiveOrExpression
@@ -1096,6 +1113,7 @@ def p_ConditionalAndExpression(p):
         'type' : 'TYPE_ERROR'
     }
     if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
+        p[0]=p[1]
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
         p[3] =ResolveRHSArray(p[3])
@@ -1104,7 +1122,7 @@ def p_ConditionalAndExpression(p):
         p[0]['type'] = 'INT'
     else:
         TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
-    
+
 def p_ConditionalOrExpression(p):
     '''ConditionalOrExpression : ConditionalAndExpression
                         | ConditionalOrExpression OPOR ConditionalAndExpression
@@ -1126,7 +1144,7 @@ def p_ConditionalOrExpression(p):
         p[0]['type'] = 'INT'
     else:
         TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
-    
+
 def p_ConditionalExpression(p):
     ''' ConditionalExpression : ConditionalOrExpression
                         | ConditionalOrExpression OPTERNARY Expression SEPCOLON ConditionalExpression
@@ -1134,7 +1152,7 @@ def p_ConditionalExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
-    
+
 def p_AssignmentExpression(p):
     '''AssignmentExpression : ConditionalExpression
                         | UnaryExpression AssignmentOperator AssignmentExpression
@@ -1143,23 +1161,38 @@ def p_AssignmentExpression(p):
         p[0] = p[1]
         return
 
+    if(p[3]=='Scanner'):
+        p[0]=p[3]
+        return
+    print(p[3])
+
+    if('input' in p[3].keys() and p[3]['input']):
+        dst=p[1]['place']
+        if( 'isArrayAccess' in p[1].keys() and p[1]['isArrayAccess']):
+            dst=p[1]['place'] + "["+p[1]['index_place'] + "]"
+        TAC.emit('input',dst,'','')
+        p[0] = {}
+        return
+
+    if(type(p[3])!=type({})):
+        print(p[3])
+        p[0]=p[3]
+        return
+#    print(p[3])
     if('isarray' in p[3].keys() and p[3]['isarray'] and p[2]=='='):
-        # print "test"
-        # print p[1]
-        # print p[2]
-        # print p[3]
         TAC.emit('declare',p[1]['place'],p[3]['place'],p[3]['type'])
         return
 
-
-
-    ## 
     newPlace = ST.createTemp()
     p[0] = {
         'place' : newPlace,
         'type' : 'TYPE_ERROR',
         'isarray': False
     }
+    print(p[3])
+    if('input' in p[3].keys() and p[3]['input']):
+        p[0] = p[3]
+        return
     if p[1]['type']=='TYPE_ERROR' or p[3]['type']=='TYPE_ERROR':
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
@@ -1211,17 +1244,17 @@ def p_AssignmentOperator(p):
                         | OPBINOREQ
     '''
     p[0] = p[1]
-    
+
 def p_Expression(p):
     '''Expression : AssignmentExpression
     '''
     p[0] = p[1]
-    
+
 def p_ConstantExpression(p):
     '''ConstantExpression : ConditionalExpression
     '''
     p[0] = p[1]
-    
+
 def p_error(p):
     if p == None:
         print str(sys.argv[1])+" ::You missed something at the end"

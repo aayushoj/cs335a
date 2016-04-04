@@ -42,15 +42,14 @@ class ThreeAddressCode:
 				print(str(count)+", "+i[0]+", "+i[1])
 			elif(i[0]=='label'):
 				print(str(count)+", label, "+i[1])
+			elif(i[0]=='input'):
+				print(str(count)+", "+i[0]+", "+i[1])
 			elif(i[0]=='func'):
 				print(str(count)+", func")
 			elif(i[0]=='declare'):
 				print(str(count)+", declare" +", "+i[1]+", "+i[2])
 			elif(i[0]=='print'):
 				print(str(count)+", print, "+i[1])
-			elif(i[0]=='error'):
-				print(i[1] + " = "+ i[2])
-				sys.exit(0)
 			elif(i[0]=='ret'):
 				print(str(count)+", ret")
 			else:
