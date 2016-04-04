@@ -15,14 +15,18 @@ public class HelloWorld
         {
             A[i*i+A[i]] = A[i+i];
         }
-        for(int i=0;i<n;i++)
-            for(int j=0;j<m;j++)
-            {
-
-            }
-        for(i=0;i<n;i++)
+        for(int i=0;i<n*n;i++)
         {
-            A[i*i+A[i]] = A[i+i]=A[n]+=A[i*i-i i];
+            for(int j=0;j<m;)
+            {
+                A[i] =A[j]+A[j];
+                j++;   
+            }
+        }
+        //Ultimate For loop and Array test
+        for(i=0;i<n*n;i++)
+        {
+            A[i*i+A[i]] = A[i+i]=A[n]+=A[i*i-i/i];
             A[i*i+A[i]] = A[i+i]=A[n]+=A[i*i-i%7];
         }
 	}
