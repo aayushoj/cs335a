@@ -6,6 +6,7 @@ from lexer import tokens
 import SymbolTable
 import ThreeAddressCode
 import logging
+import sys
 from copy import deepcopy
 nonterminals=[]
 output=[]
@@ -160,6 +161,13 @@ def p_FieldVariableDeclaration(p):
     '''FieldVariableDeclaration : Modifiers TypeSpecifier VariableDeclarators
                                 | TypeSpecifier VariableDeclarators
     '''
+    if(len(p)==3):
+        for i in p[2]:
+            if(p[1]['type']=='SCANNER'):
+                p[1]['type']='INT'
+            ST.variableAdd(i, i, p[1]['type'])
+    else:
+        TAC.error("We are not supporting Modifiers to Primitive Datatypes")
 
 def p_VariableDeclarators(p):
     '''VariableDeclarators : VariableDeclarator
@@ -413,8 +421,8 @@ def p_IfMark5(p):
 # Iteration statements start here ..................
 def p_IterationStatement(p):
     '''IterationStatement : KEYWHILE WhMark1 SEPLEFTBRACE Expression SEPRIGHTBRACE WhMark2 Statement WhMark3
-                        | KEYFOR SEPLEFTBRACE ForInt FoMark1 ForExpr ForIncr SEPRIGHTBRACE FoMark2 Statement FoMark3
-                        | KEYFOR SEPLEFTBRACE ForInt FoMark1 ForExpr SEPRIGHTBRACE FoMark4 Statement FoMark5
+                        | KEYFOR FoMark0 SEPLEFTBRACE ForInt FoMark1 ForExpr ForIncr SEPRIGHTBRACE FoMark2 Statement FoMark3
+                        | KEYFOR FoMark0 SEPLEFTBRACE ForInt FoMark1 ForExpr SEPRIGHTBRACE FoMark4 Statement FoMark5
     '''
 def p_WhMark1(p):
     '''WhMark1 : '''
@@ -441,6 +449,10 @@ def p_WhMark3(p):
     stackbegin.pop()
     stackend.pop()
 
+def p_FoMark0(p):
+    '''FoMark0 : '''
+    ST.newScope()
+
 def p_FoMark1(p):
     '''FoMark1 : '''
     l1 = TAC.newLabel()
@@ -448,7 +460,6 @@ def p_FoMark1(p):
     l3 = TAC.newLabel()
     stackbegin.append(l1)
     stackend.append(l3)
-    ST.newScope()
     TAC.emit('label',l1,'','')
     p[0]=[l1,l2,l3]
 
@@ -646,7 +657,7 @@ def p_ArrayAccess(p):
     p[0]= p[1]
     p[0]['isArrayAccess'] = True;
     p[0]['type'] = ST.getAttr(p[0]['idVal'],'type')
-    p[0]['place'] = p[0]['idVal']
+    p[0]['place'] = ST.getAttr(p[0]['idVal'],'place')
     p[0]['index_place'] = p[3]['place']
     del p[0]['idVal']
 
@@ -744,7 +755,7 @@ def p_DimExprs(p):
     if(len(p)==2):
         p[0]=p[1]
         return
-    
+
 def p_DimExpr(p):
     '''DimExpr : SEPLEFTSQBR Expression SEPRIGHTSQBR
     '''
@@ -785,7 +796,7 @@ def p_RealPostfixExpression(p):
         }
     else:
         TAC.error("Error: increment operator can be used only with integer")
-    
+
 def p_UnaryExpression(p):
     '''UnaryExpression : OPINCREMENT UnaryExpression
                 | OPDECREMENT UnaryExpression
@@ -877,7 +888,7 @@ def p_MultiplicativeExpression(p):
             p[0]['type'] = 'INT'
         else:
             TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
-    
+
 def p_AdditiveExpression(p):
     '''AdditiveExpression : MultiplicativeExpression
                         | AdditiveExpression OPPLUS MultiplicativeExpression
@@ -984,7 +995,7 @@ def p_RelationalExpression(p):
             p[0]['type'] = 'INT'
     else:
         TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
-  
+
 def p_EqualityExpression(p):
     '''EqualityExpression : RelationalExpression
                         | EqualityExpression OPCHECKEQ RelationalExpression
@@ -1222,7 +1233,7 @@ def p_AssignmentExpression(p):
         p[0]['type'] = 'INT'
     else:
         TAC.error('Error: Type is not compatible'+p[1]['place']+','+p[3]['place']+'.')
-    
+
 def p_AssignmentOperator(p):
     ''' AssignmentOperator : OPEQUAL
                         | OPMULTIPLYEQ
