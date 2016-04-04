@@ -37,7 +37,7 @@ class SymbolTable:
                     'type' : idType,
                     'size' : idSize
                     }
-        # print(self.SymbolTable[self.currScope]['identifiers'])
+        print(self.SymbolTable[self.currScope]['identifiers'])
 
     def variableSearch(self, idVal):
         scope = self.getScope(idVal)
