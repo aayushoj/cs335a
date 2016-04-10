@@ -915,11 +915,11 @@ def IFGOTO(line):
     out('C',a,b)
     if(isInt(inst.src1) and isInt(inst.src2)):
         g.regalloc[isregassigned("$"+str(inst.src2))]='-1'
-
-    if(isInt(inst.jlno)):
-        label="l_"+str(inst.jlno)
-    else:
-        label="u_"+str(inst.jlno)
+    g.debug("ifgoto issue " + inst.jlno)
+    # if(isInt(inst.lineno)):
+    #     label="l_"+str(inst.jlno)
+    # else:
+    label="l_"+str(inst.jlno)
     #Save Context before jump
     SaveContext()
     if(inst.cmpltype=='eq'):
@@ -980,12 +980,12 @@ def print_functions():
             print(".type "+g.splitins[i].lblname+" , @function\n")
 
 # UNCOMMENTED
-def updatejumpttrgt():
-    for k in g.marker:
-        if(g.splitins[k].lbl==False):
-            # g.splitins[k-1].lbl=True
-            g.debug("Lets see: "+str(k))
-            g.splitins[k].lblname="l_"+g.splitins[k].lineno
+# def updatejumpttrgt():
+#     for k in g.marker:
+#         if(g.splitins[k].lbl==False):
+#             # g.splitins[k-1].lbl=True
+#             g.debug("Lets see: "+str(k))
+#             g.splitins[k].lblname="l_"+g.splitins[k].lineno
 
 #prints labels on required lines of Assembly Code
 def printlabelname(i,flag,fgl):
@@ -1016,10 +1016,13 @@ def convertassem():
     createdatasection()
     g.debug(g.marker)
     # UNCOMMENTED
-    updatejumpttrgt()
+    # updatejumpttrgt()
     for i in range(len(g.splitins)):
-        flag,fgl=printlabelname(i,flag,fgl)
-        if(g.splitins[i].op == '='):
+        if(g.splitins[i].op == 'func'):
+            flag,fgl=printlabelname(i,flag,fgl)
+        if(g.splitins[i].op == 'label'):
+            print("\n"+str(g.splitins[i].lblname)+":")
+        elif(g.splitins[i].op == '='):
             EQUAL(i)
         elif(g.splitins[i].op=='+'):
             ADD(i)
