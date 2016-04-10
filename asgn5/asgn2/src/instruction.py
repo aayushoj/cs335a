@@ -59,7 +59,16 @@ class instruction(object):
         elif (param[1]=="print"):
             g.debug("printer")
             self.printc=True
-            self.src1,self.src1index=varname(param[2])
+            self.printlist =[]
+            g.printstrings.append(["str_"+str(self.lineno),str(param[2][:-1]+"\\n\\0\"")])
+            self.printlist.append("$str_"+str(self.lineno))
+            # g.debug("len of param :: "+str(len(param)))
+            for i in range(3,len(param)):
+                temp,tempindex=varname(param[i])
+                self.printlist.append([temp,tempindex])
+            g.debug("print line :: "+str(self.printlist))
+            g.debug("string line :: "+str(g.printstrings))
+            # self.src1,self.src1index=varname(param[2])
         elif (param[1]=="input"):
             self.inputc=True
             self.src1,self.src1index=varname(param[2])
@@ -117,3 +126,4 @@ class instruction(object):
         self.printc=False        #If we have to print or not(lib func)
         self.inputc=False        #If we have to take input or not(lib func)
         self.returnc=False       #If we have to return or not(lib func)
+        self.printlist=[]

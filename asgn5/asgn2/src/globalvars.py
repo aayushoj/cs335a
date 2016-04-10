@@ -7,6 +7,8 @@ basicConfig(format=FORMAT,level=DEBUG)
 
 # list to store all variables
 variables = []
+# list to store all the strings to print
+printstrings = []
 # list to store all basicblocks
 basicblock=[]
 # list to store nextuse table

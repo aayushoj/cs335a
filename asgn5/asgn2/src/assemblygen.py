@@ -122,8 +122,11 @@ def SaveContext():
 def createdatasection():
     tempvar=['tempac1','tempac2','tempac3','tempac4','tempac5','tempac6']
     print(".section .data")
-    strIO="format_input:\n\t.ascii \"%d\\0\"\nformat_output:\n \t.ascii \"%d\\n\\0\"\nL_INPUT:\n\t.long 0"
-    print(strIO)
+    # strIO="format_input:\n\t.ascii \"%d\\0\"\nformat_output:\n \t.ascii \"%d\\n\\0\"\nL_INPUT:\n\t.long 0"
+    # print(strIO)
+    for i in g.printstrings:
+        # g.debug("data"+i[0])
+        print("format_input:\n\t.ascii \"%d\\0\"\n"+i[0]+":\n\t.ascii "+i[1]+"\nL_INPUT:\n\t.long 0")
     # print("array_block:")
     # print("\t.fill 100")
     for i in g.variables :
@@ -966,10 +969,18 @@ def INPUT(line):
 def PRINT(line):
     i=line
     SaveContext()
-    if(not isInt(g.splitins[i].src1)):
-        inp=regs(i,g.splitins[i].src1)
-    out("PU",inp)
-    out("PU","$format_output")
+    # if(not isInt(g.splitins[i].src1)):
+    #     inp=regs(i,g.splitins[i].src1)
+    g.debug("print line strs ::"+str(g.splitins[i].printlist))
+    for j in range(1,len(g.splitins[i].printlist)):
+        g.debug("j::"+str(j))
+        g.debug("list "+str(g.splitins[i].printlist[j]))
+        k=len(g.splitins[i].printlist)-j
+        if(g.splitins[i].printlist[k][1]==None):
+            out("PU",g.splitins[i].printlist[k][0]) #pushing in opp dir
+    # out("PU",inp)
+    # out("PU","$format_output")
+    out("PU",g.splitins[i].printlist[0])
     out("CA","printf")
 
 # defines labels to be function in Assembly Code
