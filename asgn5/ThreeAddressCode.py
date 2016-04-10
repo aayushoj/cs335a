@@ -4,9 +4,6 @@ class ThreeAddressCode:
     def __init__(self):
         self.lNo = -1
         self.code = []
-
-    def emit(self,des, src1, src2, op):
-        self.code.append([des,src1,src2,op])
     
     def newLabel(self):
         self.lNo += 1
@@ -15,6 +12,9 @@ class ThreeAddressCode:
     def output(self):
         for i in self.code:
             print i
+
+    def emit(self,des, src1, src2, op):
+        self.code.append([des,src1,src2,op])
 
     def error(self,error):
         self.output3AC()
@@ -35,7 +35,7 @@ class ThreeAddressCode:
             elif(i[0]=='input'):
                 print(str(count)+", "+i[0]+", "+i[1])
             elif(i[0]=='func'):
-                print(str(count)+", func")
+                print(str(count)+", func ,"+i[1])
             elif(i[0]=='declare'):
                 print(str(count)+", declare" +", "+i[1]+", "+i[2])
             elif(i[0]=='print'):

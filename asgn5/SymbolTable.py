@@ -3,47 +3,31 @@ class SymbolTable:
 
     def __init__(self):
         self.SymbolTable = {
-                'mains' : {
-                    'name' : 'mains',
-                    'identifiers' : {},
+                'start' : {
+                    'name' : 'start',
+                    'variables' : {},
                     'function' : {},
-                    'type' : 'mains',
+                    'type' : 'start',
                     'parent' : None,
                     }
                 }
-        self.currScope = 'mains'
+        self.currScope = 'start'
         self.tNo = -1
         self.scopeNo = -1
 
-    def newScope(self):
-        scope = self.newScopeName()
-        self.SymbolTable[scope] = {
-                'name' : scope,
-                'type' : 'block',
-                'identifiers' : {},
-                'function' : {},
-                'type' : 'scope',
-                'parent' : self.currScope,
-                }
-        self.currScope = scope
-
-    def endScope(self):
-        self.currScope = self.SymbolTable[self.currScope]['parent']
-
-    def variableAdd(self, idVal, place, idType, idSize = 4):
-        if idSize == 4:
-            idSize = self.getSize(idType)
+    def variableAdd(self, idVal, place, idType):
+        idSize = self.getSize(idType)
         scope = self.getScope(idVal)
         if scope != self.currScope:
             sc = str(self.currScope)+'_'+place
-            self.SymbolTable[self.currScope]['identifiers'][idVal] = {
+            self.SymbolTable[self.currScope]['variables'][idVal] = {
                     'place' : sc,
                     'type' : idType,
                     'size' : idSize
                     }
         else:
             sys.exit('Variable '+idVal+" is already initialised in this scope")
-        # print(self.SymbolTable[self.currScope]['identifiers'])
+        # print(self.SymbolTable[self.currScope]['variables'])
 
     def variableSearch(self, idVal):
         scope = self.getScope(idVal)
@@ -54,21 +38,36 @@ class SymbolTable:
             return scope
 
     def functionAdd(self, func):
+        # this is added to handle parameterised function
         self.SymbolTable[func] = {
                 'name' : func,
                 'type' : 'function',
-                'parent' : self.currScope,
-                'identifiers' : {},
+                'variables' : {},
                 'function' : {},
-                'rType' : 'TYPE_ERROR',
-                'arguments' : []
+                'rType' : 'UNDEFINED_TYPE',
+                'parent' : self.currScope,
+                # 'arguments' : []                  need when i am doing function overloading 
                 }
 
         self.SymbolTable[self.currScope]['function'][func] = {
                 'fName' : func
                 }
         self.currScope = func
-        # self.methodSize[self.getCurrLabel()]=0
+
+    def newScope(self):
+        scope = self.newScopeName()
+        self.SymbolTable[scope] = {
+                'name' : scope,
+                'type' : 'block',
+                'variables' : {},
+                'function' : {},
+                'type' : 'scope',
+                'parent' : self.currScope,
+                }
+        self.currScope = scope
+
+    def endScope(self):
+        self.currScope = self.SymbolTable[self.currScope]['parent']
     def endFunction(self):
         self.currScope = self.SymbolTable[self.currScope]['parent']
 
@@ -102,7 +101,7 @@ class SymbolTable:
         return lis
 
     def getScopeVariables(self, scope):
-        l = self.SymbolTable[scope]['identifiers']
+        l = self.SymbolTable[scope]['variables']
         lis = []
         for i in l:
             lis.append(l[i]['place'])
@@ -110,35 +109,26 @@ class SymbolTable:
         return lis
 
 
-    def getAttr(self, idVal, Name):
+    def getData(self, idVal, search):
         scope = self.getScope(idVal)
         if scope != None:
-            return  self.SymbolTable[scope]['identifiers'][idVal].get(Name)
+            return  self.SymbolTable[scope]['variables'][idVal].get(search)
         else:
             return None
 
-    def addAttr(self, idVal, Name, Val):
-        scope = self.getScope(idVal)
-        if scope != None:
-            self.SymbolTable[self.getScope(idVal)]['identifiers'][idVal][Name] = Val
-            return True
-            # print("Success")
-        else:
-            #print("Fail")
-            return False
 
-    def getSize(self, typeExpr):
-        if typeExpr in ['INT', 'BOOL', 'FLOAT', 'CHAR', 'VOID' ]:
-            return 4
+    def getSize(self, dataType):
+        offset= {'INT':4, 'FLOAT':4, 'CHAR':4, 'BOOL':4 , 'VOID':4}
+        if dataType in ['INT', 'BOOL', 'FLOAT', 'CHAR', 'VOID' ]:
+            return offset[dataType]
 
     def getScope(self, idVal):
         scope = self.currScope
-        while self.SymbolTable[scope]['type'] not in ['mains']:
-            if idVal in self.SymbolTable[scope]['identifiers']:
+        while self.SymbolTable[scope]['type'] not in ['start']:
+            if idVal in self.SymbolTable[scope]['variables']:
                 return scope
             scope = self.SymbolTable[scope]['parent']
-
-        if idVal in self.SymbolTable[scope]['identifiers']:
+        if idVal in self.SymbolTable[scope]['variables']:
             return scope
         return None
 
