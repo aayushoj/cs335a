@@ -37,6 +37,10 @@ class instruction(object):
             # g.basicblock.append(int(self.jlno)-1)
             # g.splitins[i].jlno
             # g.marker.append(int(self.jlno)-1)
+        elif(param[1]=="goto"):
+            self.jmp=True
+            self.jlno="l_"+param[2]
+            g.basicblock.append(int(self.lineno))
         elif (param[1]=="call"):
             g.basicblock.append(int(self.lineno))
             g.basicblock.append(int(self.lineno)+1)

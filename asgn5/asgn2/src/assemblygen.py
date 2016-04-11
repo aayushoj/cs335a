@@ -126,7 +126,8 @@ def createdatasection():
     # print(strIO)
     for i in g.printstrings:
         # g.debug("data"+i[0])
-        print("format_input:\n\t.ascii \"%d\\0\"\n"+i[0]+":\n\t.ascii "+i[1]+"\nL_INPUT:\n\t.long 0")
+        print(i[0]+":\n\t.ascii "+i[1]+"\n")
+    print("format_input:\n\t.ascii \"%d\\0\"\n"+"L_INPUT:\n\t.long 0\n")
     # print("array_block:")
     # print("\t.fill 100")
     for i in g.variables :
@@ -1009,6 +1010,11 @@ def POP(line):
     else:
         out("PO",g.splitins[i].dst)
 
+def GOTO(line):
+    i=line
+    inst=g.splitins[i]
+    SaveContext()
+    out("JMP",inst.jlno)
 # defines labels to be function in Assembly Code
 def print_functions():
     g.debug(g.marker)
@@ -1083,6 +1089,8 @@ def convertassem():
             MOD(i)
         elif(g.splitins[i].op=='ifgoto'):
             IFGOTO(i)
+        elif(g.splitins[i].op=="goto"):
+            GOTO(i)
         elif(g.splitins[i].op== 'and'):
             AND(i)
         elif(g.splitins[i].op== 'or'):
