@@ -1,0 +1,23 @@
+1, func, sum, sum_u, sum_h
+2, +, t1, sum_h, sum_u
+3, =, start_b, t1
+4, =, start_b, t1
+5, ret, start_b
+6, func, main
+7, =, start_b, 1
+8, input, main_n
+9, push, main_a
+10, push, main_c
+11, push, main_d
+12, push, main_n
+13, push, start_b
+14, push, main_n
+15, call, sum
+16, pop, t4
+17, pop, main_n
+18, pop, main_d
+19, pop, main_c
+20, pop, main_a
+21, push, t4
+22, pop, main_d
+23, print,"%d", main_d
