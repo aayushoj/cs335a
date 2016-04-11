@@ -137,7 +137,7 @@ def createdatasection():
         if(i[1]==0):
             print("\t.long 0")
         else:
-            print("\t.fill "+str(i[1]))
+            print("\t.space "+str(4*int(i[1])))
     for i in tempvar :
         print(str(i)+":")
         print("\t.long 0")
