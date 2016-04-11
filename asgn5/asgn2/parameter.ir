@@ -1,0 +1,29 @@
+1, func, sum, sum_u, sum_h,sum_g
+2, +, t1, sum_h, sum_u
+3, +, t1,t1,sum_g
+4, =, start_b, t1
+5, ret, start_b
+6, func, main
+7, =, start_b, 1
+8, input, main_n
+9, push, main_a
+10, push, main_c
+11, push, main_d
+12, push, main_n
+13, push, 8
+14, push, start_b
+15, push, main_n
+16, call, sum
+17, pop, t4
+18, pop, main_n
+19, pop, main_d
+20, pop, main_c
+21, pop, main_a
+22, push, t4
+23, pop, main_d
+24, print,"%d", main_d
+25, goto,next_next
+25, label, next
+26, print, "Goto doesnt works \:\'\("
+27,label, next_next
+28, print,"yipee goto worked \:\'\)"
