@@ -43,6 +43,8 @@ class instruction(object):
             self.func=True
             self.funcname="u_"+param[2]
         elif (param[1]=="ret"):
+            g.debug("instruction.py :: ret"+str(param))
+            self.dst,self.dstindex=varname(param[2])
             self.returnc=True
         elif (param[1]=="func"):
             # print("i m here")
@@ -77,6 +79,8 @@ class instruction(object):
             self.src1,self.src1index=varname(param[3])
             # g.variables.append(varname(param[2]))
             # g.variables.append(varname(param[3]))
+        elif (param[1]=="push" or param[1]=="pop"):
+            self.dst,self.dstindex=varname(param[2])
         else:
             # print(param)
             self.dst,self.dstindex=varname(param[2])

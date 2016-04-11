@@ -150,7 +150,7 @@ def createdatasection():
     print(" ")
     print(".global _start")
     print_functions()
-    print("\n _start:")
+    # print("\n _start:")
 
 #handles all cases of addition
 def ADD(line):
@@ -951,6 +951,15 @@ def RET(line):
     SaveContext()
     out("M","%ebp","%esp")
     out("PO","%ebp")
+    out("PO", "v_t0")
+    i=line
+    var=isregassigned(g.splitins[i].dst)
+    g.debug("func::push--var="+str(var))
+    if(var!='-1'):
+        out("PU",regname(var))
+    else:
+        out("PU",g.splitins[i].dst)
+    out("PU", "v_t0")
     out("R")
 
 # handles instruction:- input, a
@@ -983,11 +992,28 @@ def PRINT(line):
     out("PU",g.splitins[i].printlist[0])
     out("CA","printf")
 
+def PUSH(line):
+    i=line
+    var=isregassigned(g.splitins[i].dst)
+    g.debug("func::push--var="+str(var))
+    if(var!='-1'):
+        out("PU",regname(var))
+    else:
+        out("PU",g.splitins[i].dst)
+
+def POP(line):
+    i=line
+    var=isregassigned(g.splitins[i].dst)
+    if(var!='-1'):
+        out("PO",regname(var))
+    else:
+        out("PO",g.splitins[i].dst)
+
 # defines labels to be function in Assembly Code
 def print_functions():
     g.debug(g.marker)
     for i in g.marker:
-        if g.splitins[i].lbl==True:
+        if g.splitins[i].lbl==True and g.splitins[i].lblname!="u_main":
             print(".type "+g.splitins[i].lblname+" , @function\n")
 
 # UNCOMMENTED
@@ -1002,7 +1028,7 @@ def print_functions():
 def printlabelname(i,flag,fgl):
     if i in g.marker:
             g.debug("Check It:- "+str(i))
-            if(g.splitins[i].lbl==True ):
+            if(g.splitins[i].lbl==True):
                 if(flag==1):
                     print("_exit:")
                     SaveContext()
@@ -1010,7 +1036,8 @@ def printlabelname(i,flag,fgl):
                     out("M",0,"%ebx")
                     out("int","$0x80")
                     fgl=1
-                flag=0
+                    flag=0
+                
                 print("\n"+g.splitins[i].lblname+":")
                 out("PU","%ebp")
                 out("M","%esp","%ebp")
@@ -1021,7 +1048,7 @@ def printlabelname(i,flag,fgl):
 
 #Converts every instruction to corresponding assembly code
 def convertassem():
-    flag=1
+    flag=0
     fgl =0
     #Create data section of Assembly Code
     createdatasection()
@@ -1029,9 +1056,12 @@ def convertassem():
     # UNCOMMENTED
     # updatejumpttrgt()
     for i in range(len(g.splitins)):
-        if(g.splitins[i].op == 'func'):
+        if(g.splitins[i].lblname=="u_main"):
+            print "\n_start:"
+            flag=1
+        elif(g.splitins[i].op == 'func'):
             flag,fgl=printlabelname(i,flag,fgl)
-        if(g.splitins[i].op == 'label'):
+        elif(g.splitins[i].op == 'label'):
             print("\n"+str(g.splitins[i].lblname)+":")
         elif(g.splitins[i].op == '='):
             EQUAL(i)
@@ -1055,6 +1085,10 @@ def convertassem():
             XOR(i)
         elif(g.splitins[i].op== 'not'):
             NOT(i)
+        elif(g.splitins[i].op=='push'):
+            PUSH(i)
+        elif(g.splitins[i].op=='pop'):
+            POP(i)
         elif(g.splitins[i].func==True):
             FUNC(i)
         elif(g.splitins[i].returnc==True):
