@@ -120,6 +120,7 @@ def SaveContext():
 
 # Creates the data secction for assembly code
 def createdatasection():
+    print "\n"
     tempvar=['tempac1','tempac2','tempac3','tempac4','tempac5','tempac6','tempretaddr']
     print(".section .data")
     # strIO="format_input:\n\t.ascii \"%d\\0\"\nformat_output:\n \t.ascii \"%d\\n\\0\"\nL_INPUT:\n\t.long 0"
@@ -147,10 +148,7 @@ def createdatasection():
     # print("\t.long 0")
     print(".section .data")
     print(" ")
-    print(".section .text")
-    print(" ")
-    print(".global _start")
-    print_functions()
+
     # print("\n _start:")
 
 #handles all cases of addition
@@ -1017,6 +1015,9 @@ def GOTO(line):
     out("JMP",inst.jlno)
 # defines labels to be function in Assembly Code
 def print_functions():
+    print(".section .text")
+    print(" ")
+    print("\t.global _start")
     g.debug(g.marker)
     for i in g.marker:
         if g.splitins[i].lbl==True and g.splitins[i].lblname!="u_main":
@@ -1063,10 +1064,10 @@ def convertassem():
     flag=0
     fgl =0
     #Create data section of Assembly Code
-    createdatasection()
     g.debug(g.marker)
     # UNCOMMENTED
     # updatejumpttrgt()
+    print_functions()
     for i in range(len(g.splitins)):
         if(g.splitins[i].lblname=="u_main"):
             print "\n_start:"
@@ -1125,3 +1126,5 @@ def convertassem():
         out("M",1,"%eax")
         out("M",0,"%ebx")
         out("int","$0x80")
+    createdatasection()
+
