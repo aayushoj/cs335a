@@ -120,7 +120,7 @@ def SaveContext():
 
 # Creates the data secction for assembly code
 def createdatasection():
-    tempvar=['tempac1','tempac2','tempac3','tempac4','tempac5','tempac6']
+    tempvar=['tempac1','tempac2','tempac3','tempac4','tempac5','tempac6','tempretaddr']
     print(".section .data")
     # strIO="format_input:\n\t.ascii \"%d\\0\"\nformat_output:\n \t.ascii \"%d\\n\\0\"\nL_INPUT:\n\t.long 0"
     # print(strIO)
@@ -951,7 +951,7 @@ def RET(line):
     SaveContext()
     out("M","%ebp","%esp")
     out("PO","%ebp")
-    out("PO", "v_t0")
+    out("PO", "tempretaddr")
     i=line
     var=isregassigned(g.splitins[i].dst)
     g.debug("func::push--var="+str(var))
@@ -959,7 +959,7 @@ def RET(line):
         out("PU",regname(var))
     else:
         out("PU",g.splitins[i].dst)
-    out("PU", "v_t0")
+    out("PU", "tempretaddr")
     out("R")
 
 # handles instruction:- input, a
@@ -980,16 +980,16 @@ def PRINT(line):
     SaveContext()
     # if(not isInt(g.splitins[i].src1)):
     #     inp=regs(i,g.splitins[i].src1)
-    g.debug("print line strs ::"+str(g.splitins[i].printlist))
-    for j in range(1,len(g.splitins[i].printlist)):
+    g.debug("print line strs ::"+str(g.splitins[i].paramlist))
+    for j in range(1,len(g.splitins[i].paramlist)):
         g.debug("j::"+str(j))
-        g.debug("list "+str(g.splitins[i].printlist[j]))
-        k=len(g.splitins[i].printlist)-j
-        if(g.splitins[i].printlist[k][1]==None):
-            out("PU",g.splitins[i].printlist[k][0]) #pushing in opp dir
+        g.debug("list "+str(g.splitins[i].paramlist[j]))
+        k=len(g.splitins[i].paramlist)-j
+        if(g.splitins[i].paramlist[k][1]==None):
+            out("PU",g.splitins[i].paramlist[k][0]) #pushing in opp dir
     # out("PU",inp)
     # out("PU","$format_output")
-    out("PU",g.splitins[i].printlist[0])
+    out("PU",g.splitins[i].paramlist[0])
     out("CA","printf")
 
 def PUSH(line):
@@ -1039,6 +1039,12 @@ def printlabelname(i,flag,fgl):
                     flag=0
                 
                 print("\n"+g.splitins[i].lblname+":")
+                g.debug(str(g.splitins[i].paramlist[0][0]))
+                out("PO","tempretaddr")
+                for j in range(0,len(g.splitins[i].paramlist )):
+                    k=len(g.splitins[i].paramlist)-j-1
+                    out("PO",g.splitins[i].paramlist[k][0])                
+                out("PU","tempretaddr")
                 out("PU","%ebp")
                 out("M","%esp","%ebp")
             else:
