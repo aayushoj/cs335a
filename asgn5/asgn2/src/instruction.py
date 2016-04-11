@@ -10,7 +10,7 @@ def varname(var):
         n=var.find("[")
         m=var.find("]")
         index=var[n+1:m]
-        g.variables.append(("v_"+var[0:n],1))
+        # g.variables.append(("v_"+var[0:n],1))     //arrays are declared using special command declare
         return "v_"+var[0:n],index
     else:
         g.variables.append(("v_"+var,0))
@@ -87,6 +87,8 @@ class instruction(object):
             # g.variables.append(varname(param[3]))
         elif (param[1]=="push" or param[1]=="pop"):
             self.dst,self.dstindex=varname(param[2])
+        elif (param[1]=="declare"):
+            g.variables.append(("v_"+param[2],param[3]))
         else:
             # print(param)
             self.dst,self.dstindex=varname(param[2])

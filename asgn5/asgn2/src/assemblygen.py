@@ -137,7 +137,7 @@ def createdatasection():
         if(i[1]==0):
             print("\t.long 0")
         else:
-            print("\t.fill 100")
+            print("\t.fill "+str(i[1]))
     for i in tempvar :
         print(str(i)+":")
         print("\t.long 0")
@@ -1113,6 +1113,8 @@ def convertassem():
             INPUT(i)
         elif(g.splitins[i].printc==True):
             PRINT(i)
+        elif(g.splitins[i].op=='declare'):
+            continue
         else:
             #Only for debugging
             g.splitins[i].printobj()
