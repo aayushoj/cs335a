@@ -43,7 +43,8 @@ class instruction(object):
             g.basicblock.append(int(self.lineno))
         elif (param[1]=="call"):
             g.basicblock.append(int(self.lineno))
-            g.basicblock.append(int(self.lineno)+1)
+            if(int(self.lineno)<=len(g.splitins)):
+                g.basicblock.append(int(self.lineno)+1)
             self.func=True
             self.funcname="u_"+param[2]
         elif (param[1]=="ret"):
