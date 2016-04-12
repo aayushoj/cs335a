@@ -48,7 +48,10 @@ class instruction(object):
             self.funcname="u_"+param[2]
         elif (param[1]=="ret"):
             g.debug("instruction.py :: ret"+str(param))
-            self.dst,self.dstindex=varname(param[2])
+            if(len(param)==3):
+                self.dst,self.dstindex=varname(param[2])
+            else:
+                self.dst=None
             self.returnc=True
         elif (param[1]=="func"):
             # print("i m here")
