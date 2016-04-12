@@ -579,6 +579,7 @@ def p_PrimaryExpression(p):
         if ST.variableSearch(p[1]['idVal']) :
             p[0]['place'] = ST.getData(p[1]['idVal'],'place')
             p[0]['type'] = ST.getData(p[1]['idVal'],'type')
+            p[0]['idVal'] = p[1]['idVal']
         else:
             TAC.error('Error : undefined variable '+p[1]['idVal']+' is used.')
     else:
@@ -653,11 +654,47 @@ def p_ArrayAccess(p):
                 | ComplexPrimary SEPLEFTSQBR Expression SEPRIGHTSQBR
     '''
     p[0]= p[1]
-    p[0]['isArrayAccess'] = True;
-    p[0]['type'] = ST.getData(p[0]['idVal'],'type')
-    p[0]['place'] = ST.getData(p[0]['idVal'],'place')
-    p[0]['index_place'] = p[3]['place']
-    del p[0]['idVal']
+    if('isArrayAccess' in p[0].keys() and p[0]['isArrayAccess']):
+        print("Only These prints are needed")
+        print("p[1] = " + str(p[1]))
+        print("p[3] = " + str(p[3]))
+        
+        dim = ST.getData(p[0]['idVal'],'dimension')
+        multiplier = 1
+        d = dim[p[1]['index_pos']+1:-1]
+        print("d = "+str(d))
+        for i in d:
+            multiplier = i*multiplier
+        tempvar1 = ST.getTemp()
+        tempvar2 = ST.getTemp()
+        TAC.emit(tempvar1,str(multiplier),p[3]['place'],'*')
+        TAC.emit(tempvar2,tempvar1,p[1]['index_place'],'+')
+        p[0]['isArrayAccess'] = True
+        p[0]['type'] = p[1]['type']
+        p[0]['place'] = p[1]['place']
+        p[0]['idVal'] = p[1]['idVal']
+        p[0]['index_place'] = tempvar2
+        p[0]['index_pos'] = p[1]['index_pos']+1
+        print(".... Only These prints are needed")
+
+    else:
+        dim = ST.getData(p[0]['idVal'],'dimension')
+        multiplier = 1
+        d = dim[0:-1]
+        print("d = "+str(d))
+        for i in d:
+            multiplier = i*multiplier
+        tempvar1 = ST.getTemp()
+        tempvar2 = ST.getTemp()
+        TAC.emit(tempvar1,str(multiplier),p[3]['place'],'*')
+        TAC.emit(tempvar2,tempvar1,'0','+')
+
+        p[0]['isArrayAccess'] = True;
+        p[0]['type'] = ST.getData(p[0]['idVal'],'type')
+        p[0]['place'] = ST.getData(p[0]['idVal'],'place')
+        p[0]['index_place'] = tempvar2 #p[3]['place']
+        p[0]['index_pos'] = 0
+
 
 def p_FieldAcess(p):
     '''FieldAccess : NotJustName SEPDOT Identifier
@@ -781,23 +818,36 @@ def p_ArrayAllocationExpression(p):
                             | KEYNEW TypeName Dims
     '''
     #Doing just 2nd rule i.e 1D array
+    place =1
+    for x in p[3]:
+        # print(x)
+        place = place*int(x['place'])
+    place = str(place)
+    # print(place)
     if(len(p)==4):
         # TAC.emit('declare',p[2],p[3][1:-1])
         p[0]={
             'type' : p[2].upper(),
-            'place'  : p[3]['place'],
-            'isarray' : True
+            'place'  : place,
+            'isarray' : True,
+            'dimensions' : [int(x['place']) for x in p[3]]
         }
-        # print p[0]['len']
-
+        # print("aayush")
+        # print(p[3])
+        # print(p[0]['dimensions'])
 
 def p_DimExprs(p):
     '''DimExprs : DimExpr
                 | DimExprs DimExpr
     '''
     if(len(p)==2):
-        p[0]=p[1]
+        p[0]=[p[1]]
+        # print(p[0])
         return
+    else:
+        p[0] = p[1] + [p[2]]
+        # print(p[0])
+
 
 def p_DimExpr(p):
     '''DimExpr : SEPLEFTSQBR Expression SEPRIGHTSQBR
@@ -1225,9 +1275,14 @@ def p_AssignmentExpression(p):
     if(type(p[3])!=type({})):
         p[0]=p[3]
         return
-#    print(p[3])
+    # print(p[3])
     if('isarray' in p[3].keys() and p[3]['isarray'] and p[2]=='='):
         TAC.emit('declare',p[1]['place'],p[3]['place'],p[3]['type'])
+        # print(p[1]['place'])
+        # print("aaaaaaaaaaa")
+        # print(p[1])
+        # print(p[3])
+        ST.setDimension(p[1]['idVal'],p[3]['dimensions'])
         return
 
     tempvar = ST.getTemp()

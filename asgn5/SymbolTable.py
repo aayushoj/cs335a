@@ -15,7 +15,7 @@ class SymbolTable:
         self.tNo = -1
         self.scopeNo = -1
 
-    def variableAdd(self, idVal, place, idType):
+    def variableAdd(self, idVal, place, idType,idDimension=[]):
         idSize = self.getSize(idType)
         scope = self.getScope(idVal)
         if scope != self.currScope:
@@ -23,11 +23,13 @@ class SymbolTable:
             self.SymbolTable[self.currScope]['variables'][idVal] = {
                     'place' : sc,
                     'type' : idType,
-                    'size' : idSize
+                    'size' : idSize,
+                    'dimension' : idDimension
                     }
         else:
             sys.exit('Variable '+idVal+" is already initialised in this scope")
-        # print(self.SymbolTable[self.currScope]['variables'])
+        print(self.SymbolTable[self.currScope]['variables'])
+
 
     def variableSearch(self, idVal):
         scope = self.getScope(idVal)
@@ -117,6 +119,16 @@ class SymbolTable:
         else:
             return None
 
+    def setDimension(self, idVal, NewDimension):
+        scope = self.getScope(idVal)
+        print(scope)
+        if scope != None:
+            self.SymbolTable[scope]['variables'][idVal]['dimension'] = NewDimension
+            return
+        else:
+            return None
+
+    
 
     def getSize(self, dataType):
         offset= {'INT':4, 'FLOAT':4, 'CHAR':4, 'BOOL':4 , 'VOID':4}
