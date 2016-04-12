@@ -222,11 +222,13 @@ def p_MethodDeclaration(p):
 
 def p_FMark2(p):
     '''FMark2 : '''
-    TAC.emit('ret','','','')
+    if(p[-2][1] not in ['main']):
+        TAC.emit('ret','','','')
 
 def p_FMark3(p):
     '''FMark3 : '''
-    TAC.emit('ret','','','')
+    if(p[-3][1] not in ['main']):
+        TAC.emit('ret','','','')
 
 def p_Throws(p):
     '''Throws : KEYTHROWS ClassNameList
@@ -625,14 +627,16 @@ def p_IntLiteral(p):
     '''
     p[0] = {
         'type' : 'INT',
-        'place' : p[1]
+        'place' : p[1],
+        'novar' : True
     }
 def p_FlLiteral(p):
     '''FlLiteral : FloatingLiteral
     '''
     p[0] = {
         'type' : 'FLOAT',
-        'place' : p[1]
+        'place' : p[1],
+        'novar' : True
     }
 def p_ChLiteral(p):
     '''ChLiteral : CharacterLiteral
@@ -899,6 +903,35 @@ def p_UnaryExpression(p):
     if(len(p)==2):
         p[0] = p[1]
         return
+    if(p[1]=='++'):
+        TAC.emit(p[2]['place'],p[2]['place'],'1','+')
+        p[0]=p[2]
+    elif(p[1]=='--'):
+        TAC.emit(p[2]['place'],p[2]['place'],'1','-')
+        p[0]=p[2]
+    elif(p[1]=='-'):
+        if('novar' in p[2].keys()):
+            tempvar = ST.getTemp()
+            TAC.emit(tempvar,'0',p[2]['place'],'-')
+            p[0] = p[2]
+            p[0]['place'] =  tempvar
+        else:
+            tempvar = ST.getTemp()
+            TAC.emit(tempvar,'0',p[2]['place'],'-')
+            p[0]=p[2]
+            p[0]['place'] =  tempvar
+    elif(p[1]=='+'):
+        if('novar' in p[2].keys()):
+            tempvar = ST.getTemp()
+            TAC.emit(tempvar,'0',p[2]['place'],'+')
+            p[0] = p[2]
+            p[0]['place'] =  tempvar
+        else:
+            tempvar = ST.getTemp()
+            TAC.emit(tempvar,'0',p[2]['place'],'+')
+            p[0]=p[2]
+            p[0]['place'] =  tempvar
+
 
 
 def p_LogicalUnaryExpression(p):

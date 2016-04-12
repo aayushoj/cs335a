@@ -1047,7 +1047,7 @@ def printlabelname(i,flag,fgl):
                     flag=0
                 
                 print("\n"+g.splitins[i].lblname+":")
-                g.debug(str(g.splitins[i].paramlist[0][0]))
+                # g.debug(str(g.splitins[i].paramlist[0][0]))
                 out("PO","tempretaddr")
                 for j in range(0,len(g.splitins[i].paramlist )):
                     k=len(g.splitins[i].paramlist)-j-1
@@ -1076,6 +1076,7 @@ def convertassem():
         elif(g.splitins[i].op == 'func'):
             flag,fgl=printlabelname(i,flag,fgl)
         elif(g.splitins[i].op == 'label'):
+            SaveContext()
             print("\n"+str(g.splitins[i].lblname)+":")
         elif(g.splitins[i].op == '='):
             EQUAL(i)
