@@ -131,6 +131,8 @@ def createdatasection():
     print("format_input:\n\t.ascii \"%d\\0\"\n"+"L_INPUT:\n\t.long 0\n")
     # print("array_block:")
     # print("\t.fill 100")
+    # print("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
+    # print(g.variables)
     for i in g.variables :
         if (isInt(i)):
             continue
@@ -1128,5 +1130,6 @@ def convertassem():
         out("M",1,"%eax")
         out("M",0,"%ebx")
         out("int","$0x80")
+    # print("called createdatasection")
     createdatasection()
 
