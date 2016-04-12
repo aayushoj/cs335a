@@ -437,7 +437,7 @@ def p_IfMark5(p):
 # Iteration statements start here ..................
 def p_IterationStatement(p):
     '''IterationStatement : KEYWHILE WhMark1 SEPLEFTBRACE Expression SEPRIGHTBRACE WhMark2 Statement WhMark3
-                        | KEYFOR FoMark0 SEPLEFTBRACE ForInt FoMark1 ForExpr ForIncr SEPRIGHTBRACE FoMark2 Statement FoMark3
+                        | KEYFOR FoMark0 SEPLEFTBRACE ForInt FoMark1 ForExpr FoMark6 ForIncr FoMark7 SEPRIGHTBRACE FoMark2 Statement FoMark3
                         | KEYFOR FoMark0 SEPLEFTBRACE ForInt FoMark1 ForExpr SEPRIGHTBRACE FoMark4 Statement FoMark5
     '''
 def p_WhMark1(p):
@@ -474,38 +474,58 @@ def p_FoMark1(p):
     l1 = TAC.newLabel()
     l2 = TAC.newLabel()
     l3 = TAC.newLabel()
+    l4 = TAC.newLabel()
+    l5 = TAC.newLabel()
+    tempvar = ST.getTemp()
+    TAC.emit(tempvar,'0','','=')
     stackbegin.append(l1)
     stackend.append(l3)
     TAC.emit('label',l1,'','')
-    p[0]=[l1,l2,l3]
+    lab=[l1,l2,l3,l4,l5]
+    p[0] = {
+        'label' : lab,
+        'temp' : tempvar
+    }
 
 def p_FoMark2(p):
     '''FoMark2 : '''
-    TAC.emit('ifgoto',p[-3]['place'],'eq 0', p[-4][2])
-    TAC.emit('goto',p[-4][1],'','')
-    TAC.emit('label',p[-4][1],'','')
+    TAC.emit('ifgoto',p[-5]['place'],'eq 0', p[-6]['label'][2])
+    TAC.emit('goto',p[-6]['label'][1],'','')
+    TAC.emit('label',p[-6]['label'][1],'','')
 
 def p_FoMark4(p):
     '''FoMark4 : '''
-    TAC.emit('ifgoto',p[-2]['place'],'eq 0', p[-3][2])
-    TAC.emit('goto',p[-3][1],'','')
-    TAC.emit('label',p[-3][1],'','')
+    TAC.emit('ifgoto',p[-2]['place'],'eq 0', p[-3]['label'][2])
+    TAC.emit('goto',p[-3]['label'][1],'','')
+    TAC.emit('label',p[-3]['label'][1],'','')
 
 def p_FoMark3(p):
     '''FoMark3 : '''
-    TAC.emit('goto',p[-6][0],'','')
-    TAC.emit('label',p[-6][2],'','')
+    TAC.emit('goto',p[-8]['label'][4],'','')
+    TAC.emit('label',p[-8]['label'][2],'','')
     ST.endScope()
     stackbegin.pop()
     stackend.pop()
 
 def p_FoMark5(p):
     '''FoMark5 : '''
-    TAC.emit('goto',p[-5][0],'','')
-    TAC.emit('label',p[-5][2],'','')
+    TAC.emit('goto',p[-5]['label'][0],'','')
+    TAC.emit('label',p[-5]['label'][2],'','')
     ST.endScope()
     stackbegin.pop()
     stackend.pop()
+
+def p_FoMark6(p):
+    '''FoMark6 : '''
+    TAC.emit('ifgoto',p[-2]['temp'],'eq 0',p[-2]['label'][3])
+    TAC.emit('label',p[-2]['label'][4],'','')
+
+
+def p_FoMark7(p):
+    '''FoMark7 : '''
+    TAC.emit('goto',p[-4]['label'][0],'','')
+    TAC.emit('label',p[-4]['label'][3],'','')
+
 
 def p_ForInt(p):
     '''ForInt : ExpressionStatements SEPSEMICOLON
