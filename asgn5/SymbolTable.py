@@ -104,7 +104,8 @@ class SymbolTable:
         l = self.SymbolTable[scope]['variables']
         lis = []
         for i in l:
-            lis.append(l[i]['place'])
+            if(i not in ['in']):
+                lis.append(l[i]['place'])
             # print(l[i]['place'])
         return lis
 

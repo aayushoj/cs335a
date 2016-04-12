@@ -218,7 +218,7 @@ def p_MethodDeclaration(p):
                         | TypeSpecifier MethodDeclarator MethodBody FMark2
     '''
     # print("-------------------------------------")
-    # print(p[2])
+    # print(p[3])
 
 def p_FMark2(p):
     '''FMark2 : '''
@@ -240,11 +240,11 @@ def p_MethodDeclarator(p):
     if(len(p)==4):
         # TAC.emit('func','','','')
         p[0]=['funct']+p[1]
-        TAC.emit('func',p[1][0],'','')
+        TAC.emit('func',p[1][0],p[0],'')
     elif(len(p)==5):
         # TAC.emit('func','','','')
         p[0]=['funct']+p[1]+p[3]
-        TAC.emit('func',p[1][0],'','')
+        TAC.emit('func',p[1][0],p[0],'')
 
 
 def p_ParameterList(p):
@@ -311,13 +311,22 @@ def p_BMark1(p):
     '''BMark1 : '''
     if(p[-2]!=None):
         if(p[-2][0]=='funct'):
-            # print(p[-3]['type'])
+            # print(p[-2])
+            #print(p[-3]['type'])
             ST.functionAdd(p[-2][1])
             ST.setRType(p[-3]['type'])
             l =len(p[-2])
+            # param = []
             for i in range(2,l):
                 ST.variableAdd(p[-2][i][0], p[-2][i][0], p[-2][i][1])
-            # print("----------------------")
+                # param = [p[-2][1]+'_'+p[-2][i][0]]+param
+            # print(param)
+            # if(len(param)>0):
+            #     tempvar = ST.getTemp()
+            #     TAC.emit('pop',tempvar,'','')
+            #     for i in param:
+            #         TAC.emit('pop',i,'','')
+            #     TAC.emit('push',tempvar,'','')
             return
     ST.newScope()
     # print(p[-2])
@@ -552,9 +561,9 @@ def p_JumpStatement(p):
         fun = ST.getFunction()
         if(ST.getRType(fun) in ['VOID']):
             TAC.error('Error : function is of void type , do not return any value')
-        else:    
-            TAC.emit('push',p[2]['place'],'','')
-            TAC.emit('ret','','','')
+        else:
+            TAC.emit('ret',p[2]['place'],'','')
+            # TAC.emit('ret','','','')
         return
 
 
@@ -666,7 +675,7 @@ def p_MethodCall(p):
         x = p[1]['idVal'].split('.')
         # print(x)
         if(p[1]['idVal']=='System.out.println'):
-            TAC.emit('print',p[3]['place'],'','')
+            TAC.emit('print',p[3][0],'','')
             p[0]=p[1]
         elif(x[len(x)-1] in ['nextInt']):
             p[0]=p[1]
@@ -682,10 +691,16 @@ def p_MethodCall(p):
             for i in p[3]:
                 TAC.emit('push',i,'','')
             TAC.emit('call',p[1]['idVal'],'','')
+            rt = ST.getRType(p[1]['idVal'])
+            # print(varSave)
+            tempvar = ST.getTemp()
+            if(rt not in ['VOID']):
+                TAC.emit('pop',tempvar,'','')
             l = len(varSave)
             for i in range(1,l+1):
                 TAC.emit('pop',varSave[l-i],'','')
-
+            if(rt not in ['VOID']):
+                TAC.emit('push',tempvar,'','')
             p[0]=p[1]
     else:
         x = p[1]['idVal'].split('.')
@@ -693,8 +708,23 @@ def p_MethodCall(p):
             p[0]=p[1]
             p[0]['input'] = 'True'
             return
-        TAC.emit('call',p[1]['idVal'],'','')
-        p[0]=p[1]
+        else:
+            currScope = ST.retScope()
+            varSave = ST.variableSave(currScope)
+            # print(varSave)
+            for i in varSave:
+                TAC.emit('push',i,'','')    #how array would be done
+            TAC.emit('call',p[1]['idVal'],'','')
+            rt = ST.getRType(p[1]['idVal'])
+            tempvar = ST.getTemp()
+            if(rt not in ['VOID']):
+                TAC.emit('pop',tempvar,'','')
+            l = len(varSave)
+            for i in range(1,l+1):
+                TAC.emit('pop',varSave[l-i],'','')
+            if(rt not in ['VOID']):
+                TAC.emit('push',tempvar,'','')
+            p[0]=p[1]
 
 
 

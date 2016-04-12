@@ -35,7 +35,16 @@ class ThreeAddressCode:
             elif(i[0]=='input'):
                 print(str(count)+", "+i[0]+", "+i[1])
             elif(i[0]=='func'):
-                print(str(count)+", func ,"+i[1])
+                if(len(i[2])==2):
+                    print(str(count)+", func, "+i[1])
+                else:
+                    l = len(i[2])
+                    f = i[2][1]+'_'+i[2][2][0]
+                    for j in range(3,l):
+                        f = f+", "+i[2][1]+'_'+i[2][j][0]
+                    # print(f)
+                    print(str(count)+", func, "+i[1]+", "+f)
+                    # print(i[2])
             elif(i[0]=='declare'):
                 print(str(count)+", declare" +", "+i[1]+", "+i[2])
             elif(i[0]=='print'):
@@ -46,7 +55,10 @@ class ThreeAddressCode:
                 print(i[1] + " = "+ i[2])
                 sys.exit(0)
             elif(i[0]=='ret'):
-                print(str(count)+", ret")
+                if(i[1]==''):
+                    print(str(count)+", ret")
+                else:
+                    print(str(count)+", ret, "+i[1])
             else:
                 if(i[3]=='='):
                     print(str(count)+", "+i[3]+", "+i[0]+", "+i[1])
