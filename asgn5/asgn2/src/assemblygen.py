@@ -99,7 +99,7 @@ def out(mode='Q',str1="Default",str2="Default"):
         raise ValueError("INVALID MODE:- Don't You know I m Idiot?")
     print('\t'+Output)
 
-# Saves Context before going to next basic block called before jumps. 
+# Saves Context before going to next basic block called before jumps.
 def SaveContext():
     # print("SaveContext")
     if(getVar("%eax")!="NULL"):
@@ -127,11 +127,14 @@ def createdatasection():
     # print(strIO)
     for i in g.printstrings:
         # g.debug("data"+i[0])
+        g.debug(i)
         print(i[0]+":\n\t.ascii "+i[1]+"\n")
     print("format_input:\n\t.ascii \"%d\\0\"\n"+"L_INPUT:\n\t.long 0\n")
     # print("array_block:")
     # print("\t.fill 100")
-    for i in g.variables :
+    g.debug(g.variables)
+    for i in g.variables:
+        g.debug(i)
         if (isInt(i)):
             continue
         print(str(i[0])+":")
@@ -945,7 +948,7 @@ def FUNC(line):
     SaveContext()
     out("CA",g.splitins[i].funcname)
 
-# handles all cases of ret 
+# handles all cases of ret
 def RET(line):
     SaveContext()
     out("M","%ebp","%esp")
@@ -1045,13 +1048,13 @@ def printlabelname(i,flag,fgl):
                     out("int","$0x80")
                     fgl=1
                     flag=0
-                
+
                 print("\n"+g.splitins[i].lblname+":")
                 # g.debug(str(g.splitins[i].paramlist[0][0]))
                 out("PO","tempretaddr")
                 for j in range(0,len(g.splitins[i].paramlist )):
                     k=len(g.splitins[i].paramlist)-j-1
-                    out("PO",g.splitins[i].paramlist[k][0])                
+                    out("PO",g.splitins[i].paramlist[k][0])
                 out("PU","tempretaddr")
                 out("PU","%ebp")
                 out("M","%esp","%ebp")

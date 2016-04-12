@@ -3,10 +3,12 @@ from logging import *
 # Settings of debugger
 # FORMAT = "[%(levelname)s:%(filename)s:%(lineno)s] %(message)s"
 FORMAT = "%(message)s"
-basicConfig(format=FORMAT,level=CRITICAL)
+basicConfig(format=FORMAT,level=DEBUG)
 
 # list to store all variables
 variables = []
+# list to store all the strings to print
+printstrings = []
 # list to store all basicblocks
 basicblock=[]
 # list to store nextuse table
