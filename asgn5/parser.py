@@ -740,9 +740,12 @@ def p_MethodCall(p):
             l = len(varSave)
             for i in range(1,l+1):
                 TAC.emit('pop',varSave[l-i],'','')
-            if(rt not in ['VOID']):
-                TAC.emit('push',tempvar,'','')
-            p[0]=p[1]
+            # if(rt not in ['VOID']):
+            #     TAC.emit('push',tempvar,'','')
+            p[0]={
+                'place' : tempvar,
+                'type' : rt
+            }
     else:
         x = p[1]['idVal'].split('.')
         if(x[len(x)-1] in ['nextInt']):
@@ -763,9 +766,13 @@ def p_MethodCall(p):
             l = len(varSave)
             for i in range(1,l+1):
                 TAC.emit('pop',varSave[l-i],'','')
-            if(rt not in ['VOID']):
-                TAC.emit('push',tempvar,'','')
-            p[0]=p[1]
+            # if(rt not in ['VOID']):
+            #     TAC.emit('push',tempvar,'','')
+            p[0]={
+                'place' : tempvar,
+                'type' : rt
+            }
+            # p[0]=p[1]
 
 
 
@@ -1328,9 +1335,9 @@ def p_AssignmentExpression(p):
     if('input' in p[3].keys() and p[3]['input']):
         p[0] = p[3]
         return
-    if('idVal' in p[3].keys()):
-        TAC.emit('pop',p[1]['place'],'','')
-        return
+    # if('idVal' in p[3].keys()):
+    #     TAC.emit('pop',p[1]['place'],'','')
+    #     return
     if p[1]['type']=='UNDEFINED_TYPE' or p[3]['type']=='UNDEFINED_TYPE':
         return
     if p[1]['type'] == 'INT' and p[3]['type'] == 'INT' :
