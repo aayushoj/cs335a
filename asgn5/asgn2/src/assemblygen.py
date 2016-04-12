@@ -950,15 +950,16 @@ def RET(line):
     SaveContext()
     out("M","%ebp","%esp")
     out("PO","%ebp")
-    out("PO", "tempretaddr")
     i=line
-    var=isregassigned(g.splitins[i].dst)
-    g.debug("func::push--var="+str(var))
-    if(var!='-1'):
-        out("PU",regname(var))
-    else:
-        out("PU",g.splitins[i].dst)
-    out("PU", "tempretaddr")
+    if(g.splitins[i].dst is not None):
+        out("PO", "tempretaddr")
+        var=isregassigned(g.splitins[i].dst)
+        g.debug("func::push--var="+str(var))
+        if(var!='-1'):
+            out("PU",regname(var))
+        else:
+            out("PU",g.splitins[i].dst)
+        out("PU", "tempretaddr")
     out("R")
 
 # handles instruction:- input, a
