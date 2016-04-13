@@ -1025,7 +1025,7 @@ def print_functions():
     print("\t.global _start")
     g.debug(g.marker)
     for i in g.marker:
-        if g.splitins[i].lbl==True and g.splitins[i].lblname!="u_main":
+        if g.splitins[i].lbl==True and g.splitins[i].lblname!="u_main0":
             print(".type "+g.splitins[i].lblname+" , @function\n")
 
 # UNCOMMENTED
@@ -1074,7 +1074,7 @@ def convertassem():
     # updatejumpttrgt()
     print_functions()
     for i in range(len(g.splitins)):
-        if(g.splitins[i].lblname=="u_main"):
+        if(g.splitins[i].lblname=="u_main0"):
             print "\n_start:"
             flag=1
         elif(g.splitins[i].op == 'func'):
