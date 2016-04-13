@@ -72,7 +72,7 @@ class instruction(object):
             g.debug("printer")
             self.printc=True
             self.paramlist =[]
-            g.printstrings.append(["str_"+str(self.lineno),str(param[2][:-1]+"\\n\\0\"")])
+            g.printstrings.append(["str_"+str(self.lineno),str(param[2][:-1]+"\\0\"")])
             self.paramlist.append("$str_"+str(self.lineno))
             # g.debug("len of param :: "+str(len(param)))
             for i in range(3,len(param)):

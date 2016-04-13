@@ -1044,6 +1044,8 @@ def printlabelname(i,flag,fgl):
                 if(flag==1):
                     print("_exit:")
                     SaveContext()
+                    out("PU",0)
+                    out("CA","fflush")
                     out("M",1,"%eax")
                     out("M",0,"%ebx")
                     out("int","$0x80")
@@ -1129,6 +1131,8 @@ def convertassem():
     if(fgl==0):
         print("_exit:")
         SaveContext()
+        out("PU",0)
+        out("CA","fflush")
         out("M",1,"%eax")
         out("M",0,"%ebx")
         out("int","$0x80")

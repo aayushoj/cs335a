@@ -92,16 +92,17 @@ def emptyreg(lineno,regno):
             return True
     tempvar=None
     tempnextuse=-1
-    for j in range(0,6) and g.regalloc[j]!='0DNA':
-        if g.regalloc[j] in varsinline:
-            continue
-        i=g.regalloc[j]
-        if(tempnextuse==-1):
-            tempvar=i
-            tempnextuse=g.nextuse[lineno-1][i]
-        elif(tempnextuse<g.nextuse[lineno-1][i]):
+    for j in range(0,6):
+        if(g.regalloc[j]!='0DNA'):
+            if g.regalloc[j] in varsinline:
+                continue
+            i=g.regalloc[j]
+            if(tempnextuse==-1):
                 tempvar=i
                 tempnextuse=g.nextuse[lineno-1][i]
+            elif(tempnextuse<g.nextuse[lineno-1][i]):
+                    tempvar=i
+                    tempnextuse=g.nextuse[lineno-1][i]
     g.debug("empline no: "+str(lineno)+ "  movl "+str(regname(isregassigned(tempvar))+","+str(tempvar)))
     print("movl "+str(regname(isregassigned(tempvar))+" , "+str(tempvar)))
     g.debug("empline no: "+str(lineno)+" movl "+regname(regno)+","+str(regname(isregassigned(tempvar))))

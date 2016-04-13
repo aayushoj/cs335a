@@ -49,6 +49,12 @@ class ThreeAddressCode:
                 print(str(count)+", declare" +", "+i[1]+", "+i[2])
             elif(i[0]=='print'):
                 print(str(count)+", print, \"%d\", "+i[1])
+            elif(i[0]=='printf'):
+                l = len(i[1])
+                f = i[1][0]
+                for j in range(1,l):
+                    f = f + ", " + i[1][j]
+                print(str(count)+", print, "+f)
             elif(i[0]=='push' or i[0]=='pop'):
                 print(str(count)+", "+i[0]+", "+i[1])
             elif(i[0]=='error'):
