@@ -3,15 +3,16 @@ public class TowersOfHanoi {
 
    public void solve(int n, int start, int auxiliary, int end) {
        if (n == 1) {
-
-           System.out.println(start);
-           System.out.println(-1);
-           System.out.println(end);
+            System.out.printf("%d -> %d\n",start,end);
+           // System.out.println(start);
+           // System.out.println(-1);
+           // System.out.println(end);
        } else {
            solve(n - 1, start, end, auxiliary);
-           System.out.println(start);
-           System.out.println(-1);
-           System.out.println(end);
+           System.out.printf("%d -> %d\n",start,end);
+           // System.out.println(start);
+           // System.out.println(-1);
+           // System.out.println(end);
            solve(n - 1, auxiliary, start, end);
        }
    }
