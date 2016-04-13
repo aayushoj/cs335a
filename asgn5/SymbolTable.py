@@ -73,8 +73,6 @@ class SymbolTable:
     def endFunction(self):
         self.currScope = self.SymbolTable[self.currScope]['parent']
 
-    def getCurrScope(self):
-        return self.currScope
 
     def retScope(self):
         return self.currScope

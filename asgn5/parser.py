@@ -194,9 +194,13 @@ def p_VariableDeclarator(p):
     else:
         if('isArrayAccess' in p[3].keys() and p[3]['isArrayAccess']):
             ResolveRHSArray(p[3])
-            TAC.emit(p[1][0],p[3]['place'],'',p[2])
+            # print("look here.....................")
+            # print(p[3])
+            # print(p[1])
+            rt = ST.retScope()
+            TAC.emit(rt+'_'+p[1][0],p[3]['place'],'',p[2])
         else:
-            rt = ST.getCurrScope()
+            rt = ST.retScope()
             TAC.emit(rt+'_'+p[1][0],p[3]['place'],'',p[2])
         p[0] = p[1]
 
@@ -428,6 +432,7 @@ def p_IfMark1(p):
     l1 = TAC.newLabel()
     l2 = TAC.newLabel()
     # need to handle p[-2].place big work..
+    ResolveRHSArray(p[-2])
     TAC.emit('ifgoto',p[-2]['place'],'eq 0', l2)
     TAC.emit('goto',l1, '', '')
     TAC.emit('label',l1, '', '')
@@ -483,7 +488,7 @@ def p_WhMark3(p):
     '''WhMark3 : '''
     TAC.emit('goto',p[-6][0],'','')
     TAC.emit('label',p[-6][2],'','')
-    ST.newScope()
+    ST.endScope()
     stackbegin.pop()
     stackend.pop()
 
@@ -701,14 +706,14 @@ def p_ArrayAccess(p):
     '''
     p[0]= p[1]
     if('isArrayAccess' in p[0].keys() and p[0]['isArrayAccess']):
-        print("Only These prints are needed")
-        print("p[1] = " + str(p[1]))
-        print("p[3] = " + str(p[3]))
+        # print("Only These prints are needed")
+        # print("p[1] = " + str(p[1]))
+        # print("p[3] = " + str(p[3]))
         
         dim = ST.getData(p[0]['idVal'],'dimension')
         multiplier = 1
         d = dim[p[1]['index_pos']+1:-1]
-        print("d = "+str(d))
+        # print("d = "+str(d))
         for i in d:
             multiplier = i*multiplier
         tempvar1 = ST.getTemp()
@@ -721,13 +726,13 @@ def p_ArrayAccess(p):
         p[0]['idVal'] = p[1]['idVal']
         p[0]['index_place'] = tempvar2
         p[0]['index_pos'] = p[1]['index_pos']+1
-        print(".... Only These prints are needed")
+        # print(".... Only These prints are needed")
 
     else:
         dim = ST.getData(p[0]['idVal'],'dimension')
         multiplier = 1
         d = dim[0:-1]
-        print("d = "+str(d))
+        # print("d = "+str(d))
         for i in d:
             multiplier = i*multiplier
         tempvar1 = ST.getTemp()
@@ -759,6 +764,9 @@ def p_MethodCall(p):
         # print(x)
         if(p[1]['idVal']=='System.out.println'):
             TAC.emit('print',p[3][0],'','')
+            p[0]=p[1]
+        elif(p[1]['idVal']=='System.out.printf'):
+            TAC.emit('printf',p[3],'','')
             p[0]=p[1]
         elif(x[len(x)-1] in ['nextInt']):
             p[0]=p[1]
