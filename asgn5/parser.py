@@ -17,6 +17,7 @@ finalout=[]
 stackend = []
 stackbegin =[]
 
+function = []
 ##
 ## Call this whenever array is on right hand side of =
 ##
@@ -184,6 +185,7 @@ def p_VariableDeclarator(p):
         p[0]=p[1]
         return
 
+
     if(type(p[3])!=type({})):
         return
     if( 'isarray' in p[3].keys() and p[3]['isarray']):
@@ -194,7 +196,8 @@ def p_VariableDeclarator(p):
             ResolveRHSArray(p[3])
             TAC.emit(p[1][0],p[3]['place'],'',p[2])
         else:
-            TAC.emit(p[1][0],p[3]['place'],'',p[2])
+            rt = ST.getCurrScope()
+            TAC.emit(rt+'_'+p[1][0],p[3]['place'],'',p[2])
         p[0] = p[1]
 
 
@@ -226,12 +229,12 @@ def p_MethodDeclaration(p):
 
 def p_FMark2(p):
     '''FMark2 : '''
-    if(p[-2][1] not in ['main']):
+    if(p[-2][1] not in ['main0']):
         TAC.emit('ret','','','')
 
 def p_FMark3(p):
     '''FMark3 : '''
-    if(p[-3][1] not in ['main']):
+    if(p[-3][1] not in ['main0']):
         TAC.emit('ret','','','')
 
 def p_Throws(p):
@@ -245,12 +248,26 @@ def p_MethodDeclarator(p):
     '''
     if(len(p)==4):
         # TAC.emit('func','','','')
+        arg = 0
         p[0]=['funct']+p[1]
-        TAC.emit('func',p[1][0],p[0],'')
+        g = p[1][0]+str(arg)
+        p[0][1] = g
+        if(g in function):
+            TAC.error('Error: function with same name and same number of arguments is already defined')
+        else:
+            function.append(g)
+        TAC.emit('func',g,p[0],'')
     elif(len(p)==5):
         # TAC.emit('func','','','')
         p[0]=['funct']+p[1]+p[3]
-        TAC.emit('func',p[1][0],p[0],'')
+        arg = len(p[3])
+        g = p[1][0]+str(arg)
+        p[0][1] = g
+        if(g in function):
+            TAC.error('Error: function with same name and same number of arguments is already defined')
+        else:
+            function.append(g)
+        TAC.emit('func',g,p[0],'')
 
 
 def p_ParameterList(p):
@@ -321,6 +338,7 @@ def p_BMark1(p):
             #print(p[-3]['type'])
             ST.functionAdd(p[-2][1])
             ST.setRType(p[-3]['type'])
+            # TAC.emit('func',p[-2][1],p[-2],'')
             l =len(p[-2])
             # param = []
             for i in range(2,l):
@@ -482,7 +500,7 @@ def p_FoMark1(p):
     l5 = TAC.newLabel()
     tempvar = ST.getTemp()
     TAC.emit(tempvar,'0','','=')
-    stackbegin.append(l1)
+    stackbegin.append(l5)
     stackend.append(l3)
     TAC.emit('label',l1,'','')
     lab=[l1,l2,l3,l4,l5]
@@ -753,10 +771,12 @@ def p_MethodCall(p):
             # print(varSave)
             for i in varSave:
                 TAC.emit('push',i,'','')    #how array would be done
+            arg = len(p[3])
             for i in p[3]:
                 TAC.emit('push',i,'','')
-            TAC.emit('call',p[1]['idVal'],'','')
-            rt = ST.getRType(p[1]['idVal'])
+            newfuncname = p[1]['idVal']+str(arg)
+            TAC.emit('call',newfuncname,'','')
+            rt = ST.getRType(newfuncname)
             # print(varSave)
             tempvar = ST.getTemp()
             if(rt not in ['VOID']):
@@ -782,8 +802,10 @@ def p_MethodCall(p):
             # print(varSave)
             for i in varSave:
                 TAC.emit('push',i,'','')    #how array would be done
-            TAC.emit('call',p[1]['idVal'],'','')
-            rt = ST.getRType(p[1]['idVal'])
+            arg = 0
+            newfuncname = p[1]['idVal']+str(arg)
+            TAC.emit('call',newfuncname,'','')
+            rt = ST.getRType(newfuncname)
             tempvar = ST.getTemp()
             if(rt not in ['VOID']):
                 TAC.emit('pop',tempvar,'','')
