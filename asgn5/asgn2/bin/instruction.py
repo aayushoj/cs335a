@@ -10,7 +10,7 @@ def varname(var):
         n=var.find("[")
         m=var.find("]")
         index=var[n+1:m]
-        g.variables.append(("v_"+var[0:n],1))
+        # g.variables.append(("v_"+var[0:n],1))     //arrays are declared using special command declare
         return "v_"+var[0:n],index
     else:
         g.variables.append(("v_"+var,0))
@@ -34,26 +34,53 @@ class instruction(object):
             self.src2,self.src2index=varname(param[4])
             self.jlno=param[5]
             g.basicblock.append(int(self.lineno))
-            g.basicblock.append(int(self.jlno)-1)
+            # g.basicblock.append(int(self.jlno)-1)
             # g.splitins[i].jlno
-            g.marker.append(int(self.jlno)-1)
+            # g.marker.append(int(self.jlno)-1)
+        elif(param[1]=="goto"):
+            self.jmp=True
+            self.jlno="l_"+param[2]
+            g.basicblock.append(int(self.lineno))
         elif (param[1]=="call"):
             g.basicblock.append(int(self.lineno))
-            g.basicblock.append(int(self.lineno)+1)
+            if(int(self.lineno)<=len(g.splitins)):
+                g.basicblock.append(int(self.lineno)+1)
             self.func=True
             self.funcname="u_"+param[2]
         elif (param[1]=="ret"):
+            g.debug("instruction.py :: ret"+str(param))
+            if(len(param)==3):
+                self.dst,self.dstindex=varname(param[2])
+            else:
+                self.dst=None
             self.returnc=True
-        elif (param[1]=="label"):
+        elif (param[1]=="func"):
             # print("i m here")
             # g.basicblock.append(int(self.lineno))
             g.marker.append(int(self.lineno)-1)
+            for i in range(3,len(param)):
+                self.paramlist.append(varname(param[i]))
             self.lbl=True
             self.lblname="u_"+param[2]
+        elif (param[1]=="label"):
+            # print("i m here")
+            g.basicblock.append(int(self.lineno)-1)
+            g.marker.append(int(self.lineno)-1)
+            self.lbl=False
+            self.lblname="l_"+param[2]
         elif (param[1]=="print"):
             g.debug("printer")
             self.printc=True
-            self.src1,self.src1index=varname(param[2])
+            self.paramlist =[]
+            g.printstrings.append(["str_"+str(self.lineno),str(param[2][:-1]+"\\n\\0\"")])
+            self.paramlist.append("$str_"+str(self.lineno))
+            # g.debug("len of param :: "+str(len(param)))
+            for i in range(3,len(param)):
+                temp,tempindex=varname(param[i])
+                self.paramlist.append([temp,tempindex])
+            g.debug("print line :: "+str(self.paramlist))
+            g.debug("string line :: "+str(g.printstrings))
+            # self.src1,self.src1index=varname(param[2])
         elif (param[1]=="input"):
             self.inputc=True
             self.src1,self.src1index=varname(param[2])
@@ -62,6 +89,10 @@ class instruction(object):
             self.src1,self.src1index=varname(param[3])
             # g.variables.append(varname(param[2]))
             # g.variables.append(varname(param[3]))
+        elif (param[1]=="push" or param[1]=="pop"):
+            self.dst,self.dstindex=varname(param[2])
+        elif (param[1]=="declare"):
+            g.variables.append(("v_"+param[2],param[3]))
         else:
             # print(param)
             self.dst,self.dstindex=varname(param[2])
@@ -111,3 +142,4 @@ class instruction(object):
         self.printc=False        #If we have to print or not(lib func)
         self.inputc=False        #If we have to take input or not(lib func)
         self.returnc=False       #If we have to return or not(lib func)
+        self.paramlist=[]

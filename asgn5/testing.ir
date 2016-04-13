@@ -1,25 +1,25 @@
 1, func, main
-2, declare, main_A, 12
-3, *, t0, 3, 1
-4, +, t1, t0, 0
-5, *, t2, 1, 2
-6, +, t3, t2, t1
-7, =, main_A[t3], 2
-8, *, t5, 3, 2
-9, +, t6, t5, 0
-10, *, t7, 1, 1
-11, +, t8, t7, t6
-12, =, main_A[t8], 5
-13, *, t10, 3, 1
-14, +, t11, t10, 0
-15, *, t12, 1, 2
-16, +, t13, t12, t11
-17, *, t14, 3, 2
-18, +, t15, t14, 0
-19, *, t16, 1, 1
-20, +, t17, t16, t15
-21, =, t19, main_A[t17]
-22, =, t20, main_A[t13]
-23, +, t18, t20, t19
-24, =, main_g, t18
+2, declare, main_A, 4
+3, =, i, 0
+4, label, l0
+5, ifgoto, l, s0_i, 4, l4
+6, goto, l3
+7, label, l3
+8, =, t0, 0
+9, goto, l5
+10, label, l4
+11, =, t0, 1
+12, label, l5
+13, +, s0_i, s0_i, 1
+14, ifgoto, eq, t0, 0, l2
+15, goto, l1
+16, label, l1
+17, *, t1, 1, s0_i
+18, +, t2, t1, 0
+19, pop, main_A
+20, goto, l0
+21, label, l2
+22, *, t4, 1, 0
+23, +, t5, t4, 0
+24, pop, main_g
 25, print, "%d", main_g

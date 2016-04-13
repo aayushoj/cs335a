@@ -190,7 +190,11 @@ def p_VariableDeclarator(p):
         TAC.emit('declare',p[1][0],p[3]['place'],p[3]['type'])
         p[0]=p[1]
     else:
-        TAC.emit(p[1][0],p[3]['place'],'',p[2])
+        if('isArrayAccess' in p[3].keys() and p[3]['isArrayAccess']):
+            ResolveRHSArray(p[3])
+            TAC.emit(p[1][0],p[3]['place'],'',p[2])
+        else:
+            TAC.emit(p[1][0],p[3]['place'],'',p[2])
         p[0] = p[1]
 
 

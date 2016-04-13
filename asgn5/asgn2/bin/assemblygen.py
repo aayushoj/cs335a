@@ -99,7 +99,7 @@ def out(mode='Q',str1="Default",str2="Default"):
         raise ValueError("INVALID MODE:- Don't You know I m Idiot?")
     print('\t'+Output)
 
-# Saves Context before going to next basic block called before jumps. 
+# Saves Context before going to next basic block called before jumps.
 def SaveContext():
     # print("SaveContext")
     if(getVar("%eax")!="NULL"):
@@ -120,20 +120,28 @@ def SaveContext():
 
 # Creates the data secction for assembly code
 def createdatasection():
-    tempvar=['tempac1','tempac2','tempac3','tempac4','tempac5','tempac6']
+    print "\n"
+    tempvar=['tempac1','tempac2','tempac3','tempac4','tempac5','tempac6','tempretaddr']
     print(".section .data")
-    strIO="format_input:\n\t.ascii \"%d\\0\"\nformat_output:\n \t.ascii \"%d\\n\\0\"\nL_INPUT:\n\t.long 0"
-    print(strIO)
+    # strIO="format_input:\n\t.ascii \"%d\\0\"\nformat_output:\n \t.ascii \"%d\\n\\0\"\nL_INPUT:\n\t.long 0"
+    # print(strIO)
+    for i in g.printstrings:
+        # g.debug("data"+i[0])
+        g.debug(i)
+        print(i[0]+":\n\t.ascii "+i[1]+"\n")
+    print("format_input:\n\t.ascii \"%d\\0\"\n"+"L_INPUT:\n\t.long 0\n")
     # print("array_block:")
     # print("\t.fill 100")
-    for i in g.variables :
+    g.debug(g.variables)
+    for i in g.variables:
+        g.debug(i)
         if (isInt(i)):
             continue
         print(str(i[0])+":")
         if(i[1]==0):
             print("\t.long 0")
         else:
-            print("\t.fill 100")
+            print("\t.space "+str(4*int(i[1])))
     for i in tempvar :
         print(str(i)+":")
         print("\t.long 0")
@@ -143,11 +151,8 @@ def createdatasection():
     # print("\t.long 0")
     print(".section .data")
     print(" ")
-    print(".section .text")
-    print(" ")
-    print(".global _start")
-    print_functions()
-    print("\n _start:")
+
+    # print("\n _start:")
 
 #handles all cases of addition
 def ADD(line):
@@ -915,11 +920,11 @@ def IFGOTO(line):
     out('C',a,b)
     if(isInt(inst.src1) and isInt(inst.src2)):
         g.regalloc[isregassigned("$"+str(inst.src2))]='-1'
-
-    if(isInt(inst.jlno)):
-        label="l_"+str(inst.jlno)
-    else:
-        label="u_"+str(inst.jlno)
+    g.debug("ifgoto issue " + inst.jlno)
+    # if(isInt(inst.lineno)):
+    #     label="l_"+str(inst.jlno)
+    # else:
+    label="l_"+str(inst.jlno)
     #Save Context before jump
     SaveContext()
     if(inst.cmpltype=='eq'):
@@ -943,11 +948,21 @@ def FUNC(line):
     SaveContext()
     out("CA",g.splitins[i].funcname)
 
-# handles all cases of ret 
+# handles all cases of ret
 def RET(line):
     SaveContext()
     out("M","%ebp","%esp")
     out("PO","%ebp")
+    i=line
+    if(g.splitins[i].dst is not None):
+        out("PO", "tempretaddr")
+        var=isregassigned(g.splitins[i].dst)
+        g.debug("func::push--var="+str(var))
+        if(var!='-1'):
+            out("PU",regname(var))
+        else:
+            out("PU",g.splitins[i].dst)
+        out("PU", "tempretaddr")
     out("R")
 
 # handles instruction:- input, a
@@ -966,32 +981,65 @@ def INPUT(line):
 def PRINT(line):
     i=line
     SaveContext()
-    if(not isInt(g.splitins[i].src1)):
-        inp=regs(i,g.splitins[i].src1)
-    out("PU",inp)
-    out("PU","$format_output")
+    # if(not isInt(g.splitins[i].src1)):
+    #     inp=regs(i,g.splitins[i].src1)
+    g.debug("print line strs ::"+str(g.splitins[i].paramlist))
+    for j in range(1,len(g.splitins[i].paramlist)):
+        g.debug("j::"+str(j))
+        g.debug("list "+str(g.splitins[i].paramlist[j]))
+        k=len(g.splitins[i].paramlist)-j
+        if(g.splitins[i].paramlist[k][1]==None):
+            out("PU",g.splitins[i].paramlist[k][0]) #pushing in opp dir
+    # out("PU",inp)
+    # out("PU","$format_output")
+    out("PU",g.splitins[i].paramlist[0])
     out("CA","printf")
 
+def PUSH(line):
+    i=line
+    var=isregassigned(g.splitins[i].dst)
+    g.debug("func::push--var="+str(var))
+    if(var!='-1'):
+        out("PU",regname(var))
+    else:
+        out("PU",g.splitins[i].dst)
+
+def POP(line):
+    i=line
+    var=isregassigned(g.splitins[i].dst)
+    if(var!='-1'):
+        out("PO",regname(var))
+    else:
+        out("PO",g.splitins[i].dst)
+
+def GOTO(line):
+    i=line
+    inst=g.splitins[i]
+    SaveContext()
+    out("JMP",inst.jlno)
 # defines labels to be function in Assembly Code
 def print_functions():
+    print(".section .text")
+    print(" ")
+    print("\t.global _start")
     g.debug(g.marker)
     for i in g.marker:
-        if g.splitins[i].lbl==True:
+        if g.splitins[i].lbl==True and g.splitins[i].lblname!="u_main":
             print(".type "+g.splitins[i].lblname+" , @function\n")
 
 # UNCOMMENTED
-def updatejumpttrgt():
-    for k in g.marker:
-        if(g.splitins[k].lbl==False):
-            # g.splitins[k-1].lbl=True
-            g.debug("Lets see: "+str(k))
-            g.splitins[k].lblname="l_"+g.splitins[k].lineno
+# def updatejumpttrgt():
+#     for k in g.marker:
+#         if(g.splitins[k].lbl==False):
+#             # g.splitins[k-1].lbl=True
+#             g.debug("Lets see: "+str(k))
+#             g.splitins[k].lblname="l_"+g.splitins[k].lineno
 
 #prints labels on required lines of Assembly Code
 def printlabelname(i,flag,fgl):
     if i in g.marker:
             g.debug("Check It:- "+str(i))
-            if(g.splitins[i].lbl==True ):
+            if(g.splitins[i].lbl==True):
                 if(flag==1):
                     print("_exit:")
                     SaveContext()
@@ -999,8 +1047,15 @@ def printlabelname(i,flag,fgl):
                     out("M",0,"%ebx")
                     out("int","$0x80")
                     fgl=1
-                flag=0
+                    flag=0
+
                 print("\n"+g.splitins[i].lblname+":")
+                # g.debug(str(g.splitins[i].paramlist[0][0]))
+                out("PO","tempretaddr")
+                for j in range(0,len(g.splitins[i].paramlist )):
+                    k=len(g.splitins[i].paramlist)-j-1
+                    out("PO",g.splitins[i].paramlist[k][0])
+                out("PU","tempretaddr")
                 out("PU","%ebp")
                 out("M","%esp","%ebp")
             else:
@@ -1010,16 +1065,23 @@ def printlabelname(i,flag,fgl):
 
 #Converts every instruction to corresponding assembly code
 def convertassem():
-    flag=1
+    flag=0
     fgl =0
     #Create data section of Assembly Code
-    createdatasection()
     g.debug(g.marker)
     # UNCOMMENTED
-    updatejumpttrgt()
+    # updatejumpttrgt()
+    print_functions()
     for i in range(len(g.splitins)):
-        flag,fgl=printlabelname(i,flag,fgl)
-        if(g.splitins[i].op == '='):
+        if(g.splitins[i].lblname=="u_main"):
+            print "\n_start:"
+            flag=1
+        elif(g.splitins[i].op == 'func'):
+            flag,fgl=printlabelname(i,flag,fgl)
+        elif(g.splitins[i].op == 'label'):
+            SaveContext()
+            print("\n"+str(g.splitins[i].lblname)+":")
+        elif(g.splitins[i].op == '='):
             EQUAL(i)
         elif(g.splitins[i].op=='+'):
             ADD(i)
@@ -1033,6 +1095,8 @@ def convertassem():
             MOD(i)
         elif(g.splitins[i].op=='ifgoto'):
             IFGOTO(i)
+        elif(g.splitins[i].op=="goto"):
+            GOTO(i)
         elif(g.splitins[i].op== 'and'):
             AND(i)
         elif(g.splitins[i].op== 'or'):
@@ -1041,6 +1105,10 @@ def convertassem():
             XOR(i)
         elif(g.splitins[i].op== 'not'):
             NOT(i)
+        elif(g.splitins[i].op=='push'):
+            PUSH(i)
+        elif(g.splitins[i].op=='pop'):
+            POP(i)
         elif(g.splitins[i].func==True):
             FUNC(i)
         elif(g.splitins[i].returnc==True):
@@ -1051,6 +1119,8 @@ def convertassem():
             INPUT(i)
         elif(g.splitins[i].printc==True):
             PRINT(i)
+        elif(g.splitins[i].op=='declare'):
+            continue
         else:
             #Only for debugging
             g.splitins[i].printobj()
@@ -1061,3 +1131,5 @@ def convertassem():
         out("M",1,"%eax")
         out("M",0,"%ebx")
         out("int","$0x80")
+    createdatasection()
+

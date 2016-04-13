@@ -1,0 +1,65 @@
+1, func, fac, fac_h
+2, declare, start_a, 100
+3, ifgoto, eq, fac_h, 1, l1
+4, goto, l0
+5, label, l0
+6, =, t0, 0
+7, goto, l2
+8, label, l1
+9, =, t0, 1
+10, label, l2
+11, ifgoto, eq, t0, 0, l4
+12, goto, l3
+13, label, l3
+14, ret, 1
+15, goto, l5
+16, label, l4
+17, *, t1, 10, 0
+18, +, t2, t1, 0
+19, *, t3, 1, 0
+20, +, t4, t3, t2
+21, *, t5, 10, 5
+22, +, t6, t5, 0f
+23, *, t7, 1, 6
+24, +, t8, t7, t6
+25, -, t9, fac_h, 1
+26, push, fac_y
+27, push, fac_h
+28, push, t9
+29, call, fac
+30, pop, t10
+31, pop, fac_h
+32, pop, fac_y
+33, *, t11, fac_h, t10
+34, =, fac_y, t11
+35, =, start_a[t8], fac_y
+36, =, t15, start_a[t8]
+37, =, start_a[t4], t15
+38, *, t16, 10, 5
+39, +, t17, t16, 0
+40, *, t18, 1, 6
+41, +, t19, t18, t17
+42, =, t20, start_a[t19]
+43, =, d, t20
+44, print, "%d", s1_d
+45, ret, fac_y
+46, label, l5
+47, ret
+48, func, main
+49, =, main_a, main_b
+50, input, main_b
+51, push, main_a
+52, push, main_c
+53, push, main_b
+54, push, main_d
+55, push, main_n
+56, push, main_b
+57, call, fac
+58, pop, t22
+59, pop, main_n
+60, pop, main_d
+61, pop, main_b
+62, pop, main_c
+63, pop, main_a
+64, =, main_c, t22
+65, print, "%d", main_c
